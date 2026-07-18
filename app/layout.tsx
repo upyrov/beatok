@@ -1,9 +1,9 @@
 import { HubConnectionBuilder, type HubConnection } from "@microsoft/signalr";
 import { useEffect, useRef, useState } from "react";
-import { RealtimeContext } from "./realtime-context";
+import { RealtimeContext } from "./contexts";
 import { Outlet } from "react-router";
 
-export default function RealtimeLayout() {
+export default function Layout() {
   const connectionRef = useRef<HubConnection | null>(null);
   const [isConnected, setIsConnected] = useState(false);
 

@@ -1,7 +1,7 @@
 import type { Route } from "./+types/home";
 import { Welcome } from "../welcome/welcome";
 import { use, useEffect } from "react";
-import { RealtimeContext } from "~/realtime-context";
+import { RealtimeContext } from "~/contexts";
 
 export function meta({}: Route.MetaArgs) {
   return [
