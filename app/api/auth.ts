@@ -1,16 +1,18 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "./query-keys";
+import type { UserSignin } from "./types/user/user-signin";
+import type { UserSignup } from "./types/user/user-signup";
 
-async function signIn(body: { email: string; password?: string }) {
+async function signIn(data: UserSignin) {
   const response = await fetch(
     `${import.meta.env.VITE_API_BASE_URL}/auth/sign-in`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+      body: JSON.stringify(data),
     },
   );
-  
+
   if (!response.ok) {
     const error = await response.json();
     throw new Error(error.message);
@@ -22,24 +24,21 @@ export function useSignIn() {
 
   return useMutation({
     mutationFn: signIn,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.users.me() }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: queryKeys.users.me() }),
   });
 }
 
-async function signUp(body: {
-  name: string;
-  email: string;
-  password?: string;
-}) {
+async function signUp(data: UserSignup) {
   const response = await fetch(
     `${import.meta.env.VITE_API_BASE_URL}/auth/sign-up`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+      body: JSON.stringify(data),
     },
   );
-  
+
   if (!response.ok) {
     const error = await response.json();
     throw new Error(error.message);
@@ -51,7 +50,8 @@ export function useSignUp() {
 
   return useMutation({
     mutationFn: signUp,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.users.me() }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: queryKeys.users.me() }),
   });
 }
 
@@ -66,6 +66,7 @@ export function useSignOut() {
 
   return useMutation({
     mutationFn: signOut,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.users.me() }),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: queryKeys.users.me() }),
   });
 }
