@@ -9,7 +9,7 @@ export default function Layout() {
 
   useEffect(() => {
     const connection = new HubConnectionBuilder()
-      .withUrl(import.meta.env.VITE_API_BASE_URL)
+      .withUrl(`${import.meta.env.VITE_API_BASE_URL}/lobby`)
       .withAutomaticReconnect()
       .build();
 
@@ -18,9 +18,9 @@ export default function Layout() {
       .start()
       .then(() => {
         setIsConnected(true);
-        console.log("Realtime Connected!");
+        console.log("Lobby Connected!");
       })
-      .catch((err) => console.error("Realtime Connection failed: ", err));
+      .catch((err) => console.error("Lobby connection failed: ", err));
 
     return () => {
       connectionRef.current?.stop();

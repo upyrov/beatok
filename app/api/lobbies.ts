@@ -5,7 +5,7 @@ import type { Lobby } from "./types/lobby/lobby";
 import type { LobbyFilter } from "./types/lobby-filter";
 import type { CreateScore } from "./types/score/create-score";
 
-async function createLobby(data: CreateLobby) {
+async function createLobby(data: CreateLobby): Promise<string> {
   const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/lobbies`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -16,6 +16,8 @@ async function createLobby(data: CreateLobby) {
     const error = await response.json();
     throw new Error(error.message);
   }
+
+  return response.json();
 }
 
 export function useCreateLobby() {
@@ -29,7 +31,7 @@ export function useCreateLobby() {
   });
 }
 
-async function getLobbies(filter?: LobbyFilter): Promise<Lobby[]> {
+export async function getLobbies(filter?: LobbyFilter): Promise<Lobby[]> {
   const params = new URLSearchParams();
   if (filter) {
     Object.entries(filter).forEach(([key, value]) => {
@@ -51,11 +53,15 @@ async function getLobbies(filter?: LobbyFilter): Promise<Lobby[]> {
   return response.json();
 }
 
-export function useLobbies(filter?: LobbyFilter) {
-  return useQuery({
+export function lobbiesQueryOptions(filter?: LobbyFilter) {
+  return {
     queryKey: queryKeys.lobbies.list(filter || {}),
     queryFn: () => getLobbies(filter),
-  });
+  };
+}
+
+export function useLobbies(filter?: LobbyFilter) {
+  return useQuery(lobbiesQueryOptions(filter));
 }
 
 async function startLobby(id: string) {

@@ -17,7 +17,7 @@ export function QueryBoundary<T>({
   emptyFallback,
 }: QueryBoundaryProps<T>) {
   if (query.isPending) {
-    return loadingFallback || <div>Loading...</div>;
+    return loadingFallback ?? <div>Loading...</div>;
   }
 
   if (query.isError) {
@@ -36,13 +36,8 @@ export function QueryBoundary<T>({
     );
   }
 
-  const isEmpty =
-    query.data === null ||
-    query.data === undefined ||
-    (Array.isArray(query.data) && query.data.length === 0);
-
-  if (isEmpty) {
-    return emptyFallback || <div>No data available.</div>;
+  if (!query.data) {
+    return emptyFallback ?? <div>No data available.</div>;
   }
 
   return (
@@ -53,7 +48,7 @@ export function QueryBoundary<T>({
           Updating...
         </div>
       )}
-      {children(query.data as NonNullable<T>)}
+      {children(query.data)}
     </div>
   );
 }

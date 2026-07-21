@@ -27,7 +27,7 @@ export function useCreateGenre() {
   });
 }
 
-async function getGenres(): Promise<Genre[]> {
+export async function getGenres(): Promise<Genre[]> {
   const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/genres`);
 
   if (!response.ok) {
@@ -38,11 +38,15 @@ async function getGenres(): Promise<Genre[]> {
   return response.json();
 }
 
-export function useGenres() {
-  return useQuery({
+export function genresQueryOptions() {
+  return {
     queryKey: queryKeys.genres.list(),
     queryFn: getGenres,
-  });
+  };
+}
+
+export function useGenres() {
+  return useQuery(genresQueryOptions());
 }
 
 async function deleteGenre(id: string) {
