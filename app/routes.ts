@@ -6,11 +6,10 @@ import {
 } from "@react-router/dev/routes";
 
 export default [
-  layout("layout.tsx", [
-    index("routes/home.tsx"),
-    route("create-lobby", "routes/create-lobby.tsx"),
-    route("lobbies/:id", "routes/lobby.tsx")
-  ]),
+  index("routes/home.tsx"),
+  route("create-lobby", "routes/create-lobby.tsx"),
+
+  layout("layout.tsx", [route("lobbies/:id", "routes/lobby.tsx")]),
 
   layout("routes/auth/layout.tsx", [
     route("signin", "routes/auth/signin.tsx"),

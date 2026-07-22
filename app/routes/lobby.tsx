@@ -2,21 +2,29 @@ import { use, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { RealtimeContext } from "~/contexts";
 import type { LobbyWithParticipants } from "~/api/types/lobby/lobby-with-participants";
+import { useJoinLobby } from "~/api/lobbies";
 
 export default function Lobby() {
   const { id } = useParams();
   const { connection, isConnected } = use(RealtimeContext);
   const [lobby, setLobby] = useState<LobbyWithParticipants | null>(null);
+  const joinLobby = useJoinLobby();
 
   useEffect(() => {
     if (isConnected && connection && id) {
-      connection
-        .invoke<LobbyWithParticipants>("Join", id)
-        .then((joinedLobby) => {
-          console.log(`Joined lobby ${id}`);
-          setLobby(joinedLobby);
+      joinLobby
+        .mutateAsync(id)
+        .catch((err) => {
+          console.error("Failed to join via API (might already be joined):", err);
         })
-        .catch((err) => console.error("Failed to join lobby:", err));
+        .then(() => connection.invoke<LobbyWithParticipants>("Join", id))
+        .then((joinedLobby) => {
+          if (joinedLobby) {
+            console.log(`Joined lobby ${id}`);
+            setLobby(joinedLobby);
+          }
+        })
+        .catch((err) => console.error("Failed to join lobby realtime:", err));
     }
   }, [isConnected, connection, id]);
 

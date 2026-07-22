@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import type { Route } from "./+types/home";
-import { useLobbies, useJoinLobby, lobbiesQueryOptions } from "~/api/lobbies";
+import { useLobbies, lobbiesQueryOptions } from "~/api/lobbies";
 import { LobbyCard } from "~/components/lobby-card";
 import { QueryBoundary } from "~/components/query-boundary";
 import { getQueryClient } from "~/lib/query-client";
@@ -18,7 +18,6 @@ export async function clientLoader() {
 
 export default function Home() {
   const lobbiesQuery = useLobbies();
-  const joinLobby = useJoinLobby();
 
   return (
     <main className="container mx-auto p-4 md:p-8 space-y-8 max-w-7xl min-h-screen">
@@ -43,11 +42,17 @@ export default function Home() {
           {(lobbies) => (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {lobbies.map((lobby) => (
-                <LobbyCard 
-                  key={lobby.id} 
-                  lobby={lobby} 
-                  onJoin={(id) => joinLobby.mutate(id)} 
-                />
+                <div key={lobby.id} className="flex flex-col border border-white/10 rounded-xl p-5 bg-white/5">
+                  <LobbyCard lobby={lobby} />
+                  <div className="mt-6">
+                    <Link
+                      to={`/lobbies/${lobby.id}`}
+                      className="w-full flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 py-2 rounded-lg transition-colors"
+                    >
+                      Join Lobby
+                    </Link>
+                  </div>
+                </div>
               ))}
               {lobbies.length === 0 && (
                 <div className="col-span-full py-12 text-center">

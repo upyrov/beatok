@@ -2,10 +2,9 @@ import type { Lobby } from "~/api/types/lobby/lobby";
 
 interface LobbyCardProps {
   lobby: Lobby;
-  onJoin?: (id: string) => void;
 }
 
-export function LobbyCard({ lobby, onJoin }: LobbyCardProps) {
+export function LobbyCard({ lobby }: LobbyCardProps) {
   const dateFormatter = new Intl.DateTimeFormat(undefined, {
     month: 'short',
     day: 'numeric',
@@ -14,7 +13,7 @@ export function LobbyCard({ lobby, onJoin }: LobbyCardProps) {
   });
 
   const createdAt = dateFormatter.format(new Date(lobby.createdAt));
-  const submissionTime = dateFormatter.format(new Date(lobby.submissionTimeLimit));
+  const submissionTime = lobby.submissionTimeLimit;
 
   return (
     <div className="flex flex-col gap-4">
@@ -42,15 +41,6 @@ export function LobbyCard({ lobby, onJoin }: LobbyCardProps) {
             <span>{lobby.participantCount} / {lobby.participantLimit}</span>
           </div>
         </div>
-      </div>
-
-      <div className="mt-2">
-        <button
-          onClick={() => onJoin?.(lobby.id)}
-          className="w-full flex items-center justify-center gap-2"
-        >
-          Join Lobby
-        </button>
       </div>
     </div>
   );
