@@ -8,6 +8,7 @@ async function createGenre(data: CreateGenre) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
+    credentials: "include",
   });
 
   if (!response.ok) {
@@ -54,6 +55,7 @@ async function deleteGenre(id: string) {
     `${import.meta.env.VITE_API_BASE_URL}/genres/${id}`,
     {
       method: "DELETE",
+      credentials: "include",
     },
   );
 

@@ -10,6 +10,7 @@ async function signIn(data: UserSignin) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
+      credentials: "include",
     },
   );
 
@@ -36,6 +37,7 @@ async function signUp(data: UserSignup) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
+      credentials: "include",
     },
   );
 
@@ -58,6 +60,7 @@ export function useSignUp() {
 async function signOut() {
   await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/sign-out`, {
     method: "POST",
+    credentials: "include",
   });
 }
 

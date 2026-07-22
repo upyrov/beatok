@@ -10,6 +10,7 @@ async function createLobby(data: CreateLobby): Promise<string> {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
+    credentials: "include",
   });
 
   if (!response.ok) {
@@ -69,6 +70,7 @@ async function startLobby(id: string) {
     `${import.meta.env.VITE_API_BASE_URL}/lobbies/${id}/start`,
     {
       method: "PATCH",
+      credentials: "include",
     },
   );
 
@@ -95,6 +97,7 @@ async function joinLobby(id: string) {
     `${import.meta.env.VITE_API_BASE_URL}/lobbies/${id}/participants`,
     {
       method: "POST",
+      credentials: "include",
     },
   );
 
@@ -120,6 +123,7 @@ async function leaveLobby(id: string) {
     `${import.meta.env.VITE_API_BASE_URL}/lobbies/${id}/participants/me`,
     {
       method: "DELETE",
+      credentials: "include",
     },
   );
 
@@ -147,6 +151,7 @@ async function vote(params: { id: string; data: CreateScore }) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(params.data),
+      credentials: "include",
     },
   );
 

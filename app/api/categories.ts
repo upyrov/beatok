@@ -10,6 +10,7 @@ async function createCategory(data: CreateCategory) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
+      credentials: "include",
     },
   );
 
@@ -40,6 +41,7 @@ async function updateCategoryName(params: {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(params.data),
+      credentials: "include",
     },
   );
 
@@ -68,6 +70,7 @@ async function deleteCategory(id: string) {
     `${import.meta.env.VITE_API_BASE_URL}/categories/${id}`,
     {
       method: "DELETE",
+      credentials: "include",
     },
   );
 

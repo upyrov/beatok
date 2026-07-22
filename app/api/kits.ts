@@ -9,6 +9,7 @@ async function createKit(data: CreateKit) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
+    credentials: "include",
   });
 
   if (!response.ok) {
@@ -29,7 +30,9 @@ export function useCreateKit() {
 }
 
 async function getKits(): Promise<Kit[]> {
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/kits`);
+  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/kits`, {
+    credentials: "include",
+  });
 
   if (!response.ok) {
     const error = await response.json();
@@ -53,6 +56,7 @@ async function updateKitName(params: { id: string; data: UpdateKit }) {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(params.data),
+      credentials: "include",
     },
   );
 
@@ -81,6 +85,7 @@ async function deleteKit(id: string) {
     `${import.meta.env.VITE_API_BASE_URL}/kits/${id}`,
     {
       method: "DELETE",
+      credentials: "include",
     },
   );
 

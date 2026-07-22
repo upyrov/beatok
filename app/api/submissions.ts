@@ -7,6 +7,7 @@ import type { UpdateSubmission } from "./types/submission/update-submission";
 async function getUploadUrl(extension: string): Promise<SubmissionUpload> {
   const response = await fetch(
     `${import.meta.env.VITE_API_BASE_URL}/submissions/upload?extension=${extension}`,
+    { credentials: "include" },
   );
 
   if (!response.ok) {
@@ -32,6 +33,7 @@ async function createSubmission(data: CreateSubmission) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
+      credentials: "include",
     },
   );
 
@@ -64,6 +66,7 @@ async function updateSubmissionValue(params: {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(params.data),
+      credentials: "include",
     },
   );
 

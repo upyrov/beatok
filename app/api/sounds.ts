@@ -8,6 +8,7 @@ async function createSound(data: CreateSound) {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
+    credentials: "include",
   });
 
   if (!response.ok) {
@@ -34,6 +35,7 @@ async function updateSoundValue(params: { id: string; data: UpdateSound }) {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(params.data),
+      credentials: "include",
     },
   );
 
@@ -62,6 +64,7 @@ async function deleteSound(id: string) {
     `${import.meta.env.VITE_API_BASE_URL}/sounds/${id}`,
     {
       method: "DELETE",
+      credentials: "include",
     },
   );
 
