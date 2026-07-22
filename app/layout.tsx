@@ -9,7 +9,9 @@ export default function Layout() {
 
   useEffect(() => {
     const connection = new HubConnectionBuilder()
-      .withUrl(`${import.meta.env.VITE_API_BASE_URL}/lobby`)
+      .withUrl(`${import.meta.env.VITE_API_BASE_URL}/lobby`, {
+        withCredentials: true,
+      })
       .withAutomaticReconnect()
       .build();
 
