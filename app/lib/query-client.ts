@@ -1,4 +1,5 @@
 import { QueryClient } from "@tanstack/react-query";
+import { AuthError } from "./api-client";
 
 export function makeQueryClient() {
   return new QueryClient({
@@ -7,6 +8,8 @@ export function makeQueryClient() {
         // With SSR, we usually want to set some default staleTime
         // above 0 to avoid refetching immediately on the client
         staleTime: 60 * 1000,
+        retry: (failureCount, error) =>
+          error instanceof AuthError ? false : failureCount < 3,
       },
     },
   });

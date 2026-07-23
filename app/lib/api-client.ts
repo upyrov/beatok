@@ -1,5 +1,12 @@
 import { refresh } from "../api/auth";
 
+export class AuthError extends Error {
+  constructor(message: string = "Authentication failed") {
+    super(message);
+    this.name = "AuthError";
+  }
+}
+
 let refreshPromise: Promise<void> | null = null;
 
 export async function fetchWithAuth(
@@ -21,13 +28,21 @@ export async function fetchWithAuth(
 
   if (response.status === 401) {
     if (!refreshPromise) {
-      refreshPromise = refresh().finally(() => {
-        refreshPromise = null;
-      });
+      refreshPromise = refresh()
+        .catch((err) => {
+          throw new AuthError(err instanceof Error ? err.message : String(err));
+        })
+        .finally(() => {
+          refreshPromise = null;
+        });
     }
 
     await refreshPromise;
     response = await fetch(finalUrl, finalInit);
+    
+    if (response.status === 401) {
+      throw new AuthError("Unauthorized");
+    }
   }
 
   return response;

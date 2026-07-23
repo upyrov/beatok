@@ -1,7 +1,8 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "./query-keys";
 import type { CreateCategory } from "./types/category/create-category";
 import type { UpdateCategory } from "./types/category/update-category";
+import type { Category } from "./types/category/category";
 
 import { fetchWithAuth } from "../lib/api-client";
 
@@ -26,6 +27,24 @@ export function useCreateCategory() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.categories.lists() });
     },
+  });
+}
+
+async function getCategories(kitId: string): Promise<Category[]> {
+  const response = await fetchWithAuth(`/categories?id=${kitId}`);
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message);
+  }
+
+  return response.json();
+}
+
+export function useCategories(kitId: string) {
+  return useQuery({
+    queryKey: queryKeys.categories.list(kitId),
+    queryFn: () => getCategories(kitId),
   });
 }
 

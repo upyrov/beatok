@@ -1,7 +1,8 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "./query-keys";
 import type { CreateSound } from "./types/sound/create-sound";
 import type { UpdateSound } from "./types/sound/update-sound";
+import type { Sound } from "./types/sound/sound";
 import { fetchWithAuth } from "../lib/api-client";
 
 async function createSound(data: CreateSound) {
@@ -25,6 +26,24 @@ export function useCreateSound() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.sounds.lists() });
     },
+  });
+}
+
+async function getSounds(categoryId: string): Promise<Sound[]> {
+  const response = await fetchWithAuth(`/sounds?id=${categoryId}`);
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message);
+  }
+
+  return response.json();
+}
+
+export function useSounds(categoryId: string) {
+  return useQuery({
+    queryKey: queryKeys.sounds.list(categoryId),
+    queryFn: () => getSounds(categoryId),
   });
 }
 
