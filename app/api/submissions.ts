@@ -3,11 +3,11 @@ import { queryKeys } from "./query-keys";
 import type { CreateSubmission } from "./types/submission/create-submission";
 import type { SubmissionUpload } from "./types/submission/submission-upload";
 import type { UpdateSubmission } from "./types/submission/update-submission";
+import { fetchWithAuth } from "../lib/api-client";
 
 async function getUploadUrl(extension: string): Promise<SubmissionUpload> {
-  const response = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/submissions/upload?extension=${extension}`,
-    { credentials: "include" },
+  const response = await fetchWithAuth(
+    `/submissions/upload?extension=${extension}`,
   );
 
   if (!response.ok) {
@@ -18,24 +18,18 @@ async function getUploadUrl(extension: string): Promise<SubmissionUpload> {
   return response.json();
 }
 
-export function useUploadUrl(extension: string, enabled: boolean = true) {
-  return useQuery({
-    queryKey: queryKeys.submissions.upload(extension),
-    queryFn: () => getUploadUrl(extension),
-    enabled,
+export function useUploadUrl() {
+  return useMutation({
+    mutationFn: (extension: string) => getUploadUrl(extension),
   });
 }
 
 async function createSubmission(data: CreateSubmission) {
-  const response = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/submissions`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-      credentials: "include",
-    },
-  );
+  const response = await fetchWithAuth("/submissions", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
 
   if (!response.ok) {
     const error = await response.json();
@@ -60,15 +54,11 @@ async function updateSubmissionValue(params: {
   id: string;
   data: UpdateSubmission;
 }) {
-  const response = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/submissions/${params.id}`,
-    {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(params.data),
-      credentials: "include",
-    },
-  );
+  const response = await fetchWithAuth(`/submissions/${params.id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(params.data),
+  });
 
   if (!response.ok) {
     const error = await response.json();

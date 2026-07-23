@@ -6,10 +6,10 @@ interface LobbyCardProps {
 
 export function LobbyCard({ lobby }: LobbyCardProps) {
   const dateFormatter = new Intl.DateTimeFormat(undefined, {
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   });
 
   const createdAt = dateFormatter.format(new Date(lobby.createdAt));
@@ -20,11 +20,13 @@ export function LobbyCard({ lobby }: LobbyCardProps) {
       <div className="flex justify-between items-start">
         <div>
           <h3>{lobby.name}</h3>
-          <p>Host: <span>{lobby.owner.name}</span></p>
+          <p>
+            Host: <span>{lobby.owner.name}</span>
+          </p>
         </div>
         <span>{lobby.genre.name}</span>
       </div>
-      
+
       <div className="grow">
         <div className="flex justify-between items-center mb-1">
           <span>Created</span>
@@ -34,11 +36,13 @@ export function LobbyCard({ lobby }: LobbyCardProps) {
           <span>Submission By</span>
           <span>{submissionTime}</span>
         </div>
-        
+
         <div>
           <div className="flex justify-between items-center mb-1">
             <span>Players</span>
-            <span>{lobby.participantCount} / {lobby.participantLimit}</span>
+            <span>
+              {lobby.participantCount} / {lobby.participantLimit}
+            </span>
           </div>
         </div>
       </div>

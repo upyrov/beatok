@@ -4,12 +4,13 @@ import type { CreateKit } from "./types/kit/create-kit";
 import type { Kit } from "./types/kit/kit";
 import type { UpdateKit } from "./types/kit/update-kit";
 
+import { fetchWithAuth } from "../lib/api-client";
+
 async function createKit(data: CreateKit) {
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/kits`, {
+  const response = await fetchWithAuth("/kits", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
-    credentials: "include",
   });
 
   if (!response.ok) {
@@ -30,9 +31,7 @@ export function useCreateKit() {
 }
 
 async function getKits(): Promise<Kit[]> {
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/kits`, {
-    credentials: "include",
-  });
+  const response = await fetchWithAuth("/kits");
 
   if (!response.ok) {
     const error = await response.json();
@@ -50,15 +49,11 @@ export function useKits() {
 }
 
 async function updateKitName(params: { id: string; data: UpdateKit }) {
-  const response = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/kits?id=${params.id}`,
-    {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(params.data),
-      credentials: "include",
-    },
-  );
+  const response = await fetchWithAuth(`/kits?id=${params.id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(params.data),
+  });
 
   if (!response.ok) {
     const error = await response.json();
@@ -81,13 +76,9 @@ export function useUpdateKitName() {
 }
 
 async function deleteKit(id: string) {
-  const response = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/kits/${id}`,
-    {
-      method: "DELETE",
-      credentials: "include",
-    },
-  );
+  const response = await fetchWithAuth(`/kits/${id}`, {
+    method: "DELETE",
+  });
 
   if (!response.ok) {
     const error = await response.json();

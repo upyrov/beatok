@@ -2,13 +2,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "./query-keys";
 import type { CreateSound } from "./types/sound/create-sound";
 import type { UpdateSound } from "./types/sound/update-sound";
+import { fetchWithAuth } from "../lib/api-client";
 
 async function createSound(data: CreateSound) {
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/sounds`, {
+  const response = await fetchWithAuth("/sounds", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
-    credentials: "include",
   });
 
   if (!response.ok) {
@@ -29,15 +29,11 @@ export function useCreateSound() {
 }
 
 async function updateSoundValue(params: { id: string; data: UpdateSound }) {
-  const response = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/sounds?id=${params.id}`,
-    {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(params.data),
-      credentials: "include",
-    },
-  );
+  const response = await fetchWithAuth(`/sounds?id=${params.id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(params.data),
+  });
 
   if (!response.ok) {
     const error = await response.json();
@@ -60,13 +56,9 @@ export function useUpdateSoundValue() {
 }
 
 async function deleteSound(id: string) {
-  const response = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/sounds/${id}`,
-    {
-      method: "DELETE",
-      credentials: "include",
-    },
-  );
+  const response = await fetchWithAuth(`/sounds/${id}`, {
+    method: "DELETE",
+  });
 
   if (!response.ok) {
     const error = await response.json();

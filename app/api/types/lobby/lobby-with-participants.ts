@@ -1,3 +1,4 @@
+import type { LobbyPhase } from "../enums/lobby-phase";
 import type { Genre } from "../genre/genre";
 import type { User } from "../user/user";
 
@@ -10,4 +11,5 @@ export interface LobbyWithParticipants {
   participants: User[];
   createdAt: string;
   submissionTimeLimit: string;
+  phase: LobbyPhase;
 }

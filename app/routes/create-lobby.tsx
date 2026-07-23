@@ -28,7 +28,7 @@ export default function CreateLobby() {
         name: formData.name,
         genreId: formData.genreId,
         participantLimit: Number(formData.participantLimit),
-        submissionTimeLimit: `00:${String(formData.submissionTimeLimit).padStart(2, '0')}:00`,
+        submissionTimeLimit: `00:${String(formData.submissionTimeLimit).padStart(2, "0")}:00`,
       });
       navigate(`/lobbies/${createdLobbyId}`);
     } catch (error) {
@@ -42,18 +42,18 @@ export default function CreateLobby() {
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="flex flex-col gap-1">
           <label className="font-medium">Lobby Name</label>
-          <input 
-            type="text" 
-            required 
+          <input
+            type="text"
+            required
             className="border p-2"
             value={formData.name}
-            onChange={(e) => setFormData({...formData, name: e.target.value})}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           />
         </div>
-        
+
         <div className="flex flex-col gap-1">
           <label className="font-medium">Genre</label>
-          <QueryBoundary 
+          <QueryBoundary
             query={genresQuery}
             loadingFallback={
               <select disabled className="border p-2">
@@ -62,15 +62,19 @@ export default function CreateLobby() {
             }
           >
             {(genres) => (
-              <select 
+              <select
                 required
                 className="border p-2"
                 value={formData.genreId}
-                onChange={(e) => setFormData({...formData, genreId: e.target.value})}
+                onChange={(e) =>
+                  setFormData({ ...formData, genreId: e.target.value })
+                }
               >
                 <option value="">Select a genre</option>
-                {genres.map(genre => (
-                  <option key={genre.id} value={genre.id}>{genre.name}</option>
+                {genres.map((genre) => (
+                  <option key={genre.id} value={genre.id}>
+                    {genre.name}
+                  </option>
                 ))}
               </select>
             )}
@@ -79,39 +83,51 @@ export default function CreateLobby() {
 
         <div className="flex flex-col gap-1">
           <label className="font-medium">Participant Limit</label>
-          <input 
-            type="number" 
+          <input
+            type="number"
             min="2"
-            required 
+            required
             className="border p-2"
             value={formData.participantLimit}
-            onChange={(e) => setFormData({...formData, participantLimit: Number(e.target.value)})}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                participantLimit: Number(e.target.value),
+              })
+            }
           />
         </div>
 
         <div className="flex flex-col gap-1">
           <label className="font-medium">Submission Deadline (minutes)</label>
-          <input 
+          <input
             type="number"
             min="3"
             max="30"
-            required 
+            required
             className="border p-2"
             value={formData.submissionTimeLimit}
-            onChange={(e) => setFormData({...formData, submissionTimeLimit: Number(e.target.value)})}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                submissionTimeLimit: Number(e.target.value),
+              })
+            }
           />
         </div>
 
-        <button 
-          type="submit" 
+        <button
+          type="submit"
           disabled={createLobbyMutation.isPending}
           className="mt-4 p-2 bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
         >
-          {createLobbyMutation.isPending ? 'Creating...' : 'Create Lobby'}
+          {createLobbyMutation.isPending ? "Creating..." : "Create Lobby"}
         </button>
 
         {createLobbyMutation.isError && (
-          <p className="text-red-600">Error: {createLobbyMutation.error.message}</p>
+          <p className="text-red-600">
+            Error: {createLobbyMutation.error.message}
+          </p>
         )}
       </form>
     </main>

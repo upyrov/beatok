@@ -69,7 +69,21 @@ export function useSignOut() {
 
   return useMutation({
     mutationFn: signOut,
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: queryKeys.users.me() }),
+    onSuccess: () => queryClient.setQueryData(queryKeys.users.me(), null),
   });
+}
+
+export async function refresh() {
+  const response = await fetch(
+    `${import.meta.env.VITE_API_BASE_URL}/auth/refresh`,
+    {
+      method: "POST",
+      credentials: "include",
+    },
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message);
+  }
 }

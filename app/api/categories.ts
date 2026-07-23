@@ -3,16 +3,14 @@ import { queryKeys } from "./query-keys";
 import type { CreateCategory } from "./types/category/create-category";
 import type { UpdateCategory } from "./types/category/update-category";
 
+import { fetchWithAuth } from "../lib/api-client";
+
 async function createCategory(data: CreateCategory) {
-  const response = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/categories`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-      credentials: "include",
-    },
-  );
+  const response = await fetchWithAuth("/categories", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
 
   if (!response.ok) {
     const error = await response.json();
@@ -35,15 +33,11 @@ async function updateCategoryName(params: {
   id: string;
   data: UpdateCategory;
 }) {
-  const response = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/categories?id=${params.id}`,
-    {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(params.data),
-      credentials: "include",
-    },
-  );
+  const response = await fetchWithAuth(`/categories?id=${params.id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(params.data),
+  });
 
   if (!response.ok) {
     const error = await response.json();
@@ -66,13 +60,9 @@ export function useUpdateCategoryName() {
 }
 
 async function deleteCategory(id: string) {
-  const response = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/categories/${id}`,
-    {
-      method: "DELETE",
-      credentials: "include",
-    },
-  );
+  const response = await fetchWithAuth(`/categories/${id}`, {
+    method: "DELETE",
+  });
 
   if (!response.ok) {
     const error = await response.json();

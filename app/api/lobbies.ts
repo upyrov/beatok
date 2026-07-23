@@ -5,12 +5,13 @@ import type { Lobby } from "./types/lobby/lobby";
 import type { LobbyFilter } from "./types/lobby-filter";
 import type { CreateScore } from "./types/score/create-score";
 
+import { fetchWithAuth } from "../lib/api-client";
+
 async function createLobby(data: CreateLobby): Promise<string> {
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/lobbies`, {
+  const response = await fetchWithAuth("/lobbies", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
-    credentials: "include",
   });
 
   if (!response.ok) {
@@ -36,15 +37,12 @@ export async function getLobbies(filter?: LobbyFilter): Promise<Lobby[]> {
   const params = new URLSearchParams();
   if (filter) {
     Object.entries(filter).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
+      if (value) {
         params.append(key, String(value));
       }
     });
   }
-  const queryString = params.toString();
-  const url = `${import.meta.env.VITE_API_BASE_URL}/lobbies${queryString ? `?${queryString}` : ""}`;
-
-  const response = await fetch(url);
+  const response = await fetchWithAuth(`/lobbies?${params.toString()}`);
 
   if (!response.ok) {
     const error = await response.json();
@@ -66,13 +64,9 @@ export function useLobbies(filter?: LobbyFilter) {
 }
 
 async function startLobby(id: string) {
-  const response = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/lobbies/${id}/start`,
-    {
-      method: "PATCH",
-      credentials: "include",
-    },
-  );
+  const response = await fetchWithAuth(`/lobbies/${id}/start`, {
+    method: "PATCH",
+  });
 
   if (!response.ok) {
     const error = await response.json();
@@ -93,13 +87,9 @@ export function useStartLobby() {
 }
 
 async function joinLobby(id: string) {
-  const response = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/lobbies/${id}/participants`,
-    {
-      method: "POST",
-      credentials: "include",
-    },
-  );
+  const response = await fetchWithAuth(`/lobbies/${id}/participants`, {
+    method: "POST",
+  });
 
   if (!response.ok) {
     const error = await response.json();
@@ -119,13 +109,9 @@ export function useJoinLobby() {
 }
 
 async function leaveLobby(id: string) {
-  const response = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/lobbies/${id}/participants/me`,
-    {
-      method: "DELETE",
-      credentials: "include",
-    },
-  );
+  const response = await fetchWithAuth(`/lobbies/${id}/participants/me`, {
+    method: "DELETE",
+  });
 
   if (!response.ok) {
     const error = await response.json();
@@ -145,15 +131,11 @@ export function useLeaveLobby() {
 }
 
 async function vote(params: { id: string; data: CreateScore }) {
-  const response = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/lobbies/${params.id}/scores`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(params.data),
-      credentials: "include",
-    },
-  );
+  const response = await fetchWithAuth(`/lobbies/${params.id}/scores`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(params.data),
+  });
 
   if (!response.ok) {
     const error = await response.json();

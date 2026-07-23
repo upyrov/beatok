@@ -3,10 +3,8 @@ import { createContext } from "react";
 
 export interface IRealtimeContext {
   connection: HubConnection | null;
-  isConnected: boolean;
 }
 
 export const RealtimeContext = createContext<IRealtimeContext>({
   connection: null,
-  isConnected: false,
 });

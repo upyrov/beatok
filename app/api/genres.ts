@@ -2,13 +2,13 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "./query-keys";
 import type { CreateGenre } from "./types/genre/create-genre";
 import type { Genre } from "./types/genre/genre";
+import { fetchWithAuth } from "../lib/api-client";
 
 async function createGenre(data: CreateGenre) {
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/genres`, {
+  const response = await fetchWithAuth("/genres", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
-    credentials: "include",
   });
 
   if (!response.ok) {
@@ -29,7 +29,7 @@ export function useCreateGenre() {
 }
 
 export async function getGenres(): Promise<Genre[]> {
-  const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/genres`);
+  const response = await fetchWithAuth("/genres");
 
   if (!response.ok) {
     const error = await response.json();
@@ -51,13 +51,7 @@ export function useGenres() {
 }
 
 async function deleteGenre(id: string) {
-  const response = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/genres/${id}`,
-    {
-      method: "DELETE",
-      credentials: "include",
-    },
-  );
+  const response = await fetchWithAuth(`/genres/${id}`, { method: "DELETE" });
 
   if (!response.ok) {
     const error = await response.json();

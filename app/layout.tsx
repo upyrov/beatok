@@ -1,37 +1,37 @@
 import { HubConnectionBuilder, type HubConnection } from "@microsoft/signalr";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { RealtimeContext } from "./contexts";
-import { Outlet } from "react-router";
+import { Outlet, useOutletContext } from "react-router";
 
 export default function Layout() {
-  const connectionRef = useRef<HubConnection | null>(null);
-  const [isConnected, setIsConnected] = useState(false);
+  const context = useOutletContext();
+
+  const [connection, setConnection] = useState<HubConnection | null>(null);
 
   useEffect(() => {
-    const connection = new HubConnectionBuilder()
+    const newConnection = new HubConnectionBuilder()
       .withUrl(`${import.meta.env.VITE_API_BASE_URL}/lobby`, {
         withCredentials: true,
       })
       .withAutomaticReconnect()
       .build();
 
-    connectionRef.current = connection;
-    connection
+    newConnection
       .start()
       .then(() => {
-        setIsConnected(true);
-        console.log("Lobby Connected!");
+        setConnection(newConnection);
+        console.log("Realtime connection started");
       })
-      .catch((err) => console.error("Lobby connection failed: ", err));
+      .catch((err) => console.error("Realtime connection failed: ", err));
 
     return () => {
-      connectionRef.current?.stop();
+      newConnection.stop();
     };
   }, []);
 
   return (
-    <RealtimeContext value={{ connection: connectionRef.current, isConnected }}>
-      <Outlet />
+    <RealtimeContext value={{ connection }}>
+      <Outlet context={context} />
     </RealtimeContext>
   );
 }
