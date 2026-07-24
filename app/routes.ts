@@ -7,6 +7,7 @@ import {
 
 export default [
   index("routes/home.tsx"),
+  route("admin", "routes/admin.tsx"),
   route("create-lobby", "routes/create-lobby.tsx"),
 
   layout("layout.tsx", [route("lobbies/:id", "routes/lobby.tsx")]),

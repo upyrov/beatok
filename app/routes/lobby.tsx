@@ -68,8 +68,8 @@ export default function Lobby() {
     if (connection && id && !lobby) {
       joinLobbyMutation
         .mutateAsync(id)
-        .catch((err) => console.error("Failed to join via API", err))
-        .then(() => joinRealtimeMutation.mutate());
+        .then(() => joinRealtimeMutation.mutate())
+        .catch((err) => console.error("Failed to join lobby: ", err));
     }
   }, [connection, id, lobby]);
 
@@ -182,10 +182,14 @@ export default function Lobby() {
     if (!fileToUpload || !id) return;
     try {
       const fileExtension = fileToUpload.name.split(".").pop() || "";
-      const uploadData = await getUploadUrlMutation.mutateAsync(fileExtension);
+      const uploadData = await getUploadUrlMutation.mutateAsync({
+        extension: fileExtension,
+        contentType: fileToUpload.type,
+      });
 
       const uploadResponse = await fetch(uploadData.uploadUrl, {
         method: "PUT",
+        headers: { "Content-Type": fileToUpload.type },
         body: fileToUpload,
       });
 

@@ -41,11 +41,15 @@ async function getKits(): Promise<Kit[]> {
   return response.json();
 }
 
-export function useKits() {
-  return useQuery({
+export function kitsQueryOptions() {
+  return {
     queryKey: queryKeys.kits.list(),
     queryFn: getKits,
-  });
+  };
+}
+
+export function useKits() {
+  return useQuery(kitsQueryOptions());
 }
 
 async function updateKitName(params: { id: string; data: UpdateKit }) {

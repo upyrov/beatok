@@ -5,9 +5,12 @@ import type { SubmissionUpload } from "./types/submission/submission-upload";
 import type { UpdateSubmission } from "./types/submission/update-submission";
 import { fetchWithAuth } from "../lib/api-client";
 
-async function getUploadUrl(extension: string): Promise<SubmissionUpload> {
+async function getUploadUrl(
+  extension: string,
+  contentType: string,
+): Promise<SubmissionUpload> {
   const response = await fetchWithAuth(
-    `/submissions/upload?extension=${extension}`,
+    `/submissions/upload?extension=${extension}&contentType=${encodeURIComponent(contentType)}`,
   );
 
   if (!response.ok) {
@@ -20,7 +23,13 @@ async function getUploadUrl(extension: string): Promise<SubmissionUpload> {
 
 export function useUploadUrl() {
   return useMutation({
-    mutationFn: (extension: string) => getUploadUrl(extension),
+    mutationFn: ({
+      extension,
+      contentType,
+    }: {
+      extension: string;
+      contentType: string;
+    }) => getUploadUrl(extension, contentType),
   });
 }
 

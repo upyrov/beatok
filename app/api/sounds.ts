@@ -3,6 +3,7 @@ import { queryKeys } from "./query-keys";
 import type { CreateSound } from "./types/sound/create-sound";
 import type { UpdateSound } from "./types/sound/update-sound";
 import type { Sound } from "./types/sound/sound";
+import type { SoundUpload } from "./types/sound/sound-upload";
 import { fetchWithAuth } from "../lib/api-client";
 
 async function createSound(data: CreateSound) {
@@ -26,6 +27,34 @@ export function useCreateSound() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.sounds.lists() });
     },
+  });
+}
+
+async function getUploadUrl(
+  extension: string,
+  contentType: string,
+): Promise<SoundUpload> {
+  const response = await fetchWithAuth(
+    `/sounds/upload?extension=${extension}&contentType=${encodeURIComponent(contentType)}`,
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message);
+  }
+
+  return response.json();
+}
+
+export function useUploadSoundUrl() {
+  return useMutation({
+    mutationFn: ({
+      extension,
+      contentType,
+    }: {
+      extension: string;
+      contentType: string;
+    }) => getUploadUrl(extension, contentType),
   });
 }
 

@@ -40,6 +40,7 @@ export const queryKeys = {
     list: (categoryId: string) => [...queryKeys.sounds.lists(), { categoryId }] as const,
     details: () => [...queryKeys.sounds.all, "detail"] as const,
     detail: (id: string) => [...queryKeys.sounds.details(), id] as const,
+    upload: (extension: string) => [...queryKeys.sounds.all, "upload", extension] as const,
   },
   submissions: {
     all: ["submissions"] as const,
