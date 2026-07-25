@@ -11,6 +11,7 @@ import { MutationBoundary } from "~/components/mutation-boundary";
 import type { Score } from "~/api/types/score/score";
 import type { RandomCategory } from "~/api/types/category/random-category";
 import type { Submission } from "~/api/types/submission/submission";
+import { MUSIC_FILE_ACCEPT, validateAudioFile } from "~/lib/audio";
 
 interface Message {
   content: string;
@@ -180,7 +181,13 @@ export default function Lobby() {
 
   async function handleFileUpload() {
     if (!fileToUpload || !id) return;
+    const validation = await validateAudioFile(fileToUpload);
+    if (!validation.valid) {
+      alert(validation.error);
+      return;
+    }
     try {
+      const durationSeconds = validation.durationSeconds;
       const fileExtension = fileToUpload.name.split(".").pop() || "";
       const uploadData = await getUploadUrlMutation.mutateAsync({
         extension: fileExtension,
@@ -198,6 +205,7 @@ export default function Lobby() {
       await createSubmissionMutation.mutateAsync({
         lobbyId: id,
         value: uploadData.fileKey,
+        durationSeconds,
       });
 
       setFileToUpload(null);
@@ -323,10 +331,24 @@ export default function Lobby() {
                       <input
                         type="file"
                         ref={fileInputRef}
-                        onChange={(e) =>
-                          setFileToUpload(e.target.files?.[0] || null)
-                        }
-                        className="text-sm"
+                        accept={MUSIC_FILE_ACCEPT}
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0] || null;
+                          if (!file) {
+                            setFileToUpload(null);
+                            return;
+                          }
+                          const validation = await validateAudioFile(file);
+                          if (!validation.valid) {
+                            alert(validation.error);
+                            if (fileInputRef.current)
+                              fileInputRef.current.value = "";
+                            setFileToUpload(null);
+                            return;
+                          }
+                          setFileToUpload(file);
+                        }}
+                        className="flex-1 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-white/10 file:text-white hover:file:bg-white/20 transition-colors"
                       />
                       <MutationBoundary mutation={getUploadUrlMutation}>
                         <MutationBoundary mutation={createSubmissionMutation}>
@@ -342,7 +364,7 @@ export default function Lobby() {
                             {createSubmissionMutation.isPending ||
                             getUploadUrlMutation.isPending
                               ? "Uploading..."
-                              : "Upload & Submit"}
+                              : "Upload Submission"}
                           </button>
                         </MutationBoundary>
                       </MutationBoundary>

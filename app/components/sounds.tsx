@@ -6,6 +6,7 @@ import {
   useUploadSoundUrl,
 } from "~/api/sounds";
 import { QueryBoundary } from "~/components/query-boundary";
+import { MUSIC_FILE_ACCEPT, validateAudioFile } from "~/lib/audio";
 
 export function Sounds({ categoryId }: { categoryId: string }) {
   const soundsQuery = useSounds(categoryId);
@@ -18,6 +19,11 @@ export function Sounds({ categoryId }: { categoryId: string }) {
 
   async function handleFileUpload() {
     if (!fileToUpload) return;
+    const validation = await validateAudioFile(fileToUpload);
+    if (!validation.valid) {
+      alert(validation.error);
+      return;
+    }
     try {
       const fileExtension = fileToUpload.name.split(".").pop() || "";
       const uploadData = await getUploadUrlMutation.mutateAsync({
@@ -58,8 +64,22 @@ export function Sounds({ categoryId }: { categoryId: string }) {
             ref={fileInputRef}
             id="sound-upload-input"
             type="file"
-            accept=".mp3,.wav,.flac,.ogg,.m4a,.aac"
-            onChange={(e) => setFileToUpload(e.target.files?.[0] || null)}
+            accept={MUSIC_FILE_ACCEPT}
+            onChange={async (e) => {
+              const file = e.target.files?.[0] || null;
+              if (!file) {
+                setFileToUpload(null);
+                return;
+              }
+              const validation = await validateAudioFile(file);
+              if (!validation.valid) {
+                alert(validation.error);
+                if (fileInputRef.current) fileInputRef.current.value = "";
+                setFileToUpload(null);
+                return;
+              }
+              setFileToUpload(file);
+            }}
             className="flex-1 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-white/10 file:text-white hover:file:bg-white/20 transition-colors"
           />
           <button
