@@ -65,7 +65,6 @@ export function Kits() {
                         className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded text-sm font-medium transition-colors"
                         disabled={!canSubmit}
                         isPending={isSubmitting || createMutation.isPending}
-                        pendingText="Adding..."
                       >
                         Add Kit
                       </LoadingButton>

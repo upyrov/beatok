@@ -14,8 +14,11 @@ export async function handleApiError(response: Response): Promise<never> {
   } catch {
     // Ignore
   }
-  console.error(`API Error (${response.status}):`, data?.message);
-  throw new Error(data?.message || "Something went wrong");
+  console.error(
+    `API Error (${response.status}):`,
+    data?.message ?? "Something went wrong",
+  );
+  throw new Error(data?.message ?? "Something went wrong");
 }
 
 let refreshPromise: Promise<void> | null = null;

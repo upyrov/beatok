@@ -104,7 +104,6 @@ export default function Signup() {
               type="submit"
               disabled={!canSubmit}
               isPending={isSubmitting || signUpMutation.isPending}
-              pendingText="Signing up..."
               className="bg-blue-600 text-white p-2 rounded font-medium"
             >
               Sign up

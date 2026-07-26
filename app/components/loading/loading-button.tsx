@@ -13,7 +13,6 @@ export interface LoadingButtonProps extends React.ButtonHTMLAttributes<HTMLButto
  */
 export function LoadingButton({
   isPending,
-  pendingText,
   children,
   className = "",
   disabled,
@@ -25,8 +24,12 @@ export function LoadingButton({
       disabled={disabled || isPending}
       className={`relative inline-flex items-center justify-center gap-2 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed ${className}`}
     >
-      {isPending && <Spinner size="sm" className="shrink-0" />}
-      <span>{isPending ? (pendingText ?? children) : children}</span>
+      {isPending && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <Spinner size="sm" />
+        </div>
+      )}
+      <span className={isPending ? "opacity-0" : ""}>{children}</span>
     </button>
   );
 }

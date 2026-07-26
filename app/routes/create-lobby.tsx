@@ -152,7 +152,6 @@ export default function CreateLobby() {
               type="submit"
               disabled={!canSubmit}
               isPending={isSubmitting || createLobbyMutation.isPending}
-              pendingText="Creating..."
               className="mt-4 p-2 bg-gray-200 hover:bg-gray-300 font-medium rounded"
             >
               Create Lobby

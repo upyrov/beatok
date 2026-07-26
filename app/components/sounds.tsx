@@ -89,7 +89,6 @@ export function Sounds({ categoryId }: { categoryId: string }) {
             isPending={
               getUploadUrlMutation.isPending || createMutation.isPending
             }
-            pendingText="Uploading..."
             className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors w-full sm:w-auto"
           >
             Upload Sound
@@ -121,7 +120,6 @@ export function Sounds({ categoryId }: { categoryId: string }) {
                         deleteMutation.mutate(sound.id);
                     }}
                     className="text-red-400 hover:bg-red-400/20 px-2 py-1 rounded text-xs shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
-                    style={{ opacity: 1 }}
                   >
                     Delete
                   </button>

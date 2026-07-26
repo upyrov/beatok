@@ -8,10 +8,7 @@ interface QueryBoundaryProps<T> {
   children: (data: NonNullable<T>) => ReactNode;
 }
 
-export function QueryBoundary<T>({
-  query,
-  children,
-}: QueryBoundaryProps<T>) {
+export function QueryBoundary<T>({ query, children }: QueryBoundaryProps<T>) {
   useEffect(() => {
     if (query.isError) {
       console.error("QueryError:", query.error);

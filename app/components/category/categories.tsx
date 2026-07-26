@@ -57,7 +57,6 @@ export function Categories({ kitId }: { kitId: string }) {
                       className="bg-white/10 hover:bg-white/20 px-4 py-1.5 rounded text-sm transition-colors"
                       disabled={!canSubmit}
                       isPending={isSubmitting || createMutation.isPending}
-                      pendingText="Adding..."
                     >
                       Add Category
                     </LoadingButton>

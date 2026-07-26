@@ -10,6 +10,7 @@ export interface LobbyWithParticipants {
   participantLimit: number;
   participants: User[];
   createdAt: string;
+  startedAt?: string;
   submissionTimeLimit: string;
   phase: LobbyPhase;
 }

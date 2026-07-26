@@ -31,7 +31,8 @@ export function MutationBoundary({
           <div className="flex flex-col gap-1 pr-6">
             <h4 className="font-semibold text-sm">Error</h4>
             <p className="text-xs opacity-90 leading-relaxed">
-              {activeError?.message || "An unexpected error occurred. Please try again later."}
+              {activeError?.message ||
+                "An unexpected error occurred. Please try again later."}
             </p>
           </div>
         </div>
