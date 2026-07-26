@@ -1,67 +1,116 @@
 import { Link, useNavigate } from "react-router";
-import { useSignUp } from "../../api/auth";
+import { useForm } from "@tanstack/react-form";
+import { type } from "arktype";
+import { useSignUp } from "~/api/auth";
+import { MutationBoundary, FieldError } from "~/components/error";
+import { LoadingButton } from "~/components/loading";
 
 export default function Signup() {
   const navigate = useNavigate();
   const signUpMutation = useSignUp();
 
-  function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const name = formData.get("name") as string;
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-
-    signUpMutation.mutate(
-      { name, email, password },
-      { onSuccess: () => navigate("/") },
-    );
-  }
+  const form = useForm({
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+    },
+    onSubmit: async ({ value }) => {
+      signUpMutation.mutate(value, { onSuccess: () => navigate("/") });
+    },
+  });
 
   return (
     <>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        {signUpMutation.isError && (
-          <div className="bg-red-100 text-red-600 p-2 rounded">
-            {signUpMutation.error?.message || "Failed to sign up"}
-          </div>
-        )}
-        <label className="flex flex-col">
-          Name
-          <input
-            name="name"
-            placeholder="John Doe"
-            required
-            className="border p-2 rounded"
-          />
-        </label>
-        <label className="flex flex-col">
-          Email
-          <input
-            name="email"
-            type="email"
-            placeholder="email@beatok.xyz"
-            required
-            className="border p-2 rounded"
-          />
-        </label>
-        <label className="flex flex-col">
-          Password
-          <input
-            name="password"
-            type="password"
-            placeholder="Secret123!"
-            required
-            className="border p-2 rounded"
-          />
-        </label>
-        <button
-          type="submit"
-          disabled={signUpMutation.isPending}
-          className="bg-blue-600 text-white p-2 rounded disabled:opacity-50"
-        >
-          {signUpMutation.isPending ? "Signing up..." : "Sign up"}
-        </button>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          form.handleSubmit();
+        }}
+        className="flex flex-col gap-4"
+      >
+        <MutationBoundary error={signUpMutation.error} />
+
+        <form.Field
+          name="name"
+          validators={{
+            onChange: type("string > 0"),
+          }}
+          children={(field) => (
+            <label className="flex flex-col gap-1">
+              Name
+              <input
+                name={field.name}
+                value={field.state.value}
+                onBlur={field.handleBlur}
+                onChange={(e) => field.handleChange(e.target.value)}
+                placeholder="John Doe"
+                className="border p-2 rounded"
+              />
+              <FieldError errors={field.state.meta.errors} />
+            </label>
+          )}
+        />
+
+        <form.Field
+          name="email"
+          validators={{
+            onChange: type("string.email"),
+          }}
+          children={(field) => (
+            <label className="flex flex-col gap-1">
+              Email
+              <input
+                name={field.name}
+                type="email"
+                value={field.state.value}
+                onBlur={field.handleBlur}
+                onChange={(e) => field.handleChange(e.target.value)}
+                placeholder="email@beatok.xyz"
+                className="border p-2 rounded"
+              />
+              <FieldError errors={field.state.meta.errors} />
+            </label>
+          )}
+        />
+
+        <form.Field
+          name="password"
+          validators={{
+            onChange: type("string >= 6"),
+          }}
+          children={(field) => (
+            <label className="flex flex-col gap-1">
+              Password
+              <input
+                name={field.name}
+                type="password"
+                value={field.state.value}
+                onBlur={field.handleBlur}
+                onChange={(e) => field.handleChange(e.target.value)}
+                placeholder="Secret123!"
+                className="border p-2 rounded"
+              />
+              <FieldError errors={field.state.meta.errors} />
+            </label>
+          )}
+        />
+
+        <form.Subscribe
+          selector={(state) => [state.canSubmit, state.isSubmitting]}
+          children={([canSubmit, isSubmitting]) => (
+            <LoadingButton
+              type="submit"
+              disabled={!canSubmit}
+              isPending={isSubmitting || signUpMutation.isPending}
+              pendingText="Signing up..."
+              className="bg-blue-600 text-white p-2 rounded font-medium"
+            >
+              Sign up
+            </LoadingButton>
+          )}
+        />
       </form>
 
       <Link to="/signin" className="text-blue-500 hover:underline mt-4 block">

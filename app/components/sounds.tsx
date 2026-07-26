@@ -5,8 +5,9 @@ import {
   useDeleteSound,
   useUploadSoundUrl,
 } from "~/api/sounds";
-import { QueryBoundary } from "~/components/query-boundary";
+import { QueryBoundary } from "./error/query-boundary";
 import { MUSIC_FILE_ACCEPT, validateAudioFile } from "~/lib/audio";
+import { LoadingButton } from "./loading";
 
 export function Sounds({ categoryId }: { categoryId: string }) {
   const soundsQuery = useSounds(categoryId);
@@ -82,19 +83,17 @@ export function Sounds({ categoryId }: { categoryId: string }) {
             }}
             className="flex-1 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-white/10 file:text-white hover:file:bg-white/20 transition-colors"
           />
-          <button
+          <LoadingButton
             onClick={handleFileUpload}
-            disabled={
-              !fileToUpload ||
-              getUploadUrlMutation.isPending ||
-              createMutation.isPending
+            disabled={!fileToUpload}
+            isPending={
+              getUploadUrlMutation.isPending || createMutation.isPending
             }
-            className="bg-blue-500 hover:bg-blue-600 text-white disabled:opacity-50 px-4 py-2 rounded-lg text-sm font-medium transition-colors w-full sm:w-auto"
+            pendingText="Uploading..."
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors w-full sm:w-auto"
           >
-            {getUploadUrlMutation.isPending || createMutation.isPending
-              ? "Uploading..."
-              : "Upload Sound"}
-          </button>
+            Upload Sound
+          </LoadingButton>
         </div>
       </div>
 

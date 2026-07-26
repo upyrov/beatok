@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "./query-keys";
 import type { UserSignin } from "./types/user/user-signin";
 import type { UserSignup } from "./types/user/user-signup";
+import { handleApiError } from "../lib/api-client";
 
 async function signIn(data: UserSignin) {
   const response = await fetch(
@@ -15,8 +16,7 @@ async function signIn(data: UserSignin) {
   );
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message);
+    await handleApiError(response);
   }
 }
 
@@ -42,8 +42,7 @@ async function signUp(data: UserSignup) {
   );
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message);
+    await handleApiError(response);
   }
 }
 
@@ -83,7 +82,6 @@ export async function refresh() {
   );
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message);
+    await handleApiError(response);
   }
 }

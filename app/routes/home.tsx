@@ -2,7 +2,7 @@ import { Link, useOutletContext } from "react-router";
 import type { Route } from "./+types/home";
 import { useLobbies, lobbiesQueryOptions } from "~/api/lobbies";
 import { LobbyCard } from "~/components/lobby-card";
-import { QueryBoundary } from "~/components/query-boundary";
+import { QueryBoundary } from "~/components/error/query-boundary";
 import { getQueryClient } from "~/lib/query-client";
 import type { User } from "~/api/types/user/user";
 import { useSignOut } from "~/api/auth";

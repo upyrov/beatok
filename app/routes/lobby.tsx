@@ -1,5 +1,7 @@
 import { use, useEffect, useState, useRef } from "react";
 import { useParams, useOutletContext } from "react-router";
+import { useForm } from "@tanstack/react-form";
+import { type } from "arktype";
 import { useMutation } from "@tanstack/react-query";
 import { RealtimeContext } from "~/contexts";
 import type { LobbyWithParticipants } from "~/api/types/lobby/lobby-with-participants";
@@ -7,7 +9,8 @@ import { useJoinLobby, useStartLobby } from "~/api/lobbies";
 import { LobbyPhase } from "~/api/types/enums/lobby-phase";
 import type { User } from "~/api/types/user/user";
 import { useUploadUrl, useCreateSubmission } from "~/api/submissions";
-import { MutationBoundary } from "~/components/mutation-boundary";
+import { MutationBoundary } from "~/components/error/mutation-boundary";
+import { LoadingButton, LoadingFallback } from "~/components/loading";
 import type { Score } from "~/api/types/score/score";
 import type { RandomCategory } from "~/api/types/category/random-category";
 import type { Submission } from "~/api/types/submission/submission";
@@ -26,7 +29,6 @@ export default function Lobby() {
 
   const [lobby, setLobby] = useState<LobbyWithParticipants | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [chatInput, setChatInput] = useState("");
   const [randomCategories, setRandomCategories] = useState<RandomCategory[]>(
     [],
   );
@@ -169,15 +171,20 @@ export default function Lobby() {
     }
   }, [connection]);
 
-  function handleSendMessage(e: React.SubmitEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (!chatInput.trim() || !connection) return;
-
-    connection
-      .invoke("SendMessage", id, chatInput)
-      .then(() => setChatInput(""))
-      .catch((err) => console.error("Failed to send message:", err));
-  }
+  const chatForm = useForm({
+    defaultValues: {
+      content: "",
+    },
+    onSubmit: async ({ value }) => {
+      if (!connection) return;
+      try {
+        await connection.invoke("SendMessage", id, value.content);
+        chatForm.reset();
+      } catch (err) {
+        console.error("Failed to send message:", err);
+      }
+    },
+  });
 
   async function handleFileUpload() {
     if (!fileToUpload || !id) return;
@@ -225,7 +232,7 @@ export default function Lobby() {
   return (
     <main className="container mx-auto p-4 md:p-8 max-w-7xl min-h-screen flex gap-8">
       {!lobby ? (
-        <p>Joining lobby...</p>
+        <LoadingFallback className="m-auto" />
       ) : (
         <>
           <div className="flex flex-col gap-4 flex-1">
@@ -259,15 +266,14 @@ export default function Lobby() {
                   <h2 className="text-xl font-bold mb-4">Lobby Not Started</h2>
                   {user?.id === lobby.owner.id ? (
                     <MutationBoundary mutation={startLobbyMutation}>
-                      <button
+                      <LoadingButton
                         onClick={() => id && startLobbyMutation.mutate(id)}
-                        disabled={startLobbyMutation.isPending}
+                        isPending={startLobbyMutation.isPending}
+                        pendingText="Starting..."
                         className="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded text-white font-semibold"
                       >
-                        {startLobbyMutation.isPending
-                          ? "Starting..."
-                          : "Start Lobby"}
-                      </button>
+                        Start Lobby
+                      </LoadingButton>
                     </MutationBoundary>
                   ) : (
                     <p className="text-gray-400">
@@ -352,20 +358,18 @@ export default function Lobby() {
                       />
                       <MutationBoundary mutation={getUploadUrlMutation}>
                         <MutationBoundary mutation={createSubmissionMutation}>
-                          <button
+                          <LoadingButton
                             onClick={handleFileUpload}
-                            disabled={
-                              !fileToUpload ||
+                            disabled={!fileToUpload}
+                            isPending={
                               getUploadUrlMutation.isPending ||
                               createSubmissionMutation.isPending
                             }
-                            className="px-4 py-2 bg-green-600 hover:bg-green-500 rounded text-white font-semibold disabled:opacity-50"
+                            pendingText="Uploading..."
+                            className="px-4 py-2 bg-green-600 hover:bg-green-500 rounded text-white font-semibold"
                           >
-                            {createSubmissionMutation.isPending ||
-                            getUploadUrlMutation.isPending
-                              ? "Uploading..."
-                              : "Upload Submission"}
-                          </button>
+                            Upload Submission
+                          </LoadingButton>
                         </MutationBoundary>
                       </MutationBoundary>
                     </div>
@@ -452,22 +456,42 @@ export default function Lobby() {
               )}
             </div>
             <form
-              onSubmit={handleSendMessage}
+              onSubmit={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                chatForm.handleSubmit();
+              }}
               className="p-4 border-t border-white/10 flex gap-2"
             >
-              <input
-                type="text"
-                value={chatInput}
-                onChange={(e) => setChatInput(e.target.value)}
-                placeholder="Say something..."
-                className="flex-1 bg-white/10 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-white/20"
+              <chatForm.Field
+                name="content"
+                validators={{
+                  onChange: type("string > 0"),
+                }}
+                children={(field) => (
+                  <input
+                    name={field.name}
+                    type="text"
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="Say something..."
+                    className="flex-1 bg-white/10 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-white/20"
+                  />
+                )}
               />
-              <button
-                type="submit"
-                className="bg-white/10 hover:bg-white/20 px-3 py-2 rounded text-sm transition-colors"
-              >
-                Send
-              </button>
+              <chatForm.Subscribe
+                selector={(state) => [state.canSubmit, state.isSubmitting]}
+                children={([canSubmit, isSubmitting]) => (
+                  <button
+                    type="submit"
+                    disabled={!canSubmit || isSubmitting}
+                    className="bg-white/10 hover:bg-white/20 px-3 py-2 rounded text-sm transition-colors disabled:opacity-50"
+                  >
+                    Send
+                  </button>
+                )}
+              />
             </form>
           </div>
         </>
