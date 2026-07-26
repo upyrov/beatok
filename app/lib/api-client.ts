@@ -7,6 +7,20 @@ export class AuthError extends Error {
   }
 }
 
+export async function handleApiError(response: Response): Promise<never> {
+  let data: { message: string } | undefined;
+  try {
+    data = await response.json();
+  } catch {
+    // Ignore
+  }
+  console.error(
+    `API Error (${response.status}):`,
+    data?.message ?? "Something went wrong",
+  );
+  throw new Error(data?.message ?? "Something went wrong");
+}
+
 let refreshPromise: Promise<void> | null = null;
 
 export async function fetchWithAuth(
@@ -39,10 +53,14 @@ export async function fetchWithAuth(
 
     await refreshPromise;
     response = await fetch(finalUrl, finalInit);
-    
+
     if (response.status === 401) {
       throw new AuthError("Unauthorized");
     }
+  }
+
+  if (!response.ok) {
+    await handleApiError(response);
   }
 
   return response;

@@ -1,9 +1,13 @@
 import { useState } from "react";
+import { useForm } from "@tanstack/react-form";
+import { type } from "arktype";
 import { useKits, useCreateKit, useDeleteKit } from "~/api/kits";
 import { useGenres } from "~/api/genres";
-import { QueryBoundary } from "~/components/query-boundary";
+import { QueryBoundary } from "./error/query-boundary";
+import { LoadingButton } from "./loading";
 import type { Kit } from "~/api/types/kit/kit";
-import { Categories } from "./categories";
+import { Categories } from "./category/categories";
+import { FieldError, MutationBoundary } from "./error";
 
 export function Kits() {
   const kitsQuery = useKits();
@@ -11,72 +15,111 @@ export function Kits() {
   const createMutation = useCreateKit();
   const deleteMutation = useDeleteKit();
 
-  const [newKitName, setNewKitName] = useState("");
-  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
-
-  async function handleCreate(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (!newKitName.trim()) return;
-    await createMutation.mutateAsync({
-      name: newKitName.trim(),
-      genreIds: selectedGenres,
-    });
-    setNewKitName("");
-    setSelectedGenres([]);
-  }
-
-  function toggleGenre(id: string) {
-    setSelectedGenres((prev) =>
-      prev.includes(id) ? prev.filter((g) => g !== id) : [...prev, id],
-    );
-  }
+  const form = useForm({
+    defaultValues: {
+      name: "",
+      genreIds: [] as string[],
+    },
+    onSubmit: async ({ value }) => {
+      await createMutation.mutateAsync({
+        name: value.name.trim(),
+        genreIds: value.genreIds,
+      });
+      form.reset();
+    },
+  });
 
   return (
     <div className="flex flex-col gap-6 flex-1">
       <div className="bg-white/5 border border-white/10 rounded-xl p-4">
         <h2 className="text-lg font-semibold mb-3">Create New Kit</h2>
-        <form onSubmit={handleCreate} className="flex flex-col gap-4">
-          <div className="flex gap-2">
-            <input
-              className="flex-1 bg-black/20 border border-white/10 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
-              placeholder="Kit name..."
-              value={newKitName}
-              onChange={(e) => setNewKitName(e.target.value)}
-            />
-            <button
-              type="submit"
-              className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded text-sm font-medium transition-colors disabled:opacity-50"
-              disabled={createMutation.isPending || !newKitName.trim()}
-            >
-              Add Kit
-            </button>
-          </div>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            form.handleSubmit();
+          }}
+          className="flex flex-col gap-4"
+        >
+          <form.Field
+            name="name"
+            validators={{
+              onChange: type("string > 0"),
+            }}
+            children={(field) => (
+              <div className="flex flex-col gap-1">
+                <div className="flex gap-2">
+                  <input
+                    name={field.name}
+                    className="flex-1 bg-black/20 border border-white/10 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+                    placeholder="Kit name..."
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                  />
+                  <form.Subscribe
+                    selector={(state) => [state.canSubmit, state.isSubmitting]}
+                    children={([canSubmit, isSubmitting]) => (
+                      <LoadingButton
+                        type="submit"
+                        className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded text-sm font-medium transition-colors"
+                        disabled={!canSubmit}
+                        isPending={isSubmitting || createMutation.isPending}
+                      >
+                        Add Kit
+                      </LoadingButton>
+                    )}
+                  />
+                </div>
+                <FieldError errors={field.state.meta.errors} />
+              </div>
+            )}
+          />
 
-          {genres.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
-              <span className="text-sm text-white/60 mr-2 flex items-center">
-                Genres:
-              </span>
-              {genres.map((genre) => (
-                <button
-                  key={genre.id}
-                  type="button"
-                  onClick={() => toggleGenre(genre.id)}
-                  className={`px-3 py-1 text-xs rounded-full border transition-colors ${
-                    selectedGenres.includes(genre.id)
-                      ? "bg-blue-500/20 border-blue-500/50 text-blue-200"
-                      : "bg-black/20 border-white/10 text-white/60 hover:bg-white/10"
-                  }`}
-                >
-                  {genre.name}
-                </button>
-              ))}
-            </div>
-          ) : (
-            <p className="text-xs text-white/40">
-              No genres available to select.
-            </p>
-          )}
+          <form.Field
+            name="genreIds"
+            children={(field) => (
+              <>
+                {genres.length > 0 ? (
+                  <div className="flex flex-wrap gap-2">
+                    <span className="text-sm text-white/60 mr-2 flex items-center">
+                      Genres:
+                    </span>
+                    {genres.map((genre) => {
+                      const isSelected = field.state.value.includes(genre.id);
+                      return (
+                        <button
+                          key={genre.id}
+                          type="button"
+                          onClick={() => {
+                            const prev = field.state.value;
+                            field.handleChange(
+                              isSelected
+                                ? prev.filter((g) => g !== genre.id)
+                                : [...prev, genre.id],
+                            );
+                          }}
+                          className={`px-3 py-1 text-xs rounded-full border transition-colors ${
+                            isSelected
+                              ? "bg-blue-500/20 border-blue-500/50 text-blue-200"
+                              : "bg-black/20 border-white/10 text-white/60 hover:bg-white/10"
+                          }`}
+                        >
+                          {genre.name}
+                        </button>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className="text-xs text-white/40">
+                    No genres available to select.
+                  </p>
+                )}
+              </>
+            )}
+          />
+
+          <MutationBoundary error={createMutation.error} />
         </form>
       </div>
 

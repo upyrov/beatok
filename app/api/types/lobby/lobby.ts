@@ -10,5 +10,6 @@ export interface Lobby {
   participantLimit: number;
   participantCount: number;
   createdAt: string;
+  startedAt?: string;
   submissionTimeLimit: string;
 }

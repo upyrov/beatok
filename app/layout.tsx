@@ -18,10 +18,7 @@ export default function Layout() {
 
     newConnection
       .start()
-      .then(() => {
-        setConnection(newConnection);
-        console.log("Realtime connection started");
-      })
+      .then(() => setConnection(newConnection))
       .catch((err) => console.error("Realtime connection failed: ", err));
 
     return () => {

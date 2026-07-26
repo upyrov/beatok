@@ -16,7 +16,8 @@ export const queryKeys = {
   categories: {
     all: ["categories"] as const,
     lists: () => [...queryKeys.categories.all, "list"] as const,
-    list: (kitId: string) => [...queryKeys.categories.lists(), { kitId }] as const,
+    list: (kitId: string) =>
+      [...queryKeys.categories.lists(), { kitId }] as const,
     details: () => [...queryKeys.categories.all, "detail"] as const,
     detail: (id: string) => [...queryKeys.categories.details(), id] as const,
   },
@@ -37,10 +38,12 @@ export const queryKeys = {
   sounds: {
     all: ["sounds"] as const,
     lists: () => [...queryKeys.sounds.all, "list"] as const,
-    list: (categoryId: string) => [...queryKeys.sounds.lists(), { categoryId }] as const,
+    list: (categoryId: string) =>
+      [...queryKeys.sounds.lists(), { categoryId }] as const,
     details: () => [...queryKeys.sounds.all, "detail"] as const,
     detail: (id: string) => [...queryKeys.sounds.details(), id] as const,
-    upload: (extension: string) => [...queryKeys.sounds.all, "upload", extension] as const,
+    upload: (extension: string) =>
+      [...queryKeys.sounds.all, "upload", extension] as const,
   },
   submissions: {
     all: ["submissions"] as const,
@@ -56,6 +59,7 @@ export const queryKeys = {
     me: () => [...queryKeys.users.all, "me"] as const,
     details: () => [...queryKeys.users.all, "detail"] as const,
     detail: (id: string) => [...queryKeys.users.details(), id] as const,
-    comments: (id: string, page?: number, pageSize?: number) => [...queryKeys.users.detail(id), "comments", { page, pageSize }] as const,
+    comments: (id: string, page?: number, pageSize?: number) =>
+      [...queryKeys.users.detail(id), "comments", { page, pageSize }] as const,
   },
 };
