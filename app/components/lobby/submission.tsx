@@ -9,7 +9,7 @@ import { handleDownload } from "~/lib/download";
 import { MutationBoundary } from "~/components/error/mutation-boundary";
 import type { LobbyWithParticipants } from "~/api/types/lobby/lobby-with-participants";
 import type { Submission as SubmissionType } from "~/api/types/submission/submission";
-import { LobbyPhase } from "~/api/types/enums/lobby-phase";
+import { LobbyState } from "~/api/types/enums/lobby-state";
 
 interface SubmissionProps {
   lobbyId: string;
@@ -77,10 +77,17 @@ export function Submission({
   useEffect(() => {
     if (!connection) return;
 
-    function handleVotingStarted(votingSubmissions: SubmissionType[]) {
+    function handleVotingStarted(
+      votingTime: string,
+      votingSubmissions: SubmissionType[],
+    ) {
       setLobby((prev) => {
         if (!prev) return prev;
-        return { ...prev, phase: LobbyPhase.Voting };
+        return {
+          ...prev,
+          state: LobbyState.Voting,
+          votingStartedAt: new Date().toISOString(),
+        };
       });
       setSubmissions(votingSubmissions);
     }

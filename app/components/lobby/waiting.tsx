@@ -4,10 +4,9 @@ import { MutationBoundary } from "~/components/error/mutation-boundary";
 import { LoadingButton } from "~/components/loading";
 import { useEffect, use } from "react";
 import { RealtimeContext } from "~/contexts";
-import type { HubConnection } from "@microsoft/signalr";
 import type { RandomCategory } from "~/api/types/category/random-category";
 import type { LobbyWithParticipants } from "~/api/types/lobby/lobby-with-participants";
-import { LobbyPhase } from "~/api/types/enums/lobby-phase";
+import { LobbyState } from "~/api/types/enums/lobby-state";
 
 interface WaitingProps {
   lobbyId: string;
@@ -17,7 +16,13 @@ interface WaitingProps {
   setRandomCategories: React.Dispatch<React.SetStateAction<RandomCategory[]>>;
 }
 
-export function Waiting({ lobbyId, isOwner, participants, setLobby, setRandomCategories }: WaitingProps) {
+export function Waiting({
+  lobbyId,
+  isOwner,
+  participants,
+  setLobby,
+  setRandomCategories,
+}: WaitingProps) {
   const startLobbyMutation = useStartLobby();
   const { connection } = use(RealtimeContext);
 
@@ -29,8 +34,8 @@ export function Waiting({ lobbyId, isOwner, participants, setLobby, setRandomCat
         if (!prev) return prev;
         return {
           ...prev,
-          phase: LobbyPhase.Submission,
-          startedAt: new Date().toISOString(),
+          state: LobbyState.Submitting,
+          submissionStartedAt: new Date().toISOString(),
         };
       });
       setRandomCategories(categories);

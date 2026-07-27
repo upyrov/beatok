@@ -1,16 +1,20 @@
-import type { LobbyPhase } from "../enums/lobby-phase";
+import type { LobbyState } from "../enums/lobby-state";
 import type { Genre } from "../genre/genre";
 import type { Participation } from "../participation";
 
 export interface LobbyWithParticipants {
   id: string;
   name: string;
+  participantLimit: number;
+  submissionTime: string;
+  state: LobbyState;
+
+  createdAt: string;
+  submissionStartedAt: string;
+  votingStartedAt: string;
+  endedAt: string;
+
   genre: Genre;
   ownerId: string;
-  participantLimit: number;
   participants: Participation[];
-  createdAt: string;
-  startedAt?: string;
-  submissionTimeLimit: string;
-  phase: LobbyPhase;
 }

@@ -4,7 +4,6 @@ import { useMutation } from "@tanstack/react-query";
 import { RealtimeContext } from "~/contexts";
 import type { LobbyWithParticipants } from "~/api/types/lobby/lobby-with-participants";
 import { useJoinLobby } from "~/api/lobbies";
-import { LobbyPhase } from "~/api/types/enums/lobby-phase";
 import type { User } from "~/api/types/user/user";
 import { LoadingFallback } from "~/components/loading";
 import type { RandomCategory } from "~/api/types/category/random-category";
@@ -17,6 +16,7 @@ import {
   Voting,
   End,
 } from "~/components/lobby";
+import { LobbyState } from "~/api/types/enums/lobby-state";
 
 export default function Lobby() {
   const { id } = useParams();
@@ -86,7 +86,7 @@ export default function Lobby() {
             </div>
             <div className="flex flex-col gap-8">
               <p className="font-semibold">Submission Time</p>
-              <p>{lobby.submissionTimeLimit}</p>
+              <p>{lobby.submissionTime}</p>
             </div>
 
             <Participants
@@ -98,7 +98,7 @@ export default function Lobby() {
           </div>
 
           <div className="flex-1">
-            {lobby.phase === LobbyPhase.NotStarted && (
+            {lobby.state === LobbyState.Waiting && (
               <Waiting
                 lobbyId={lobby.id}
                 isOwner={user?.id === lobby.ownerId}
@@ -107,17 +107,17 @@ export default function Lobby() {
                 setRandomCategories={setRandomCategories}
               />
             )}
-            {lobby.phase === LobbyPhase.Submission && (
+            {lobby.state === LobbyState.Submitting && (
               <Submission
                 lobbyId={lobby.id}
                 randomCategories={randomCategories}
-                timeLimit={lobby.submissionTimeLimit}
-                startedAt={lobby.startedAt}
+                timeLimit={lobby.submissionTime}
+                startedAt={lobby.submissionStartedAt}
                 setLobby={setLobby}
                 setSubmissions={setSubmissions}
               />
             )}
-            {lobby.phase === LobbyPhase.Voting && (
+            {lobby.state === LobbyState.Voting && (
               <Voting
                 lobbyId={lobby.id}
                 submissions={submissions}
@@ -126,7 +126,7 @@ export default function Lobby() {
                 setWinningSubmission={setWinningSubmission}
               />
             )}
-            {lobby.phase === LobbyPhase.End && (
+            {lobby.state === LobbyState.Ended && (
               <End
                 winningSubmission={winningSubmission}
                 participants={lobby.participants}

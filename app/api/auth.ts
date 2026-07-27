@@ -25,8 +25,10 @@ export function useSignIn() {
 
   return useMutation({
     mutationFn: signIn,
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: queryKeys.users.me() }),
+    onSuccess: () => {
+      queryClient.setQueryData(["auth", "status"], "authenticated");
+      queryClient.invalidateQueries({ queryKey: queryKeys.users.me() });
+    },
   });
 }
 
@@ -51,8 +53,10 @@ export function useSignUp() {
 
   return useMutation({
     mutationFn: signUp,
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: queryKeys.users.me() }),
+    onSuccess: () => {
+      queryClient.setQueryData(["auth", "status"], "authenticated");
+      queryClient.invalidateQueries({ queryKey: queryKeys.users.me() });
+    },
   });
 }
 
@@ -68,7 +72,10 @@ export function useSignOut() {
 
   return useMutation({
     mutationFn: signOut,
-    onSuccess: () => queryClient.setQueryData(queryKeys.users.me(), null),
+    onSuccess: () => {
+      queryClient.setQueryData(["auth", "status"], "unauthenticated");
+      queryClient.setQueryData(queryKeys.users.me(), null);
+    },
   });
 }
 

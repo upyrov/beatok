@@ -1,6 +1,6 @@
 export interface CreateLobby {
   name: string;
-  genreId: string;
   participantLimit: number;
-  submissionTimeLimit: string;
+  submissionTime: string;
+  genreId: string;
 }

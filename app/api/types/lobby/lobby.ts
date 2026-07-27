@@ -1,15 +1,14 @@
-import { LobbyPhase } from "../enums/lobby-phase";
+import { LobbyState } from "../enums/lobby-state";
 import type { Genre } from "../genre/genre";
 import type { User } from "../user/user";
 
 export interface Lobby {
   id: string;
   name: string;
+  participantCount: number;
+  participantLimit: number;
+  submissionTime: string;
+  createdAt: string;
   genre: Genre;
   owner: User;
-  participantLimit: number;
-  participantCount: number;
-  createdAt: string;
-  startedAt?: string;
-  submissionTimeLimit: string;
 }

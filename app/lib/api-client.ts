@@ -1,4 +1,5 @@
 import { refresh } from "../api/auth";
+import { getQueryClient } from "./query-client";
 
 export class AuthError extends Error {
   constructor(message: string = "Authentication failed") {
@@ -22,8 +23,6 @@ export async function handleApiError(response: Response): Promise<never> {
   );
 }
 
-let refreshPromise: Promise<void> | null = null;
-
 export async function fetchWithAuth(
   input: RequestInfo | URL,
   init?: RequestInit,
@@ -42,20 +41,29 @@ export async function fetchWithAuth(
   let response = await fetch(finalUrl, finalInit);
 
   if (response.status === 401) {
-    if (!refreshPromise) {
-      refreshPromise = refresh()
-        .catch((err) => {
-          throw new AuthError(err instanceof Error ? err.message : String(err));
-        })
-        .finally(() => {
-          refreshPromise = null;
-        });
+    const queryClient = getQueryClient();
+
+    if (queryClient.getQueryData(["auth", "status"]) === "unauthenticated") {
+      throw new AuthError("Unauthorized");
     }
 
-    await refreshPromise;
+    try {
+      await queryClient.fetchQuery({
+        queryKey: ["auth", "refresh"],
+        queryFn: refresh,
+        staleTime: 0,
+        retry: false,
+      });
+      queryClient.setQueryData(["auth", "status"], "authenticated");
+    } catch (err) {
+      queryClient.setQueryData(["auth", "status"], "unauthenticated");
+      throw new AuthError(err instanceof Error ? err.message : String(err));
+    }
+
     response = await fetch(finalUrl, finalInit);
 
     if (response.status === 401) {
+      queryClient.setQueryData(["auth", "status"], "unauthenticated");
       throw new AuthError("Unauthorized");
     }
   }

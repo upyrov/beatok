@@ -28,7 +28,7 @@ export function Chat({ participants, lobbyId }: ChatProps) {
   useEffect(() => {
     if (!connection) return;
 
-    function handleMessageReceived(content: string, userId: string) {
+    function handleMessageReceived(userId: string, content: string) {
       setMessages((prev) => {
         const sender = participantsRef.current.find(
           (p) => p.user.id === userId,

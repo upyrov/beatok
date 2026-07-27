@@ -22,7 +22,7 @@ export default function CreateLobby() {
       name: "",
       genreId: "",
       participantLimit: 10,
-      submissionTimeLimit: 10,
+      submissionTime: 10,
     },
     onSubmit: async ({ value }) => {
       try {
@@ -30,7 +30,7 @@ export default function CreateLobby() {
           name: value.name,
           genreId: value.genreId,
           participantLimit: Number(value.participantLimit),
-          submissionTimeLimit: `00:${String(value.submissionTimeLimit).padStart(2, "0")}:00`,
+          submissionTime: `00:${String(value.submissionTime).padStart(2, "0")}:00`,
         });
         navigate(`/lobbies/${createdLobbyId}`);
       } catch (error) {
@@ -122,7 +122,7 @@ export default function CreateLobby() {
         />
 
         <form.Field
-          name="submissionTimeLimit"
+          name="submissionTime"
           validators={{
             onChange: type("3 <= number <= 30"),
           }}

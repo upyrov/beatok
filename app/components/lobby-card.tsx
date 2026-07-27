@@ -13,7 +13,6 @@ export function LobbyCard({ lobby }: LobbyCardProps) {
   });
 
   const createdAt = dateFormatter.format(new Date(lobby.createdAt));
-  const submissionTime = lobby.submissionTimeLimit;
 
   return (
     <div className="flex flex-col gap-4">
@@ -34,7 +33,7 @@ export function LobbyCard({ lobby }: LobbyCardProps) {
         </div>
         <div className="flex justify-between items-center mb-1">
           <span>Submission By</span>
-          <span>{submissionTime}</span>
+          <span>{lobby.submissionTime}</span>
         </div>
 
         <div>

@@ -7,7 +7,7 @@ import { useVote } from "~/api/lobbies";
 import { MutationBoundary } from "~/components/error/mutation-boundary";
 import { LoadingButton } from "~/components/loading";
 import type { LobbyWithParticipants } from "~/api/types/lobby/lobby-with-participants";
-import { LobbyPhase } from "~/api/types/enums/lobby-phase";
+import { LobbyState } from "~/api/types/enums/lobby-state";
 import type { User } from "~/api/types/user/user";
 import { useOutletContext } from "react-router";
 import type { Participation } from "~/api/types/participation";
@@ -125,7 +125,7 @@ export function Voting({
     function handleEnded(submission: Submission | null) {
       setLobby((prev) => {
         if (!prev) return prev;
-        return { ...prev, phase: LobbyPhase.End };
+        return { ...prev, state: LobbyState.Ended };
       });
       setWinningSubmission(submission);
     }
@@ -136,13 +136,15 @@ export function Voting({
     };
   }, [connection, setLobby, setWinningSubmission]);
 
+  const safeSubmissions = Array.isArray(submissions) ? submissions : [];
+
   const displayedSubmissions = votedSubmissionId
-    ? submissions.filter((s) => s.id === votedSubmissionId)
-    : submissions.filter((s) => s.userId !== user?.id);
+    ? safeSubmissions.filter((s) => s.id === votedSubmissionId)
+    : safeSubmissions.filter((s) => s.userId !== user?.id);
 
   return (
     <div>
-      <h2 className="text-xl font-bold mb-4">Voting Phase</h2>
+      <h2 className="text-xl font-bold mb-4">Voting state</h2>
       <ul className="space-y-4">
         {displayedSubmissions.map((s) => (
           <li key={s.id} className="bg-white/5 p-4 rounded flex flex-col gap-4">
@@ -165,7 +167,7 @@ export function Voting({
           </li>
         ))}
       </ul>
-      {!submissions.length && (
+      {!safeSubmissions.length && (
         <p className="text-gray-400">No submissions to vote on.</p>
       )}
     </div>
