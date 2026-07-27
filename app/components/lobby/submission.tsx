@@ -1,16 +1,23 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, use } from "react";
+import { RealtimeContext } from "~/contexts";
 import type { RandomCategory } from "~/api/types/category/random-category";
 import { useUploadUrl, useCreateSubmission } from "~/api/submissions";
 import { MUSIC_FILE_ACCEPT, validateAudioFile } from "~/lib/audio";
 import { handleDownload } from "~/lib/download";
 import { MutationBoundary } from "~/components/error/mutation-boundary";
 import { LoadingButton } from "~/components/loading";
+import type { HubConnection } from "@microsoft/signalr";
+import type { LobbyWithParticipants } from "~/api/types/lobby/lobby-with-participants";
+import type { Submission as SubmissionType } from "~/api/types/submission/submission";
+import { LobbyPhase } from "~/api/types/enums/lobby-phase";
 
 interface SubmissionProps {
   lobbyId: string;
   randomCategories: RandomCategory[];
   timeLimit: string;
   startedAt?: string;
+  setLobby: React.Dispatch<React.SetStateAction<LobbyWithParticipants | null>>;
+  setSubmissions: React.Dispatch<React.SetStateAction<SubmissionType[]>>;
 }
 
 export function Submission({
@@ -18,7 +25,10 @@ export function Submission({
   randomCategories,
   timeLimit,
   startedAt,
+  setLobby,
+  setSubmissions,
 }: SubmissionProps) {
+  const { connection } = use(RealtimeContext);
   const [fileToUpload, setFileToUpload] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -39,6 +49,23 @@ export function Submission({
     }, 1000);
     return () => clearInterval(interval);
   }, [endTime, timeLeft]);
+
+  useEffect(() => {
+    if (!connection) return;
+
+    function handleVotingStarted(votingSubmissions: SubmissionType[]) {
+      setLobby((prev) => {
+        if (!prev) return prev;
+        return { ...prev, phase: LobbyPhase.Voting };
+      });
+      setSubmissions(votingSubmissions);
+    }
+
+    connection.on("VotingStarted", handleVotingStarted);
+    return () => {
+      connection.off("VotingStarted", handleVotingStarted);
+    };
+  }, [connection, setLobby, setSubmissions]);
 
   const mins = Math.floor(timeLeft / 60)
     .toString()
@@ -134,7 +161,7 @@ export function Submission({
             Submission registered!
           </div>
         ) : (
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col items-center gap-4">
             <input
               type="file"
               ref={fileInputRef}

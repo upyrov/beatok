@@ -1,5 +1,5 @@
 import { use, useEffect, useState } from "react";
-import { useParams, useOutletContext } from "react-router";
+import { useParams, useOutletContext, useNavigate } from "react-router";
 import { useMutation } from "@tanstack/react-query";
 import { RealtimeContext } from "~/contexts";
 import type { LobbyWithParticipants } from "~/api/types/lobby/lobby-with-participants";
@@ -21,6 +21,8 @@ import {
 export default function Lobby() {
   const { id } = useParams();
 
+  const navigate = useNavigate();
+
   const { connection } = use(RealtimeContext);
   const { user } = useOutletContext<{ user: User | null }>();
 
@@ -34,11 +36,11 @@ export default function Lobby() {
 
   const joinLobbyMutation = useJoinLobby();
   const joinRealtimeMutation = useMutation({
-    async mutationFn() {
+    mutationFn() {
       if (!connection) throw new Error("No connection");
-      return await connection.invoke<LobbyWithParticipants>("Join", id);
+      return connection.invoke<LobbyWithParticipants>("Join", id);
     },
-    retry: 100,
+    retry: 5,
     retryDelay: 1000,
     onSuccess(joinedLobby) {
       if (joinedLobby) {
@@ -58,100 +60,9 @@ export default function Lobby() {
       joinLobbyMutation
         .mutateAsync(id)
         .then(() => joinRealtimeMutation.mutate())
-        .catch((err) => console.error("Failed to join lobby: ", err));
+        .catch(() => navigate("/"));
     }
   }, [connection, id, lobby]);
-
-  useEffect(() => {
-    if (connection) {
-      function handleParticipantJoined(userId: string) {
-        if (!lobby) return;
-        const existingUser = lobby.participants.find((p) => p.id === userId);
-        if (existingUser) return;
-
-        setLobby((prev) =>
-          prev
-            ? {
-                ...prev,
-                participants: [...prev.participants, existingUser!],
-              }
-            : prev,
-        );
-      }
-
-      function handleParticipantRejoined(userId: string) {}
-
-      function handleParticipantLeft(userId: string) {
-        setLobby((prev) =>
-          prev
-            ? {
-                ...prev,
-                participants: prev.participants.filter((p) => p.id !== userId),
-              }
-            : prev,
-        );
-      }
-
-      function handleOwnerChanged(ownerId: string) {
-        setLobby((prev) => {
-          if (!prev) return prev;
-          const newOwner =
-            prev.participants.find((p) => p.id === ownerId) || prev.owner;
-          return { ...prev, owner: newOwner };
-        });
-      }
-
-      function handleStarted(categories: RandomCategory[]) {
-        setLobby((prev) =>
-          prev
-            ? {
-                ...prev,
-                phase: LobbyPhase.Submission,
-                startedAt: new Date().toISOString(),
-              }
-            : prev,
-        );
-        setRandomCategories(categories);
-      }
-
-      function handleVotingStarted(votingSubmissions: SubmissionType[]) {
-        setLobby((prev) =>
-          prev ? { ...prev, phase: LobbyPhase.Voting } : prev,
-        );
-        setSubmissions(votingSubmissions);
-      }
-
-      function handleEnded(submission: SubmissionType | null) {
-        setLobby((prev) => (prev ? { ...prev, phase: LobbyPhase.End } : prev));
-        setWinningSubmission(submission);
-      }
-
-      connection.on("ParticipantJoined", handleParticipantJoined);
-      connection.on("ParticipantRejoined", handleParticipantRejoined);
-      connection.on("ParticipantLeft", handleParticipantLeft);
-      connection.on("OwnerChanged", handleOwnerChanged);
-      connection.on("Started", handleStarted);
-      connection.on("VotingStarted", handleVotingStarted);
-      connection.on("Ended", handleEnded);
-
-      return () => {
-        connection.off("ParticipantJoined", handleParticipantJoined);
-        connection.off("ParticipantRejoined", handleParticipantRejoined);
-        connection.off("ParticipantLeft", handleParticipantLeft);
-        connection.off("OwnerChanged", handleOwnerChanged);
-        connection.off("Started", handleStarted);
-        connection.off("VotingStarted", handleVotingStarted);
-        connection.off("Ended", handleEnded);
-      };
-    }
-  }, [connection]);
-
-  const dateFormatter = new Intl.DateTimeFormat(undefined, {
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
 
   return (
     <main className="container mx-auto p-4 md:p-8 max-w-7xl min-h-screen flex gap-8">
@@ -173,55 +84,56 @@ export default function Lobby() {
                 </p>
               </div>
             </div>
-            <div className="flex gap-8">
-              <div>
-                <p className="font-semibold">Created</p>
-                <p>{dateFormatter.format(new Date(lobby.createdAt))}</p>
-              </div>
-              <div>
-                <p className="font-semibold">Submission Deadline</p>
-                <p>{lobby.submissionTimeLimit}</p>
-              </div>
-            </div>
-
-            <div className="mt-8 border-t border-white/10 pt-8">
-              {lobby.phase === LobbyPhase.NotStarted && (
-                <Waiting
-                  lobbyId={lobby.id}
-                  isOwner={user?.id === lobby.owner.id}
-                />
-              )}
-              {lobby.phase === LobbyPhase.Submission && (
-                <Submission
-                  lobbyId={lobby.id}
-                  randomCategories={randomCategories}
-                  timeLimit={lobby.submissionTimeLimit}
-                  startedAt={lobby.startedAt}
-                />
-              )}
-              {lobby.phase === LobbyPhase.Voting && (
-                <Voting
-                  lobbyId={lobby.id}
-                  submissions={submissions}
-                  currentUserId={user?.id}
-                />
-              )}
-              {lobby.phase === LobbyPhase.End && (
-                <End winningSubmission={winningSubmission} />
-              )}
+            <div className="flex flex-col gap-8">
+              <p className="font-semibold">Submission Time</p>
+              <p>{lobby.submissionTimeLimit}</p>
             </div>
 
             <Participants
               participants={lobby.participants}
-              ownerId={lobby.owner.id}
+              ownerId={lobby.ownerId}
+              userId={user?.id ?? ""}
+              setLobby={setLobby}
             />
           </div>
 
-          <Chat
-            participants={lobby.participants}
-            connection={connection}
-            lobbyId={lobby.id}
-          />
+          <div className="flex-1">
+            {lobby.phase === LobbyPhase.NotStarted && (
+              <Waiting
+                lobbyId={lobby.id}
+                isOwner={user?.id === lobby.ownerId}
+                participants={lobby.participants}
+                setLobby={setLobby}
+                setRandomCategories={setRandomCategories}
+              />
+            )}
+            {lobby.phase === LobbyPhase.Submission && (
+              <Submission
+                lobbyId={lobby.id}
+                randomCategories={randomCategories}
+                timeLimit={lobby.submissionTimeLimit}
+                startedAt={lobby.startedAt}
+                setLobby={setLobby}
+                setSubmissions={setSubmissions}
+              />
+            )}
+            {lobby.phase === LobbyPhase.Voting && (
+              <Voting
+                lobbyId={lobby.id}
+                submissions={submissions}
+                currentUserId={user?.id}
+                setLobby={setLobby}
+                setWinningSubmission={setWinningSubmission}
+              />
+            )}
+            {lobby.phase === LobbyPhase.End && (
+              <End winningSubmission={winningSubmission} />
+            )}
+          </div>
+
+          <div className="flex-1">
+            <Chat participants={lobby.participants} lobbyId={lobby.id} />
+          </div>
         </>
       )}
     </main>
