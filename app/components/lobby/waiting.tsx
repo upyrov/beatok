@@ -1,28 +1,65 @@
 import { useStartLobby } from "~/api/lobbies";
+import type { Participation } from "~/api/types/participation";
 import { MutationBoundary } from "~/components/error/mutation-boundary";
 import { LoadingButton } from "~/components/loading";
+import { useEffect, use } from "react";
+import { RealtimeContext } from "~/contexts";
+import type { HubConnection } from "@microsoft/signalr";
+import type { RandomCategory } from "~/api/types/category/random-category";
+import type { LobbyWithParticipants } from "~/api/types/lobby/lobby-with-participants";
+import { LobbyPhase } from "~/api/types/enums/lobby-phase";
 
 interface WaitingProps {
   lobbyId: string;
   isOwner: boolean;
+  participants: Participation[];
+  setLobby: React.Dispatch<React.SetStateAction<LobbyWithParticipants | null>>;
+  setRandomCategories: React.Dispatch<React.SetStateAction<RandomCategory[]>>;
 }
 
-export function Waiting({ lobbyId, isOwner }: WaitingProps) {
+export function Waiting({ lobbyId, isOwner, participants, setLobby, setRandomCategories }: WaitingProps) {
   const startLobbyMutation = useStartLobby();
+  const { connection } = use(RealtimeContext);
+
+  useEffect(() => {
+    if (!connection) return;
+
+    function handleStarted(categories: RandomCategory[]) {
+      setLobby((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          phase: LobbyPhase.Submission,
+          startedAt: new Date().toISOString(),
+        };
+      });
+      setRandomCategories(categories);
+    }
+
+    connection.on("Started", handleStarted);
+
+    return () => {
+      connection.off("Started", handleStarted);
+    };
+  }, [connection, setLobby, setRandomCategories]);
 
   return (
     <div>
-      <h2 className="text-xl font-bold mb-4">Lobby Not Started</h2>
+      <h2 className="text-xl font-bold mb-4">Not Started</h2>
       {isOwner ? (
-        <MutationBoundary mutation={startLobbyMutation}>
-          <LoadingButton
-            onClick={() => startLobbyMutation.mutate(lobbyId)}
-            isPending={startLobbyMutation.isPending}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded text-white font-semibold"
-          >
-            Start Lobby
-          </LoadingButton>
-        </MutationBoundary>
+        participants.length > 1 ? (
+          <MutationBoundary mutation={startLobbyMutation}>
+            <LoadingButton
+              onClick={() => startLobbyMutation.mutate(lobbyId)}
+              isPending={startLobbyMutation.isPending}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded text-white font-semibold"
+            >
+              Start Lobby
+            </LoadingButton>
+          </MutationBoundary>
+        ) : (
+          <p className="text-gray-400">Waiting for users to join...</p>
+        )
       ) : (
         <p className="text-gray-400">Waiting for host to start...</p>
       )}

@@ -1,8 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
+import { RealtimeContext } from "~/contexts";
 import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
 import type { HubConnection } from "@microsoft/signalr";
 import type { User } from "~/api/types/user/user";
+import type { Participation } from "~/api/types/participation";
 
 export interface Message {
   content: string;
@@ -10,12 +12,12 @@ export interface Message {
 }
 
 interface ChatProps {
-  participants: User[];
-  connection: HubConnection | null;
+  participants: Participation[];
   lobbyId: string;
 }
 
-export function Chat({ participants, connection, lobbyId }: ChatProps) {
+export function Chat({ participants, lobbyId }: ChatProps) {
+  const { connection } = use(RealtimeContext);
   const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
@@ -26,7 +28,7 @@ export function Chat({ participants, connection, lobbyId }: ChatProps) {
         ...prev,
         {
           content,
-          sender: participants.find((p) => p.id === userId)!,
+          sender: participants.find((p) => p.user.id === userId)!.user,
         },
       ]);
     }
@@ -53,18 +55,15 @@ export function Chat({ participants, connection, lobbyId }: ChatProps) {
   });
 
   return (
-    <div className="w-80 flex flex-col border border-white/10 rounded-xl bg-white/5 overflow-hidden h-150 shrink-0">
-      <div className="p-4 border-b border-white/10 font-bold">Lobby Chat</div>
+    <div className="flex flex-col border border-white/10 rounded-xl bg-white/5 overflow-hidden h-150 shrink-0">
+      <div className="p-4 border-b border-white/10 font-bold">Chat</div>
       <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-2">
         {messages.map((m, i) => (
           <div key={i} className="text-sm">
-            <span className="font-bold text-gray-300">{m.sender.name}:</span>{" "}
-            <span className="text-gray-100">{m.content}</span>
+            <span className="font-bold text-gray-400">{m.sender.name}:</span>{" "}
+            <span className="text-gray-800">{m.content}</span>
           </div>
         ))}
-        {!messages.length && (
-          <p className="text-gray-500 text-sm italic">No messages yet.</p>
-        )}
       </div>
       <form
         onSubmit={(e) => {

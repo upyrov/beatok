@@ -23,7 +23,7 @@ export function Spinner({
     <div
       role="status"
       aria-label={label}
-      className={`animate-spin [animation-duration:0.5s] inline-block rounded-full border-current border-r-transparent ${className}`}
+      className={`animate-spin inline-block rounded-full border-current border-r-transparent ${className}`}
       style={{
         width: pixelSize,
         height: pixelSize,

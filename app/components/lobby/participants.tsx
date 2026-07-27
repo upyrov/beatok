@@ -1,20 +1,108 @@
-import type { User } from "~/api/types/user/user";
+import type { HubConnection } from "@microsoft/signalr";
+import { useEffect, use } from "react";
+import { RealtimeContext } from "~/contexts";
+import type { Participation } from "~/api/types/participation";
+import type { LobbyWithParticipants } from "~/api/types/lobby/lobby-with-participants";
 
 interface ParticipantsProps {
-  participants: User[];
+  participants: Participation[];
   ownerId: string;
+  userId: string;
+  setLobby: React.Dispatch<React.SetStateAction<LobbyWithParticipants | null>>;
 }
 
-export function Participants({ participants, ownerId }: ParticipantsProps) {
+export function Participants({
+  participants,
+  ownerId,
+  userId,
+  setLobby,
+}: ParticipantsProps) {
+  const { connection } = use(RealtimeContext);
+
+  useEffect(() => {
+    if (!connection) return;
+
+    function handleParticipantJoined(p: Participation) {
+      setLobby((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          participants: [...prev.participants, p],
+        };
+      });
+    }
+
+    function handleParticipantConnected(userId: string) {
+      setLobby((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          participants: prev.participants.map((p) =>
+            p.user.id === userId ? { ...p, isConnected: true } : p,
+          ),
+        };
+      });
+    }
+
+    function handleParticipantLeft(userId: string) {
+      setLobby((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          participants: prev.participants.filter((p) => p.user.id !== userId),
+        };
+      });
+    }
+
+    function handleParticipantDisconnected(userId: string) {
+      setLobby((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          participants: prev.participants.map((p) =>
+            p.user.id === userId ? { ...p, isConnected: false } : p,
+          ),
+        };
+      });
+    }
+
+    function handleOwnerChanged(ownerId: string) {
+      setLobby((prev) => {
+        if (!prev) return prev;
+        return { ...prev, ownerId };
+      });
+    }
+
+    connection.on("ParticipantJoined", handleParticipantJoined);
+    connection.on("ParticipantRejoined", handleParticipantConnected);
+    connection.on("ParticipantLeft", handleParticipantLeft);
+    connection.on("ParticipantDisconnected", handleParticipantDisconnected);
+    connection.on("OwnerChanged", handleOwnerChanged);
+
+    return () => {
+      connection.off("ParticipantJoined", handleParticipantJoined);
+      connection.off("ParticipantRejoined", handleParticipantConnected);
+      connection.off("ParticipantLeft", handleParticipantLeft);
+      connection.off("ParticipantDisconnected", handleParticipantDisconnected);
+      connection.off("OwnerChanged", handleOwnerChanged);
+    };
+  }, [connection, setLobby]);
+
   return (
     <div className="bg-white/5 border border-white/10 rounded-xl p-4">
       <h2 className="text-xl font-bold mb-4">Participants</h2>
       <ul className="flex flex-col gap-2">
         {participants.map((p) => (
           <li key={p.id}>
-            {p.name}{" "}
-            {p.id === ownerId && (
+            {p.user.name}{" "}
+            {!p.isConnected && (
+              <span className="text-gray-400 text-sm">(Disconnected)</span>
+            )}
+            {p.user.id === ownerId && (
               <span className="text-gray-400 text-sm">(Owner)</span>
+            )}
+            {p.user.id === userId && (
+              <span className="text-gray-400 text-sm">(You)</span>
             )}
           </li>
         ))}

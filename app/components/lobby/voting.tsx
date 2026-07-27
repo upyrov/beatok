@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect, use } from "react";
+import { RealtimeContext } from "~/contexts";
 import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
 import type { Submission } from "~/api/types/submission/submission";
@@ -6,6 +7,9 @@ import { useVote } from "~/api/lobbies";
 import { handleDownload } from "~/lib/download";
 import { MutationBoundary } from "~/components/error/mutation-boundary";
 import { LoadingButton } from "~/components/loading";
+import type { HubConnection } from "@microsoft/signalr";
+import type { LobbyWithParticipants } from "~/api/types/lobby/lobby-with-participants";
+import { LobbyPhase } from "~/api/types/enums/lobby-phase";
 
 function VoteForm({
   submissionId,
@@ -92,10 +96,30 @@ interface VotingProps {
   lobbyId: string;
   submissions: Submission[];
   currentUserId?: string;
+  setLobby: React.Dispatch<React.SetStateAction<LobbyWithParticipants | null>>;
+  setWinningSubmission: React.Dispatch<React.SetStateAction<Submission | null>>;
 }
 
-export function Voting({ lobbyId, submissions, currentUserId }: VotingProps) {
+export function Voting({ lobbyId, submissions, currentUserId, setLobby, setWinningSubmission }: VotingProps) {
+  const { connection } = use(RealtimeContext);
   const [votedSubmissionId, setVotedSubmissionId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!connection) return;
+
+    function handleEnded(submission: Submission | null) {
+      setLobby((prev) => {
+        if (!prev) return prev;
+        return { ...prev, phase: LobbyPhase.End };
+      });
+      setWinningSubmission(submission);
+    }
+
+    connection.on("Ended", handleEnded);
+    return () => {
+      connection.off("Ended", handleEnded);
+    };
+  }, [connection, setLobby, setWinningSubmission]);
 
   const displayedSubmissions = votedSubmissionId
     ? submissions.filter((sub) => sub.id === votedSubmissionId)
