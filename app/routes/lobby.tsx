@@ -121,13 +121,16 @@ export default function Lobby() {
               <Voting
                 lobbyId={lobby.id}
                 submissions={submissions}
-                currentUserId={user?.id}
+                participants={lobby.participants}
                 setLobby={setLobby}
                 setWinningSubmission={setWinningSubmission}
               />
             )}
             {lobby.phase === LobbyPhase.End && (
-              <End winningSubmission={winningSubmission} />
+              <End
+                winningSubmission={winningSubmission}
+                participants={lobby.participants}
+              />
             )}
           </div>
 

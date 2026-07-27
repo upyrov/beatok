@@ -4,12 +4,13 @@ import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
 import type { Submission } from "~/api/types/submission/submission";
 import { useVote } from "~/api/lobbies";
-import { handleDownload } from "~/lib/download";
 import { MutationBoundary } from "~/components/error/mutation-boundary";
 import { LoadingButton } from "~/components/loading";
-import type { HubConnection } from "@microsoft/signalr";
 import type { LobbyWithParticipants } from "~/api/types/lobby/lobby-with-participants";
 import { LobbyPhase } from "~/api/types/enums/lobby-phase";
+import type { User } from "~/api/types/user/user";
+import { useOutletContext } from "react-router";
+import type { Participation } from "~/api/types/participation";
 
 function VoteForm({
   submissionId,
@@ -44,7 +45,11 @@ function VoteForm({
   }
 
   if (isOwnTrack) {
-    return <span className="text-gray-400 text-sm">Cannot vote on your own track</span>;
+    return (
+      <span className="text-gray-400 text-sm">
+        Cannot vote on your own track
+      </span>
+    );
   }
 
   return (
@@ -95,14 +100,24 @@ function VoteForm({
 interface VotingProps {
   lobbyId: string;
   submissions: Submission[];
-  currentUserId?: string;
+  participants: Participation[];
   setLobby: React.Dispatch<React.SetStateAction<LobbyWithParticipants | null>>;
   setWinningSubmission: React.Dispatch<React.SetStateAction<Submission | null>>;
 }
 
-export function Voting({ lobbyId, submissions, currentUserId, setLobby, setWinningSubmission }: VotingProps) {
+export function Voting({
+  lobbyId,
+  submissions,
+  participants,
+  setLobby,
+  setWinningSubmission,
+}: VotingProps) {
+  const { user } = useOutletContext<{ user: User | null }>();
   const { connection } = use(RealtimeContext);
-  const [votedSubmissionId, setVotedSubmissionId] = useState<string | null>(null);
+
+  const [votedSubmissionId, setVotedSubmissionId] = useState<string | null>(
+    null,
+  );
 
   useEffect(() => {
     if (!connection) return;
@@ -122,42 +137,29 @@ export function Voting({ lobbyId, submissions, currentUserId, setLobby, setWinni
   }, [connection, setLobby, setWinningSubmission]);
 
   const displayedSubmissions = votedSubmissionId
-    ? submissions.filter((sub) => sub.id === votedSubmissionId)
-    : submissions;
+    ? submissions.filter((s) => s.id === votedSubmissionId)
+    : submissions.filter((s) => s.userId !== user?.id);
 
   return (
     <div>
       <h2 className="text-xl font-bold mb-4">Voting Phase</h2>
       <ul className="space-y-4">
-        {displayedSubmissions.map((sub) => (
-          <li
-            key={sub.id}
-            className="bg-white/5 p-4 rounded flex flex-col gap-4"
-          >
-            <div className="flex justify-between items-center">
-              <span className="font-semibold text-lg">
-                Submission by User {sub.userId}
-              </span>
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleDownload(sub.value, `submission-${sub.id}.wav`);
-                }}
-                className="text-xs bg-blue-600/50 hover:bg-blue-600 px-3 py-1.5 rounded transition-colors whitespace-nowrap"
-              >
-                Download
-              </button>
+        {displayedSubmissions.map((s) => (
+          <li key={s.id} className="bg-white/5 p-4 rounded flex flex-col gap-4">
+            <div className="font-semibold text-lg">
+              Submission by{" "}
+              {participants.find((p) => p.user.id === s.userId)!.user.name}
             </div>
-            <audio src={sub.value} controls className="w-full" />
+            <audio src={s.value} controls className="w-full" />
             <div className="border-t border-white/10 pt-4 mt-2">
               <p className="text-sm text-gray-400 mb-2">
                 Rate this submission:
               </p>
-              <VoteForm 
-                submissionId={sub.id} 
-                lobbyId={lobbyId} 
-                isOwnTrack={sub.userId === currentUserId}
-                onVote={() => setVotedSubmissionId(sub.id)}
+              <VoteForm
+                submissionId={s.id}
+                lobbyId={lobbyId}
+                isOwnTrack={s.userId === user?.id}
+                onVote={() => setVotedSubmissionId(s.id)}
               />
             </div>
           </li>
