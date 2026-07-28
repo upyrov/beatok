@@ -1,4 +1,3 @@
-import { useState, useRef } from "react";
 import {
   useSounds,
   useCreateSound,
@@ -6,8 +5,9 @@ import {
   useUploadSoundUrl,
 } from "~/api/sounds";
 import { QueryBoundary } from "./error/query-boundary";
-import { AUDIO_FILE_ACCEPT, validateAudioFile } from "~/lib/audio";
-import { LoadingButton } from "./loading";
+import { validateAudioFile } from "~/lib/audio";
+import { uploadFile } from "~/lib/upload";
+import { FileDropzone } from "./file-dropzone";
 
 export function Sounds({ categoryId }: { categoryId: string }) {
   const soundsQuery = useSounds(categoryId);
@@ -15,43 +15,25 @@ export function Sounds({ categoryId }: { categoryId: string }) {
   const createMutation = useCreateSound();
   const getUploadUrlMutation = useUploadSoundUrl();
 
-  const [fileToUpload, setFileToUpload] = useState<File | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  async function handleUpload(
+    file: File,
+    onProgress: (progress: number) => void,
+  ) {
+    const validation = await validateAudioFile(file);
+    if (!validation.valid) throw new Error(validation.error);
 
-  async function handleFileUpload() {
-    if (!fileToUpload) return;
-    const validation = await validateAudioFile(fileToUpload);
-    if (!validation.valid) {
-      alert(validation.error);
-      return;
-    }
-    try {
-      const fileExtension = fileToUpload.name.split(".").pop() || "";
-      const uploadData = await getUploadUrlMutation.mutateAsync({
-        extension: fileExtension,
-        contentType: fileToUpload.type,
-      });
+    const fileExtension = file.name.split(".").pop() || "";
+    const { uploadUrl, fileKey } = await getUploadUrlMutation.mutateAsync({
+      extension: fileExtension,
+      contentType: file.type,
+    });
 
-      const uploadResponse = await fetch(uploadData.uploadUrl, {
-        method: "PUT",
-        headers: { "Content-Type": fileToUpload.type },
-        body: fileToUpload,
-      });
+    await uploadFile(file, uploadUrl, onProgress);
 
-      if (!uploadResponse.ok) throw new Error("Failed to upload file");
-
-      await createMutation.mutateAsync({
-        value: uploadData.fileKey,
-        categoryId: categoryId,
-      });
-
-      setFileToUpload(null);
-      // Reset input file value to allow uploading the same file again if needed
-      if (fileInputRef.current) fileInputRef.current.value = "";
-    } catch (e) {
-      console.error(e);
-      alert("Failed to upload sound");
-    }
+    await createMutation.mutateAsync({
+      value: fileKey,
+      categoryId,
+    });
   }
 
   return (
@@ -61,38 +43,11 @@ export function Sounds({ categoryId }: { categoryId: string }) {
           Upload New Sound
         </label>
         <div className="flex flex-col gap-2">
-          <input
-            ref={fileInputRef}
-            id="sound-upload-input"
-            type="file"
-            accept={AUDIO_FILE_ACCEPT}
-            onChange={async (e) => {
-              const file = e.target.files?.[0] || null;
-              if (!file) {
-                setFileToUpload(null);
-                return;
-              }
-              const validation = await validateAudioFile(file);
-              if (!validation.valid) {
-                alert(validation.error);
-                if (fileInputRef.current) fileInputRef.current.value = "";
-                setFileToUpload(null);
-                return;
-              }
-              setFileToUpload(file);
-            }}
-            className="flex-1 text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-white/10 file:text-white hover:file:bg-white/20 transition-colors"
+          <FileDropzone
+            label="Click or drag sounds here (multiple allowed)"
+            maxFiles={100}
+            onUpload={handleUpload}
           />
-          <LoadingButton
-            onClick={handleFileUpload}
-            disabled={!fileToUpload}
-            isPending={
-              getUploadUrlMutation.isPending || createMutation.isPending
-            }
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors w-full sm:w-auto"
-          >
-            Upload Sound
-          </LoadingButton>
         </div>
       </div>
 

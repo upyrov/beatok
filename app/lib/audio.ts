@@ -1,21 +1,10 @@
-export const AUDIO_FILE_EXTENSIONS = [
-  ".mp3",
-  ".wav",
-  ".flac",
-  ".ogg",
-  ".m4a",
-  ".aac",
-];
-
-export const AUDIO_FILE_ACCEPT = AUDIO_FILE_EXTENSIONS.join(",");
-
-export function isAudioFile(file: File): boolean {
+function isAudioFile(file: File): boolean {
   if (file.type.startsWith("audio/")) return true;
   const extension = "." + (file.name.split(".").pop()?.toLowerCase() || "");
-  return AUDIO_FILE_EXTENSIONS.includes(extension);
+  return [".mp3", ".wav", ".flac", ".ogg", ".m4a", ".aac"].includes(extension);
 }
 
-export async function getAudioDurationSeconds(file: File): Promise<number> {
+async function getAudioDurationSeconds(file: File): Promise<number> {
   return new Promise((resolve, reject) => {
     const objectUrl = URL.createObjectURL(file);
     const audio = new Audio();
@@ -74,7 +63,7 @@ export async function getAudioDurationSeconds(file: File): Promise<number> {
   });
 }
 
-export const MAX_AUDIO_DURATION_SECONDS = 300; // 5 minutes
+const MAX_AUDIO_DURATION_SECONDS = 300; // 5 minutes
 
 export async function validateAudioFile(file: File): Promise<{
   valid: boolean;
