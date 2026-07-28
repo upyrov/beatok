@@ -15,11 +15,13 @@ function VoteForm({
   submissionId,
   lobbyId,
   isOwnTrack,
+  isVoted,
   onVote,
 }: {
   submissionId: string;
   lobbyId: string;
   isOwnTrack?: boolean;
+  isVoted?: boolean;
   onVote: () => void;
 }) {
   const voteMutation = useVote();
@@ -35,7 +37,7 @@ function VoteForm({
     },
   });
 
-  if (voteMutation.isSuccess || voteMutation.isPending) {
+  if (isVoted || voteMutation.isSuccess || voteMutation.isPending) {
     return (
       <div className="text-green-400 font-medium text-sm py-1">
         Vote registered!
@@ -161,6 +163,9 @@ export function Voting() {
                 submissionId={s.id}
                 lobbyId={lobby?.id ?? ""}
                 isOwnTrack={s.participationId === participation?.id}
+                isVoted={participation?.scores?.some(
+                  (score) => score.submissionId === s.id,
+                )}
                 onVote={() => setVotedSubmissionId(s.id)}
               />
             </div>
