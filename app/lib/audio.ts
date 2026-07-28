@@ -1,4 +1,4 @@
-export const MUSIC_FILE_EXTENSIONS = [
+export const AUDIO_FILE_EXTENSIONS = [
   ".mp3",
   ".wav",
   ".flac",
@@ -7,12 +7,12 @@ export const MUSIC_FILE_EXTENSIONS = [
   ".aac",
 ];
 
-export const MUSIC_FILE_ACCEPT = MUSIC_FILE_EXTENSIONS.join(",");
+export const AUDIO_FILE_ACCEPT = AUDIO_FILE_EXTENSIONS.join(",");
 
-export function isMusicFile(file: File): boolean {
+export function isAudioFile(file: File): boolean {
   if (file.type.startsWith("audio/")) return true;
   const extension = "." + (file.name.split(".").pop()?.toLowerCase() || "");
-  return MUSIC_FILE_EXTENSIONS.includes(extension);
+  return AUDIO_FILE_EXTENSIONS.includes(extension);
 }
 
 export async function getAudioDurationSeconds(file: File): Promise<number> {
@@ -21,45 +21,54 @@ export async function getAudioDurationSeconds(file: File): Promise<number> {
     const audio = new Audio();
     let resolved = false;
 
+    // Safety timeout in case metadata loading gets stuck
+    const timer = setTimeout(() => {
+      cleanup();
+      resolve(1); // fallback
+    }, 5000);
+
     function cleanup() {
       if (resolved) return;
       resolved = true;
+      clearTimeout(timer);
+      audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
+      audio.removeEventListener("error", handleError);
+      audio.removeEventListener("timeupdate", handleTimeUpdate);
+      audio.src = ""; // Free up memory
       URL.revokeObjectURL(objectUrl);
     }
 
-    const timer = setTimeout(() => {
+    function finalize(duration: number) {
       cleanup();
-      resolve(1); // fallback if metadata loading times out
-    }, 5000);
-
-    audio.addEventListener("loadedmetadata", () => {
-      if (audio.duration === Infinity) {
-        audio.currentTime = Number.MAX_SAFE_INTEGER;
-        audio.ontimeupdate = () => {
-          audio.ontimeupdate = null;
-          audio.currentTime = 0;
-          const duration = audio.duration;
-          clearTimeout(timer);
-          cleanup();
-          resolve(Math.max(1, Math.round(duration || 0)));
-        };
+      if (isNaN(duration) || !isFinite(duration)) {
+        resolve(1);
       } else {
-        const duration = audio.duration;
-        clearTimeout(timer);
-        cleanup();
-        if (isNaN(duration) || !isFinite(duration)) {
-          resolve(1);
-          return;
-        }
         resolve(Math.max(1, Math.round(duration)));
       }
-    });
+    }
 
-    audio.addEventListener("error", () => {
-      clearTimeout(timer);
+    function handleTimeUpdate() {
+      audio.currentTime = 0; // Reset for actual playback later if needed
+      finalize(audio.duration);
+    }
+
+    function handleLoadedMetadata() {
+      // Workaround for some browsers/formats (like Chrome with some WebM/Ogg) returning Infinity
+      if (audio.duration === Infinity) {
+        audio.currentTime = Number.MAX_SAFE_INTEGER;
+        audio.addEventListener("timeupdate", handleTimeUpdate);
+      } else {
+        finalize(audio.duration);
+      }
+    }
+
+    function handleError() {
       cleanup();
       reject(new Error("Failed to load audio file metadata"));
-    });
+    }
+
+    audio.addEventListener("loadedmetadata", handleLoadedMetadata);
+    audio.addEventListener("error", handleError);
 
     audio.src = objectUrl;
   });
@@ -72,7 +81,7 @@ export async function validateAudioFile(file: File): Promise<{
   durationSeconds: number;
   error?: string;
 }> {
-  if (!isMusicFile(file)) {
+  if (!isAudioFile(file)) {
     return {
       valid: false,
       durationSeconds: 0,

@@ -6,7 +6,7 @@ import {
   useUploadSoundUrl,
 } from "~/api/sounds";
 import { QueryBoundary } from "./error/query-boundary";
-import { MUSIC_FILE_ACCEPT, validateAudioFile } from "~/lib/audio";
+import { AUDIO_FILE_ACCEPT, validateAudioFile } from "~/lib/audio";
 import { LoadingButton } from "./loading";
 
 export function Sounds({ categoryId }: { categoryId: string }) {
@@ -65,7 +65,7 @@ export function Sounds({ categoryId }: { categoryId: string }) {
             ref={fileInputRef}
             id="sound-upload-input"
             type="file"
-            accept={MUSIC_FILE_ACCEPT}
+            accept={AUDIO_FILE_ACCEPT}
             onChange={async (e) => {
               const file = e.target.files?.[0] || null;
               if (!file) {
