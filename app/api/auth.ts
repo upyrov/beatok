@@ -91,4 +91,6 @@ export async function refresh() {
   if (!response.ok) {
     await handleApiError(response);
   }
+
+  return null;
 }
