@@ -4,7 +4,7 @@ import { MutationBoundary } from "~/components/error/mutation-boundary";
 import { LoadingButton } from "~/components/loading";
 import { useEffect, use } from "react";
 import { RealtimeContext } from "~/contexts";
-import type { RandomCategory } from "~/api/types/category/random-category";
+import type { SoundWithCategory } from "~/api/types/sound/sound-with-category";
 import type { LobbyWithParticipants } from "~/api/types/lobby/lobby-with-participants";
 import { LobbyState } from "~/api/types/enums/lobby-state";
 
@@ -13,7 +13,6 @@ interface WaitingProps {
   isOwner: boolean;
   participants: Participation[];
   setLobby: React.Dispatch<React.SetStateAction<LobbyWithParticipants | null>>;
-  setRandomCategories: React.Dispatch<React.SetStateAction<RandomCategory[]>>;
 }
 
 export function Waiting({
@@ -21,7 +20,6 @@ export function Waiting({
   isOwner,
   participants,
   setLobby,
-  setRandomCategories,
 }: WaitingProps) {
   const startLobbyMutation = useStartLobby();
   const { connection } = use(RealtimeContext);
@@ -29,16 +27,16 @@ export function Waiting({
   useEffect(() => {
     if (!connection) return;
 
-    function handleStarted(categories: RandomCategory[]) {
+    function handleStarted(sounds: SoundWithCategory[]) {
       setLobby((prev) => {
         if (!prev) return prev;
         return {
           ...prev,
           state: LobbyState.Submitting,
           submissionStartedAt: new Date().toISOString(),
+          sounds: prev.sounds?.length ? prev.sounds : sounds,
         };
       });
-      setRandomCategories(categories);
     }
 
     connection.on("Started", handleStarted);
@@ -46,7 +44,7 @@ export function Waiting({
     return () => {
       connection.off("Started", handleStarted);
     };
-  }, [connection, setLobby, setRandomCategories]);
+  }, [connection, setLobby]);
 
   return (
     <div>
