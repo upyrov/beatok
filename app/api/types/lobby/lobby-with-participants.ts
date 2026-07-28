@@ -23,5 +23,5 @@ export interface LobbyWithParticipants {
   participants: Participation[];
   sounds: SoundWithCategory[];
   submissions: Submission[];
-  winningSubmissionId: string;
+  winningSubmissionId: string | null;
 }

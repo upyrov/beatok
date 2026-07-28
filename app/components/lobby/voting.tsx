@@ -3,15 +3,13 @@ import { useCountdown } from "~/hooks/use-countdown";
 import { RealtimeContext } from "~/contexts";
 import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
-import type { Submission } from "~/api/types/submission/submission";
 import { useVote } from "~/api/lobbies";
 import { MutationBoundary } from "~/components/error/mutation-boundary";
 import { LoadingButton } from "~/components/loading";
-import type { LobbyWithParticipants } from "~/api/types/lobby/lobby-with-participants";
+import { useOutletContext } from "react-router";
+import { LobbyContext } from "~/contexts";
 import { LobbyState } from "~/api/types/enums/lobby-state";
 import type { User } from "~/api/types/user/user";
-import { useOutletContext } from "react-router";
-import type { Participation } from "~/api/types/participation";
 
 function VoteForm({
   submissionId,
@@ -98,26 +96,14 @@ function VoteForm({
   );
 }
 
-interface VotingProps {
-  lobbyId: string;
-  submissions: Submission[];
-  participants: Participation[];
-  timeLimit: string;
-  startedAt?: string;
-  setLobby: React.Dispatch<React.SetStateAction<LobbyWithParticipants | null>>;
-}
-
-export function Voting({
-  lobbyId,
-  submissions,
-  participants,
-  timeLimit,
-  startedAt,
-  setLobby,
-}: VotingProps) {
+export function Voting() {
+  const { lobby, setLobby } = use(LobbyContext);
   const { user } = useOutletContext<{ user: User | null }>();
   const { connection } = use(RealtimeContext);
-  const { minutes, seconds } = useCountdown(timeLimit, startedAt);
+  const { minutes, seconds } = useCountdown(
+    lobby?.votingTime ?? "00:00:00",
+    lobby?.votingStartedAt,
+  );
 
   const [votedSubmissionId, setVotedSubmissionId] = useState<string | null>(
     null,
@@ -126,13 +112,13 @@ export function Voting({
   useEffect(() => {
     if (!connection) return;
 
-    function handleEnded(submission: Submission | null) {
+    function handleEnded(submissionId: string | null) {
       setLobby((prev) => {
         if (!prev) return prev;
         return {
           ...prev,
           state: LobbyState.Ended,
-          winningSubmissionId: submission?.id ?? "",
+          winningSubmissionId: prev.winningSubmissionId ?? submissionId,
         };
       });
     }
@@ -143,9 +129,11 @@ export function Voting({
     };
   }, [connection, setLobby]);
 
-  const participation = participants.find((p) => p.user.id === user?.id);
+  const participation = lobby?.participants.find((p) => p.user.id === user?.id);
 
-  const safeSubmissions = Array.isArray(submissions) ? submissions : [];
+  const safeSubmissions = Array.isArray(lobby?.submissions)
+    ? lobby.submissions
+    : [];
   const displayedSubmissions = votedSubmissionId
     ? safeSubmissions.filter((s) => s.id === votedSubmissionId)
     : safeSubmissions.filter((s) => s.participationId !== participation?.id);
@@ -171,7 +159,7 @@ export function Voting({
               </p>
               <VoteForm
                 submissionId={s.id}
-                lobbyId={lobbyId}
+                lobbyId={lobby?.id ?? ""}
                 isOwnTrack={s.participationId === participation?.id}
                 onVote={() => setVotedSubmissionId(s.id)}
               />

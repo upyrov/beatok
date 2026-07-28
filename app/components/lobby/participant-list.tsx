@@ -1,23 +1,14 @@
-import type { HubConnection } from "@microsoft/signalr";
 import { useEffect, use } from "react";
 import { RealtimeContext } from "~/contexts";
 import type { Participation } from "~/api/types/participation";
-import type { LobbyWithParticipants } from "~/api/types/lobby/lobby-with-participants";
+import { useOutletContext } from "react-router";
+import type { User } from "~/api/types/user/user";
+import { LobbyContext } from "~/contexts";
 
-interface ParticipantsProps {
-  participants: Participation[];
-  ownerId: string;
-  userId: string;
-  setLobby: React.Dispatch<React.SetStateAction<LobbyWithParticipants | null>>;
-}
-
-export function Participants({
-  participants,
-  ownerId,
-  userId,
-  setLobby,
-}: ParticipantsProps) {
+export function ParticipantList() {
+  const { lobby, setLobby } = use(LobbyContext);
   const { connection } = use(RealtimeContext);
+  const { user } = useOutletContext<{ user: User | null }>();
 
   useEffect(() => {
     if (!connection) return;
@@ -92,16 +83,16 @@ export function Participants({
     <div className="bg-white/5 border border-white/10 rounded-xl p-4">
       <h2 className="text-xl font-bold mb-4">Participants</h2>
       <ul className="flex flex-col gap-2">
-        {participants.map((p) => (
+        {lobby?.participants.map((p) => (
           <li key={p.id}>
             {p.user.name}{" "}
             {!p.isConnected && (
               <span className="text-gray-400 text-sm">(Disconnected)</span>
             )}
-            {p.user.id === ownerId && (
+            {p.user.id === lobby.ownerId && (
               <span className="text-gray-400 text-sm">(Owner)</span>
             )}
-            {p.user.id === userId && (
+            {p.user.id === user?.id && (
               <span className="text-gray-400 text-sm">(You)</span>
             )}
           </li>

@@ -1,18 +1,15 @@
 import { use, useEffect, useState } from "react";
-import { useParams, useOutletContext, useNavigate } from "react-router";
+import { useParams, useNavigate } from "react-router";
 import { useMutation } from "@tanstack/react-query";
-import { RealtimeContext } from "~/contexts";
+import { RealtimeContext, LobbyContext } from "~/contexts";
 import type { LobbyWithParticipants } from "~/api/types/lobby/lobby-with-participants";
 import { useJoinLobby } from "~/api/lobbies";
-import type { User } from "~/api/types/user/user";
 import { LoadingFallback } from "~/components/loading";
-import type { SoundWithCategory } from "~/api/types/sound/sound-with-category";
-import type { Submission as SubmissionType } from "~/api/types/submission/submission";
 import {
+  ParticipantList,
   Chat,
-  Participants,
   Waiting,
-  Submission,
+  Submitting,
   Voting,
   End,
 } from "~/components/lobby";
@@ -24,7 +21,6 @@ export default function Lobby() {
   const navigate = useNavigate();
 
   const { connection } = use(RealtimeContext);
-  const { user } = useOutletContext<{ user: User | null }>();
 
   const [lobby, setLobby] = useState<LobbyWithParticipants | null>(null);
 
@@ -42,10 +38,7 @@ export default function Lobby() {
       }
     },
     onError(err) {
-      console.error(
-        "Failed to join lobby realtime after multiple attempts.",
-        err,
-      );
+      console.error(err);
     },
   });
 
@@ -58,12 +51,21 @@ export default function Lobby() {
     }
   }, [connection, id, lobby]);
 
+  const StateView =
+    lobby &&
+    {
+      [LobbyState.Waiting]: Waiting,
+      [LobbyState.Submitting]: Submitting,
+      [LobbyState.Voting]: Voting,
+      [LobbyState.Ended]: End,
+    }[lobby.state];
+
   return (
     <main className="container mx-auto p-4 md:p-8 max-w-7xl min-h-screen flex gap-8">
       {!lobby ? (
         <LoadingFallback className="m-auto" />
       ) : (
-        <>
+        <LobbyContext value={{ lobby, setLobby }}>
           <div className="flex flex-col gap-4 flex-1">
             <h1 className="text-2xl font-bold">{lobby.name}</h1>
             <div className="flex gap-8">
@@ -83,55 +85,15 @@ export default function Lobby() {
               <p>{lobby.submissionTime}</p>
             </div>
 
-            <Participants
-              participants={lobby.participants}
-              ownerId={lobby.ownerId}
-              userId={user?.id ?? ""}
-              setLobby={setLobby}
-            />
+            <ParticipantList />
           </div>
 
-          <div className="flex-1">
-            {lobby.state === LobbyState.Waiting && (
-              <Waiting
-                lobbyId={lobby.id}
-                isOwner={user?.id === lobby.ownerId}
-                participants={lobby.participants}
-                setLobby={setLobby}
-              />
-            )}
-            {lobby.state === LobbyState.Submitting && (
-              <Submission
-                lobbyId={lobby.id}
-                sounds={lobby.sounds}
-                timeLimit={lobby.submissionTime}
-                startedAt={lobby.submissionStartedAt}
-                setLobby={setLobby}
-              />
-            )}
-            {lobby.state === LobbyState.Voting && (
-              <Voting
-                lobbyId={lobby.id}
-                submissions={lobby.submissions}
-                participants={lobby.participants}
-                timeLimit={lobby.votingTime}
-                startedAt={lobby.votingStartedAt}
-                setLobby={setLobby}
-              />
-            )}
-            {lobby.state === LobbyState.Ended && (
-              <End
-                winningSubmissionId={lobby.winningSubmissionId}
-                submissions={lobby.submissions}
-                participants={lobby.participants}
-              />
-            )}
-          </div>
+          <div className="flex-1">{StateView && <StateView />}</div>
 
           <div className="flex-1">
-            <Chat participants={lobby.participants} lobbyId={lobby.id} />
+            <Chat />
           </div>
-        </>
+        </LobbyContext>
       )}
     </main>
   );

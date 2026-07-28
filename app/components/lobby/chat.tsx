@@ -2,28 +2,23 @@ import { useState, useEffect, use, useRef } from "react";
 import { RealtimeContext } from "~/contexts";
 import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
-import type { HubConnection } from "@microsoft/signalr";
 import type { User } from "~/api/types/user/user";
-import type { Participation } from "~/api/types/participation";
+import { LobbyContext } from "~/contexts";
 
 export interface Message {
   content: string;
   sender: User;
 }
 
-interface ChatProps {
-  participants: Participation[];
-  lobbyId: string;
-}
-
-export function Chat({ participants, lobbyId }: ChatProps) {
+export function Chat() {
+  const { lobby } = use(LobbyContext);
   const { connection } = use(RealtimeContext);
   const [messages, setMessages] = useState<Message[]>([]);
 
-  const participantsRef = useRef(participants);
+  const participantsRef = useRef(lobby?.participants || []);
   useEffect(() => {
-    participantsRef.current = participants;
-  }, [participants]);
+    participantsRef.current = lobby?.participants || [];
+  }, [lobby?.participants]);
 
   useEffect(() => {
     if (!connection) return;
@@ -45,15 +40,15 @@ export function Chat({ participants, lobbyId }: ChatProps) {
     };
   }, [connection]);
 
-  const chatForm = useForm({
+  const form = useForm({
     defaultValues: {
       content: "",
     },
     onSubmit: async ({ value }) => {
-      if (!connection) return;
+      if (!connection || !lobby?.id) return;
       try {
-        await connection.invoke("SendMessage", lobbyId, value.content);
-        chatForm.reset();
+        await connection.invoke("SendMessage", lobby.id, value.content);
+        form.reset();
       } catch (err) {
         console.error("Failed to send message:", err);
       }
@@ -75,11 +70,11 @@ export function Chat({ participants, lobbyId }: ChatProps) {
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          chatForm.handleSubmit();
+          form.handleSubmit();
         }}
         className="p-4 border-t border-white/10 flex gap-2"
       >
-        <chatForm.Field
+        <form.Field
           name="content"
           validators={{
             onChange: type("string > 0"),
@@ -96,7 +91,7 @@ export function Chat({ participants, lobbyId }: ChatProps) {
             />
           )}
         />
-        <chatForm.Subscribe
+        <form.Subscribe
           selector={(state) => [state.canSubmit, state.isSubmitting]}
           children={([canSubmit, isSubmitting]) => (
             <button

@@ -1,40 +1,34 @@
 import { useStartLobby } from "~/api/lobbies";
-import type { Participation } from "~/api/types/participation";
 import { MutationBoundary } from "~/components/error/mutation-boundary";
 import { LoadingButton } from "~/components/loading";
 import { useEffect, use } from "react";
-import { RealtimeContext } from "~/contexts";
-import type { SoundWithCategory } from "~/api/types/sound/sound-with-category";
-import type { LobbyWithParticipants } from "~/api/types/lobby/lobby-with-participants";
 import { LobbyState } from "~/api/types/enums/lobby-state";
+import { LobbyContext, RealtimeContext } from "~/contexts";
+import { useOutletContext } from "react-router";
+import type { User } from "~/api/types/user/user";
+import type { SoundWithCategory } from "~/api/types/sound/sound-with-category";
 
-interface WaitingProps {
-  lobbyId: string;
-  isOwner: boolean;
-  participants: Participation[];
-  setLobby: React.Dispatch<React.SetStateAction<LobbyWithParticipants | null>>;
-}
+export function Waiting() {
+  const { lobby, setLobby } = use(LobbyContext);
+  const { user } = useOutletContext<{ user: User | null }>();
 
-export function Waiting({
-  lobbyId,
-  isOwner,
-  participants,
-  setLobby,
-}: WaitingProps) {
+  if (!lobby) return;
+
+  const isOwner = user?.id === lobby.ownerId;
   const startLobbyMutation = useStartLobby();
   const { connection } = use(RealtimeContext);
 
   useEffect(() => {
     if (!connection) return;
 
-    function handleStarted(startedSounds: SoundWithCategory[]) {
+    function handleStarted(sounds: SoundWithCategory[]) {
       setLobby((prev) => {
         if (!prev) return prev;
         return {
           ...prev,
           state: LobbyState.Submitting,
           submissionStartedAt: new Date().toISOString(),
-          sounds: startedSounds,
+          sounds: prev.sounds?.length ? prev.sounds : sounds,
         };
       });
     }
@@ -50,10 +44,10 @@ export function Waiting({
     <div>
       <h2 className="text-xl font-bold mb-4">Not Started</h2>
       {isOwner ? (
-        participants.length > 1 ? (
+        lobby.participants.length > 1 ? (
           <MutationBoundary mutation={startLobbyMutation}>
             <LoadingButton
-              onClick={() => startLobbyMutation.mutate(lobbyId)}
+              onClick={() => startLobbyMutation.mutate(lobby.id)}
               isPending={startLobbyMutation.isPending}
               className="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded text-white font-semibold"
             >

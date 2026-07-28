@@ -1,19 +1,11 @@
-import type { Participation } from "~/api/types/participation";
-import type { Submission } from "~/api/types/submission/submission";
+import { use } from "react";
+import { LobbyContext } from "~/contexts";
 
-interface EndProps {
-  winningSubmissionId: string | null;
-  submissions: Submission[];
-  participants: Participation[];
-}
-
-export function End({
-  winningSubmissionId,
-  submissions,
-  participants,
-}: EndProps) {
+export function End() {
+  const { lobby } = use(LobbyContext);
   const winningSubmission =
-    submissions.find((s) => s.id === winningSubmissionId) || null;
+    lobby?.submissions.find((s) => s.id === lobby?.winningSubmissionId) ?? null;
+
   return (
     <div>
       <h2 className="text-xl font-bold mb-4">Lobby Ended</h2>
@@ -23,7 +15,7 @@ export function End({
           <p>
             User{" "}
             {
-              participants.find(
+              lobby?.participants.find(
                 (p) => p.id === winningSubmission.participationId,
               )?.user.name
             }{" "}

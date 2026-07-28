@@ -3,47 +3,40 @@ import { useCountdown } from "~/hooks/use-countdown";
 import { useForm } from "@tanstack/react-form";
 import { useDropzone } from "react-dropzone";
 import { RealtimeContext } from "~/contexts";
-import type { SoundWithCategory } from "~/api/types/sound/sound-with-category";
-import type { Category } from "~/api/types/category/category";
 import { useUploadUrl, useCreateSubmission } from "~/api/submissions";
 import { validateAudioFile } from "~/lib/audio";
 import { handleDownload } from "~/lib/download";
 import { MutationBoundary } from "~/components/error/mutation-boundary";
-import type { LobbyWithParticipants } from "~/api/types/lobby/lobby-with-participants";
 import type { Submission as SubmissionType } from "~/api/types/submission/submission";
 import { LobbyState } from "~/api/types/enums/lobby-state";
+import type { User } from "~/api/types/user/user";
+import { useOutletContext } from "react-router";
+import { LobbyContext } from "~/contexts";
 
-interface SubmissionProps {
-  lobbyId: string;
-  sounds: SoundWithCategory[];
-  timeLimit: string;
-  startedAt?: string;
-  setLobby: React.Dispatch<React.SetStateAction<LobbyWithParticipants | null>>;
-}
-
-export function Submission({
-  lobbyId,
-  sounds,
-  timeLimit,
-  startedAt,
-  setLobby,
-}: SubmissionProps) {
+export function Submitting() {
+  const { lobby, setLobby } = use(LobbyContext);
   const { connection } = use(RealtimeContext);
+  const { user } = useOutletContext<{ user: User | null }>();
+  const participation = lobby?.participants.find((p) => p.user.id === user?.id);
   const getUploadUrlMutation = useUploadUrl();
   const createSubmissionMutation = useCreateSubmission();
 
-  const { minutes, seconds } = useCountdown(timeLimit, startedAt);
+  const { minutes, seconds } = useCountdown(
+    lobby?.submissionTime ?? "00:00:00",
+    lobby?.submissionStartedAt,
+  );
 
   const groupedCategories = useMemo(() => {
+    if (!lobby) return [];
     const soundsByCategoryId = Object.groupBy(
-      sounds.filter((s) => s.category),
+      lobby.sounds.filter((s) => s.category),
       (s) => s.category.id,
     );
     return Object.values(soundsByCategoryId).map((group) => ({
       category: group![0].category,
       sounds: group!,
     }));
-  }, [sounds]);
+  }, [lobby]);
 
   const form = useForm({
     defaultValues: { file: null as File | null },
@@ -89,7 +82,9 @@ export function Submission({
           state: LobbyState.Voting,
           votingTime: votingTime,
           votingStartedAt: new Date().toISOString(),
-          submissions: votingSubmissions,
+          submissions: prev.submissions?.length
+            ? prev.submissions
+            : votingSubmissions,
         };
       });
     }
@@ -137,8 +132,9 @@ export function Submission({
 
         setUploadProgress(100);
 
+        if (!lobby) return;
         await createSubmissionMutation.mutateAsync({
-          lobbyId,
+          lobbyId: lobby.id,
           value: uploadData.fileKey,
           durationSeconds,
         });
@@ -150,7 +146,7 @@ export function Submission({
         setIsUploading(false);
       }
     },
-    [getUploadUrlMutation, createSubmissionMutation, lobbyId, form],
+    [getUploadUrlMutation, createSubmissionMutation, lobby, form],
   );
 
   const processFile = useCallback(
@@ -207,7 +203,9 @@ export function Submission({
 
       <div className="bg-white/5 p-4 rounded border border-white/10">
         <h3 className="font-bold mb-2">Submit Your Beat</h3>
-        {createSubmissionMutation.isSuccess ? (
+        {lobby?.submissions.some(
+          (s) => s.participationId === participation?.id,
+        ) || createSubmissionMutation.isSuccess ? (
           <div className="text-green-400 font-semibold text-center py-4">
             Submission registered!
           </div>
