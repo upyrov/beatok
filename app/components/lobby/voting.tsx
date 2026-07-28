@@ -152,7 +152,11 @@ export function Voting() {
         {displayedSubmissions.map((s) => (
           <li key={s.id} className="bg-white/5 p-4 rounded flex flex-col gap-4">
             <div className="font-semibold text-lg">
-              Submission by {participation?.user.name}
+              Submission by{" "}
+              {
+                lobby?.participants.find((p) => p.id === s.participationId)
+                  ?.user.name
+              }
             </div>
             <audio src={s.value} controls className="w-full" />
             <div className="border-t border-white/10 pt-4 mt-2">
