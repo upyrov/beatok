@@ -9,18 +9,13 @@ export class AuthError extends Error {
 }
 
 export async function handleApiError(response: Response): Promise<never> {
-  let data: { message: string } | undefined;
-  try {
-    data = await response.json();
-  } catch {
-    // Ignore
-  }
-  console.error(
-    `API Error (${response.status})${data?.message ? `: ${data.message}` : ""}`,
-  );
-  throw new Error(
-    data?.message ?? "Something went wrong, please try again later",
-  );
+  const data: { message: string } | undefined = await response
+    .json()
+    .catch(() => {});
+
+  const message =
+    data?.message ?? "Something went wrong, please try again later";
+  throw new Error(message);
 }
 
 export async function fetchWithAuth(
@@ -30,15 +25,11 @@ export async function fetchWithAuth(
   const urlString = input instanceof URL ? input.toString() : input;
   const isRelative = typeof urlString === "string" && urlString.startsWith("/");
 
-  const finalUrl = isRelative
+  const url = isRelative
     ? `${import.meta.env.VITE_API_BASE_URL}${urlString}`
     : input;
-  const finalInit: RequestInit = {
-    ...init,
-    credentials: "include",
-  };
 
-  let response = await fetch(finalUrl, finalInit);
+  let response = await fetch(url, { ...init, credentials: "include" });
 
   if (response.status === 401) {
     const queryClient = getQueryClient();
@@ -55,16 +46,10 @@ export async function fetchWithAuth(
         retry: false,
       });
       queryClient.setQueryData(["auth", "status"], "authenticated");
+      return fetchWithAuth(input, init);
     } catch (err) {
       queryClient.setQueryData(["auth", "status"], "unauthenticated");
       throw new AuthError(err instanceof Error ? err.message : String(err));
-    }
-
-    response = await fetch(finalUrl, finalInit);
-
-    if (response.status === 401) {
-      queryClient.setQueryData(["auth", "status"], "unauthenticated");
-      throw new AuthError("Unauthorized");
     }
   }
 
