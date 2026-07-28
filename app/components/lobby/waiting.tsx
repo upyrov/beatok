@@ -13,7 +13,6 @@ interface WaitingProps {
   isOwner: boolean;
   participants: Participation[];
   setLobby: React.Dispatch<React.SetStateAction<LobbyWithParticipants | null>>;
-  setSounds: React.Dispatch<React.SetStateAction<SoundWithCategory[]>>;
 }
 
 export function Waiting({
@@ -21,7 +20,6 @@ export function Waiting({
   isOwner,
   participants,
   setLobby,
-  setSounds,
 }: WaitingProps) {
   const startLobbyMutation = useStartLobby();
   const { connection } = use(RealtimeContext);
@@ -29,16 +27,16 @@ export function Waiting({
   useEffect(() => {
     if (!connection) return;
 
-    function handleStarted(startedSounds: SoundWithCategory[]) {
+    function handleStarted(sounds: SoundWithCategory[]) {
       setLobby((prev) => {
         if (!prev) return prev;
         return {
           ...prev,
           state: LobbyState.Submitting,
           submissionStartedAt: new Date().toISOString(),
+          sounds: prev.sounds?.length ? prev.sounds : sounds,
         };
       });
-      setSounds(startedSounds);
     }
 
     connection.on("Started", handleStarted);
@@ -46,7 +44,7 @@ export function Waiting({
     return () => {
       connection.off("Started", handleStarted);
     };
-  }, [connection, setLobby, setSounds]);
+  }, [connection, setLobby]);
 
   return (
     <div>

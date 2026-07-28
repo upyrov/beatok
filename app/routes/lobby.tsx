@@ -6,13 +6,11 @@ import type { LobbyWithParticipants } from "~/api/types/lobby/lobby-with-partici
 import { useJoinLobby } from "~/api/lobbies";
 import type { User } from "~/api/types/user/user";
 import { LoadingFallback } from "~/components/loading";
-import type { SoundWithCategory } from "~/api/types/sound/sound-with-category";
-import type { Submission as SubmissionType } from "~/api/types/submission/submission";
 import {
+  ParticipantList,
   Chat,
-  Participants,
   Waiting,
-  Submission,
+  Submitting,
   Voting,
   End,
 } from "~/components/lobby";
@@ -27,10 +25,6 @@ export default function Lobby() {
   const { user } = useOutletContext<{ user: User | null }>();
 
   const [lobby, setLobby] = useState<LobbyWithParticipants | null>(null);
-  const [sounds, setSounds] = useState<SoundWithCategory[]>([]);
-  const [submissions, setSubmissions] = useState<SubmissionType[]>([]);
-  const [winningSubmission, setWinningSubmission] =
-    useState<SubmissionType | null>(null);
 
   const joinLobbyMutation = useJoinLobby();
   const joinRealtimeMutation = useMutation({
@@ -43,18 +37,10 @@ export default function Lobby() {
     onSuccess(joinedLobby) {
       if (joinedLobby) {
         setLobby(joinedLobby);
-        if (joinedLobby.sounds) setSounds(joinedLobby.sounds);
-        if (joinedLobby.submissions) setSubmissions(joinedLobby.submissions);
-        if (joinedLobby.winningSubmissionId && joinedLobby.submissions) {
-          setWinningSubmission(joinedLobby.submissions.find(s => s.id === joinedLobby.winningSubmissionId) || null);
-        }
       }
     },
     onError(err) {
-      console.error(
-        "Failed to join lobby realtime after multiple attempts.",
-        err,
-      );
+      console.error(err);
     },
   });
 
@@ -66,6 +52,10 @@ export default function Lobby() {
         .catch(() => navigate("/"));
     }
   }, [connection, id, lobby]);
+
+  const winningSubmission = lobby?.winningSubmissionId
+    ? lobby.submissions.find((s) => s.id === lobby.winningSubmissionId)!
+    : null;
 
   return (
     <main className="container mx-auto p-4 md:p-8 max-w-7xl min-h-screen flex gap-8">
@@ -92,10 +82,9 @@ export default function Lobby() {
               <p>{lobby.submissionTime}</p>
             </div>
 
-            <Participants
+            <ParticipantList
               participants={lobby.participants}
               ownerId={lobby.ownerId}
-              userId={user?.id ?? ""}
               setLobby={setLobby}
             />
           </div>
@@ -107,28 +96,25 @@ export default function Lobby() {
                 isOwner={user?.id === lobby.ownerId}
                 participants={lobby.participants}
                 setLobby={setLobby}
-                setSounds={setSounds}
               />
             )}
             {lobby.state === LobbyState.Submitting && (
-              <Submission
+              <Submitting
                 lobbyId={lobby.id}
-                sounds={sounds}
+                sounds={lobby.sounds || []}
                 timeLimit={lobby.submissionTime}
                 startedAt={lobby.submissionStartedAt}
                 setLobby={setLobby}
-                setSubmissions={setSubmissions}
               />
             )}
             {lobby.state === LobbyState.Voting && (
               <Voting
                 lobbyId={lobby.id}
-                submissions={submissions}
+                submissions={lobby.submissions || []}
                 participants={lobby.participants}
                 timeLimit={lobby.votingTime}
                 startedAt={lobby.votingStartedAt}
                 setLobby={setLobby}
-                setWinningSubmission={setWinningSubmission}
               />
             )}
             {lobby.state === LobbyState.Ended && (
@@ -140,7 +126,7 @@ export default function Lobby() {
           </div>
 
           <div className="flex-1">
-            <Chat participants={lobby.participants} lobbyId={lobby.id} />
+            <Chat lobbyId={lobby.id} participants={lobby.participants} />
           </div>
         </>
       )}

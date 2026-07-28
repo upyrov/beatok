@@ -12,11 +12,11 @@ export interface Message {
 }
 
 interface ChatProps {
-  participants: Participation[];
   lobbyId: string;
+  participants: Participation[];
 }
 
-export function Chat({ participants, lobbyId }: ChatProps) {
+export function Chat({ lobbyId, participants }: ChatProps) {
   const { connection } = use(RealtimeContext);
   const [messages, setMessages] = useState<Message[]>([]);
 

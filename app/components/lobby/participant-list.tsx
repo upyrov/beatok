@@ -3,21 +3,22 @@ import { useEffect, use } from "react";
 import { RealtimeContext } from "~/contexts";
 import type { Participation } from "~/api/types/participation";
 import type { LobbyWithParticipants } from "~/api/types/lobby/lobby-with-participants";
+import { useOutletContext } from "react-router";
+import type { User } from "~/api/types/user/user";
 
-interface ParticipantsProps {
+interface ParticipantListProps {
   participants: Participation[];
   ownerId: string;
-  userId: string;
   setLobby: React.Dispatch<React.SetStateAction<LobbyWithParticipants | null>>;
 }
 
-export function Participants({
+export function ParticipantList({
   participants,
   ownerId,
-  userId,
   setLobby,
-}: ParticipantsProps) {
+}: ParticipantListProps) {
   const { connection } = use(RealtimeContext);
+  const { user } = useOutletContext<{ user: User | null }>();
 
   useEffect(() => {
     if (!connection) return;
@@ -101,7 +102,7 @@ export function Participants({
             {p.user.id === ownerId && (
               <span className="text-gray-400 text-sm">(Owner)</span>
             )}
-            {p.user.id === userId && (
+            {p.user.id === user?.id && (
               <span className="text-gray-400 text-sm">(You)</span>
             )}
           </li>
