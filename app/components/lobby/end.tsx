@@ -2,11 +2,18 @@ import type { Participation } from "~/api/types/participation";
 import type { Submission } from "~/api/types/submission/submission";
 
 interface EndProps {
-  winningSubmission: Submission | null;
+  winningSubmissionId: string | null;
+  submissions: Submission[];
   participants: Participation[];
 }
 
-export function End({ winningSubmission, participants }: EndProps) {
+export function End({
+  winningSubmissionId,
+  submissions,
+  participants,
+}: EndProps) {
+  const winningSubmission =
+    submissions.find((s) => s.id === winningSubmissionId) || null;
   return (
     <div>
       <h2 className="text-xl font-bold mb-4">Lobby Ended</h2>

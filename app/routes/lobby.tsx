@@ -27,10 +27,6 @@ export default function Lobby() {
   const { user } = useOutletContext<{ user: User | null }>();
 
   const [lobby, setLobby] = useState<LobbyWithParticipants | null>(null);
-  const [sounds, setSounds] = useState<SoundWithCategory[]>([]);
-  const [submissions, setSubmissions] = useState<SubmissionType[]>([]);
-  const [winningSubmission, setWinningSubmission] =
-    useState<SubmissionType | null>(null);
 
   const joinLobbyMutation = useJoinLobby();
   const joinRealtimeMutation = useMutation({
@@ -43,11 +39,6 @@ export default function Lobby() {
     onSuccess(joinedLobby) {
       if (joinedLobby) {
         setLobby(joinedLobby);
-        if (joinedLobby.sounds) setSounds(joinedLobby.sounds);
-        if (joinedLobby.submissions) setSubmissions(joinedLobby.submissions);
-        if (joinedLobby.winningSubmissionId && joinedLobby.submissions) {
-          setWinningSubmission(joinedLobby.submissions.find(s => s.id === joinedLobby.winningSubmissionId) || null);
-        }
       }
     },
     onError(err) {
@@ -107,33 +98,31 @@ export default function Lobby() {
                 isOwner={user?.id === lobby.ownerId}
                 participants={lobby.participants}
                 setLobby={setLobby}
-                setSounds={setSounds}
               />
             )}
             {lobby.state === LobbyState.Submitting && (
               <Submission
                 lobbyId={lobby.id}
-                sounds={sounds}
+                sounds={lobby.sounds}
                 timeLimit={lobby.submissionTime}
                 startedAt={lobby.submissionStartedAt}
                 setLobby={setLobby}
-                setSubmissions={setSubmissions}
               />
             )}
             {lobby.state === LobbyState.Voting && (
               <Voting
                 lobbyId={lobby.id}
-                submissions={submissions}
+                submissions={lobby.submissions}
                 participants={lobby.participants}
                 timeLimit={lobby.votingTime}
                 startedAt={lobby.votingStartedAt}
                 setLobby={setLobby}
-                setWinningSubmission={setWinningSubmission}
               />
             )}
             {lobby.state === LobbyState.Ended && (
               <End
-                winningSubmission={winningSubmission}
+                winningSubmissionId={lobby.winningSubmissionId}
+                submissions={lobby.submissions}
                 participants={lobby.participants}
               />
             )}

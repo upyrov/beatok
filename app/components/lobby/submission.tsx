@@ -19,7 +19,6 @@ interface SubmissionProps {
   timeLimit: string;
   startedAt?: string;
   setLobby: React.Dispatch<React.SetStateAction<LobbyWithParticipants | null>>;
-  setSubmissions: React.Dispatch<React.SetStateAction<SubmissionType[]>>;
 }
 
 export function Submission({
@@ -28,7 +27,6 @@ export function Submission({
   timeLimit,
   startedAt,
   setLobby,
-  setSubmissions,
 }: SubmissionProps) {
   const { connection } = use(RealtimeContext);
   const getUploadUrlMutation = useUploadUrl();
@@ -91,16 +89,16 @@ export function Submission({
           state: LobbyState.Voting,
           votingTime: votingTime,
           votingStartedAt: new Date().toISOString(),
+          submissions: votingSubmissions,
         };
       });
-      setSubmissions(votingSubmissions);
     }
 
     connection.on("VotingStarted", handleVotingStarted);
     return () => {
       connection.off("VotingStarted", handleVotingStarted);
     };
-  }, [connection, setLobby, setSubmissions]);
+  }, [connection, setLobby]);
 
   const handleFileUpload = useCallback(
     async (file: File, durationSeconds: number) => {

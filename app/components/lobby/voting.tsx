@@ -105,7 +105,6 @@ interface VotingProps {
   timeLimit: string;
   startedAt?: string;
   setLobby: React.Dispatch<React.SetStateAction<LobbyWithParticipants | null>>;
-  setWinningSubmission: React.Dispatch<React.SetStateAction<Submission | null>>;
 }
 
 export function Voting({
@@ -115,7 +114,6 @@ export function Voting({
   timeLimit,
   startedAt,
   setLobby,
-  setWinningSubmission,
 }: VotingProps) {
   const { user } = useOutletContext<{ user: User | null }>();
   const { connection } = use(RealtimeContext);
@@ -131,16 +129,19 @@ export function Voting({
     function handleEnded(submission: Submission | null) {
       setLobby((prev) => {
         if (!prev) return prev;
-        return { ...prev, state: LobbyState.Ended };
+        return {
+          ...prev,
+          state: LobbyState.Ended,
+          winningSubmissionId: submission?.id ?? "",
+        };
       });
-      setWinningSubmission(submission);
     }
 
     connection.on("Ended", handleEnded);
     return () => {
       connection.off("Ended", handleEnded);
     };
-  }, [connection, setLobby, setWinningSubmission]);
+  }, [connection, setLobby]);
 
   const participation = participants.find((p) => p.user.id === user?.id);
 
