@@ -1,8 +1,10 @@
-import { useState, useEffect, use } from "react";
+import { useState, useEffect, use, useMemo, useCallback } from "react";
+import { useCountdown } from "~/hooks/use-countdown";
 import { useForm } from "@tanstack/react-form";
 import { useDropzone } from "react-dropzone";
 import { RealtimeContext } from "~/contexts";
-import type { RandomCategory } from "~/api/types/category/random-category";
+import type { SoundWithCategory } from "~/api/types/sound/sound-with-category";
+import type { Category } from "~/api/types/category/category";
 import { useUploadUrl, useCreateSubmission } from "~/api/submissions";
 import { validateAudioFile } from "~/lib/audio";
 import { handleDownload } from "~/lib/download";
@@ -13,7 +15,7 @@ import { LobbyState } from "~/api/types/enums/lobby-state";
 
 interface SubmissionProps {
   lobbyId: string;
-  randomCategories: RandomCategory[];
+  sounds: SoundWithCategory[];
   timeLimit: string;
   startedAt?: string;
   setLobby: React.Dispatch<React.SetStateAction<LobbyWithParticipants | null>>;
@@ -22,13 +24,29 @@ interface SubmissionProps {
 
 export function Submission({
   lobbyId,
-  randomCategories,
+  sounds,
   timeLimit,
   startedAt,
   setLobby,
   setSubmissions,
 }: SubmissionProps) {
   const { connection } = use(RealtimeContext);
+  const getUploadUrlMutation = useUploadUrl();
+  const createSubmissionMutation = useCreateSubmission();
+
+  const { minutes, seconds } = useCountdown(timeLimit, startedAt);
+
+  const groupedCategories = useMemo(() => {
+    const soundsByCategoryId = Object.groupBy(
+      sounds.filter((s) => s.category),
+      (s) => s.category.id,
+    );
+    return Object.values(soundsByCategoryId).map((group) => ({
+      category: group![0].category,
+      sounds: group!,
+    }));
+  }, [sounds]);
+
   const form = useForm({
     defaultValues: { file: null as File | null },
     onSubmit: async ({ value }) => {
@@ -56,23 +74,8 @@ export function Submission({
     },
   });
 
-  const parsedSeconds = timeLimit
-    .split(":")
-    .reduce((acc, time) => 60 * acc + +time, 0);
-  const startTime = startedAt ? new Date(startedAt).getTime() : Date.now();
-  const endTime = startTime + parsedSeconds * 1000;
-
-  const [timeLeft, setTimeLeft] = useState(() =>
-    Math.max(0, Math.floor((endTime - Date.now()) / 1000)),
-  );
-
-  useEffect(() => {
-    if (timeLeft <= 0) return;
-    const interval = setInterval(() => {
-      setTimeLeft(Math.max(0, Math.floor((endTime - Date.now()) / 1000)));
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [endTime, timeLeft]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   useEffect(() => {
     if (!connection) return;
@@ -86,6 +89,7 @@ export function Submission({
         return {
           ...prev,
           state: LobbyState.Voting,
+          votingTime: votingTime,
           votingStartedAt: new Date().toISOString(),
         };
       });
@@ -98,92 +102,89 @@ export function Submission({
     };
   }, [connection, setLobby, setSubmissions]);
 
-  const mins = Math.floor(timeLeft / 60)
-    .toString()
-    .padStart(2, "0");
-  const secs = (timeLeft % 60).toString().padStart(2, "0");
-
-  const getUploadUrlMutation = useUploadUrl();
-  const createSubmissionMutation = useCreateSubmission();
-
-  const [isUploading, setIsUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
-
-  async function processFile(file: File) {
-    const validation = await validateAudioFile(file);
-    if (!validation.valid) {
-      alert(validation.error);
-      form.reset();
-      return;
-    }
-    await handleFileUpload(file, validation.durationSeconds);
-  }
-
-  async function handleFileUpload(file: File, durationSeconds: number) {
-    try {
-      setIsUploading(true);
-      setUploadProgress(0);
-      const fileExtension = file.name.split(".").pop() || "";
-      const uploadData = await getUploadUrlMutation.mutateAsync({
-        extension: fileExtension,
-        contentType: file.type,
-      });
-
-      await new Promise<void>((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-
-        xhr.upload.addEventListener("progress", (event) => {
-          if (event.lengthComputable) {
-            setUploadProgress(Math.round((event.loaded / event.total) * 100));
-          }
+  const handleFileUpload = useCallback(
+    async (file: File, durationSeconds: number) => {
+      try {
+        setIsUploading(true);
+        setUploadProgress(0);
+        const fileExtension = file.name.split(".").pop() || "";
+        const uploadData = await getUploadUrlMutation.mutateAsync({
+          extension: fileExtension,
+          contentType: file.type,
         });
-        xhr.addEventListener("load", () => {
-          if (xhr.status >= 200 && xhr.status < 300) {
-            resolve();
-          } else {
-            reject(new Error(`Failed to upload: ${xhr.statusText}`));
-          }
+
+        await new Promise<void>((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+
+          xhr.upload.addEventListener("progress", (event) => {
+            if (event.lengthComputable) {
+              setUploadProgress(Math.round((event.loaded / event.total) * 100));
+            }
+          });
+          xhr.addEventListener("load", () => {
+            if (xhr.status >= 200 && xhr.status < 300) {
+              resolve();
+            } else {
+              reject(new Error(`Failed to upload: ${xhr.statusText}`));
+            }
+          });
+          xhr.addEventListener("error", () =>
+            reject(new Error("Network Error")),
+          );
+
+          xhr.open("PUT", uploadData.uploadUrl, true);
+          xhr.setRequestHeader("Content-Type", file.type);
+          xhr.send(file);
         });
-        xhr.addEventListener("error", () => reject(new Error("Network Error")));
 
-        xhr.open("PUT", uploadData.uploadUrl, true);
-        xhr.setRequestHeader("Content-Type", file.type);
-        xhr.send(file);
-      });
+        setUploadProgress(100);
 
-      setUploadProgress(100);
+        await createSubmissionMutation.mutateAsync({
+          lobbyId,
+          value: uploadData.fileKey,
+          durationSeconds,
+        });
 
-      await createSubmissionMutation.mutateAsync({
-        lobbyId,
-        value: uploadData.fileKey,
-        durationSeconds,
-      });
+        form.reset();
+      } catch (err) {
+        console.error("Submission failed", err);
+      } finally {
+        setIsUploading(false);
+      }
+    },
+    [getUploadUrlMutation, createSubmissionMutation, lobbyId, form],
+  );
 
-      form.reset();
-    } catch (err) {
-      console.error("Submission failed", err);
-    } finally {
-      setIsUploading(false);
-    }
-  }
+  const processFile = useCallback(
+    async (file: File) => {
+      const validation = await validateAudioFile(file);
+      if (!validation.valid) {
+        alert(validation.error);
+        form.reset();
+        return;
+      }
+      await handleFileUpload(file, validation.durationSeconds);
+    },
+    [form, handleFileUpload],
+  );
 
   return (
     <div className="flex flex-col gap-6">
       <div className="text-2xl font-mono font-bold text-yellow-400 tracking-wider">
-        {mins}:{secs}
+        {minutes}:{seconds}
       </div>
 
       <div className="bg-white/5 p-4 rounded border border-white/10">
         <h3 className="font-bold mb-4">Categories</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {randomCategories.map((rc) => (
+          {groupedCategories.map((gc) => (
             <div
-              key={rc.id}
+              key={gc.category.id}
               className="bg-white/10 p-3 rounded flex flex-col gap-2"
             >
-              <span className="font-semibold text-sm">{rc.name}</span>
+              <span className="font-semibold text-sm">{gc.category.name}</span>
               <ul className="text-xs text-gray-300 flex flex-col gap-1">
-                {rc.sounds.map((s) => (
+                {gc.sounds.map((s) => (
                   <li key={s.id} className="flex justify-between items-center">
                     <span className="truncate pr-2">{s.value}</span>
                     <div className="flex items-center gap-2">

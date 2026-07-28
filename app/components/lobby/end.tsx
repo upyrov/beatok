@@ -16,8 +16,9 @@ export function End({ winningSubmission, participants }: EndProps) {
           <p>
             User{" "}
             {
-              participants.find((p) => p.user.id === winningSubmission.userId)
-                ?.user.name
+              participants.find(
+                (p) => p.id === winningSubmission.participationId,
+              )?.user.name
             }{" "}
             won with this submission:
           </p>

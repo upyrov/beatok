@@ -6,7 +6,7 @@ import type { LobbyWithParticipants } from "~/api/types/lobby/lobby-with-partici
 import { useJoinLobby } from "~/api/lobbies";
 import type { User } from "~/api/types/user/user";
 import { LoadingFallback } from "~/components/loading";
-import type { RandomCategory } from "~/api/types/category/random-category";
+import type { SoundWithCategory } from "~/api/types/sound/sound-with-category";
 import type { Submission as SubmissionType } from "~/api/types/submission/submission";
 import {
   Chat,
@@ -27,9 +27,7 @@ export default function Lobby() {
   const { user } = useOutletContext<{ user: User | null }>();
 
   const [lobby, setLobby] = useState<LobbyWithParticipants | null>(null);
-  const [randomCategories, setRandomCategories] = useState<RandomCategory[]>(
-    [],
-  );
+  const [sounds, setSounds] = useState<SoundWithCategory[]>([]);
   const [submissions, setSubmissions] = useState<SubmissionType[]>([]);
   const [winningSubmission, setWinningSubmission] =
     useState<SubmissionType | null>(null);
@@ -45,6 +43,11 @@ export default function Lobby() {
     onSuccess(joinedLobby) {
       if (joinedLobby) {
         setLobby(joinedLobby);
+        if (joinedLobby.sounds) setSounds(joinedLobby.sounds);
+        if (joinedLobby.submissions) setSubmissions(joinedLobby.submissions);
+        if (joinedLobby.winningSubmissionId && joinedLobby.submissions) {
+          setWinningSubmission(joinedLobby.submissions.find(s => s.id === joinedLobby.winningSubmissionId) || null);
+        }
       }
     },
     onError(err) {
@@ -104,13 +107,13 @@ export default function Lobby() {
                 isOwner={user?.id === lobby.ownerId}
                 participants={lobby.participants}
                 setLobby={setLobby}
-                setRandomCategories={setRandomCategories}
+                setSounds={setSounds}
               />
             )}
             {lobby.state === LobbyState.Submitting && (
               <Submission
                 lobbyId={lobby.id}
-                randomCategories={randomCategories}
+                sounds={sounds}
                 timeLimit={lobby.submissionTime}
                 startedAt={lobby.submissionStartedAt}
                 setLobby={setLobby}
@@ -122,6 +125,8 @@ export default function Lobby() {
                 lobbyId={lobby.id}
                 submissions={submissions}
                 participants={lobby.participants}
+                timeLimit={lobby.votingTime}
+                startedAt={lobby.votingStartedAt}
                 setLobby={setLobby}
                 setWinningSubmission={setWinningSubmission}
               />

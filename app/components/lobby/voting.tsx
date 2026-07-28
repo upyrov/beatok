@@ -1,4 +1,5 @@
 import { useState, useEffect, use } from "react";
+import { useCountdown } from "~/hooks/use-countdown";
 import { RealtimeContext } from "~/contexts";
 import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
@@ -101,6 +102,8 @@ interface VotingProps {
   lobbyId: string;
   submissions: Submission[];
   participants: Participation[];
+  timeLimit: string;
+  startedAt?: string;
   setLobby: React.Dispatch<React.SetStateAction<LobbyWithParticipants | null>>;
   setWinningSubmission: React.Dispatch<React.SetStateAction<Submission | null>>;
 }
@@ -109,11 +112,14 @@ export function Voting({
   lobbyId,
   submissions,
   participants,
+  timeLimit,
+  startedAt,
   setLobby,
   setWinningSubmission,
 }: VotingProps) {
   const { user } = useOutletContext<{ user: User | null }>();
   const { connection } = use(RealtimeContext);
+  const { minutes, seconds } = useCountdown(timeLimit, startedAt);
 
   const [votedSubmissionId, setVotedSubmissionId] = useState<string | null>(
     null,
@@ -136,21 +142,26 @@ export function Voting({
     };
   }, [connection, setLobby, setWinningSubmission]);
 
-  const safeSubmissions = Array.isArray(submissions) ? submissions : [];
+  const participation = participants.find((p) => p.user.id === user?.id);
 
+  const safeSubmissions = Array.isArray(submissions) ? submissions : [];
   const displayedSubmissions = votedSubmissionId
     ? safeSubmissions.filter((s) => s.id === votedSubmissionId)
-    : safeSubmissions.filter((s) => s.userId !== user?.id);
+    : safeSubmissions.filter((s) => s.participationId !== participation?.id);
 
   return (
-    <div>
-      <h2 className="text-xl font-bold mb-4">Voting state</h2>
+    <div className="flex flex-col gap-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-bold">Voting state</h2>
+        <div className="text-2xl font-mono font-bold text-yellow-400 tracking-wider">
+          {minutes}:{seconds}
+        </div>
+      </div>
       <ul className="space-y-4">
         {displayedSubmissions.map((s) => (
           <li key={s.id} className="bg-white/5 p-4 rounded flex flex-col gap-4">
             <div className="font-semibold text-lg">
-              Submission by{" "}
-              {participants.find((p) => p.user.id === s.userId)!.user.name}
+              Submission by {participation?.user.name}
             </div>
             <audio src={s.value} controls className="w-full" />
             <div className="border-t border-white/10 pt-4 mt-2">
@@ -160,7 +171,7 @@ export function Voting({
               <VoteForm
                 submissionId={s.id}
                 lobbyId={lobbyId}
-                isOwnTrack={s.userId === user?.id}
+                isOwnTrack={s.participationId === participation?.id}
                 onVote={() => setVotedSubmissionId(s.id)}
               />
             </div>
