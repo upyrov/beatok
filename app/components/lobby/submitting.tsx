@@ -97,7 +97,7 @@ export function Submitting() {
 
       <div className="bg-white/5 p-4 rounded border border-white/10">
         <h3 className="font-bold mb-4">Categories</h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {groupedCategories.map((gc) => (
             <div
               key={gc.category.id}

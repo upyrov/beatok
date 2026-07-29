@@ -3,7 +3,9 @@ import { handleApiError } from "./api-client";
 export async function handleDownload(url: string, filename: string) {
   try {
     const response = await fetch(url, { cache: "no-store" });
-    await handleApiError(response);
+    if (!response.ok) {
+      await handleApiError(response);
+    }
 
     const blob = await response.blob();
     const blobUrl = URL.createObjectURL(blob);
