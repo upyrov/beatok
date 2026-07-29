@@ -1,3 +1,5 @@
+import { CgSpinner } from "react-icons/cg";
+
 export interface SpinnerProps {
   size?: "sm" | "md" | "lg" | "xl" | number;
   className?: string;
@@ -17,18 +19,13 @@ export function Spinner({
   label = "Loading",
 }: SpinnerProps) {
   const pixelSize = typeof size === "number" ? size : sizeMap[size];
-  const borderWidth = Math.max(2, Math.floor(pixelSize / 10));
 
   return (
-    <div
+    <CgSpinner
       role="status"
       aria-label={label}
-      className={`animate-spin inline-block rounded-full border-current border-r-transparent ${className}`}
-      style={{
-        width: pixelSize,
-        height: pixelSize,
-        borderWidth,
-      }}
+      size={pixelSize}
+      className={`animate-spin ${className}`}
     />
   );
 }

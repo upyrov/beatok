@@ -148,12 +148,11 @@ export function FileDropzone({
               </div>
 
               {upload.status !== "success" && upload.status !== "error" && (
-                <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
-                  <div
-                    className="bg-blue-500 h-full transition-all duration-200"
-                    style={{ width: `${upload.progress}%` }}
-                  />
-                </div>
+                <progress
+                  value={upload.progress}
+                  max="100"
+                  className="w-full h-2 rounded-full overflow-hidden appearance-none bg-white/10 [&::-webkit-progress-bar]:bg-white/10 [&::-webkit-progress-value]:bg-blue-500 [&::-moz-progress-bar]:bg-blue-500 transition-all duration-200"
+                />
               )}
               {upload.status === "error" && (
                 <p className="text-xs text-red-400">{upload.error}</p>

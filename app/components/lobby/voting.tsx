@@ -1,14 +1,13 @@
-import { useState, useEffect, use } from "react";
+import { useState, use } from "react";
 import { useCountdown } from "~/hooks/use-countdown";
-import { RealtimeContext } from "~/contexts";
 import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
 import { useVote } from "~/api/lobbies";
 import { MutationBoundary } from "~/components/error/mutation-boundary";
 import { LoadingButton } from "~/components/loading";
+import { AudioPlayer } from "~/components/audio-player";
 import { useOutletContext } from "react-router";
 import { LobbyContext } from "~/contexts";
-import { LobbyState } from "~/api/types/enums/lobby-state";
 import type { User } from "~/api/types/user/user";
 
 function VoteForm({
@@ -79,7 +78,9 @@ function VoteForm({
               onChange={(e) => field.handleChange(Number(e.target.value))}
               className="w-32 accent-blue-500"
             />
-            <span className="font-mono font-medium w-4 text-center">{field.state.value}</span>
+            <span className="font-mono font-medium w-4 text-center">
+              {field.state.value}
+            </span>
           </div>
         )}
       />
@@ -141,7 +142,7 @@ export function Voting() {
                   ?.user.name
               }
             </div>
-            <audio src={s.value} controls className="w-full" />
+            <AudioPlayer src={s.value} className="w-full" />
             <div className="border-t border-white/10 pt-4 mt-2">
               <p className="text-sm text-gray-400 mb-2">
                 Rate this submission:

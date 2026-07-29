@@ -4,6 +4,7 @@ import type { Route } from "./+types/admin";
 import { UserRole } from "~/api/types/enums/user-role";
 import type { User } from "~/api/types/user/user";
 import { Kits } from "~/components/kits";
+import { Genres } from "~/components/genres";
 import { getQueryClient } from "~/lib/query-client";
 import { genresQueryOptions } from "~/api/genres";
 import { kitsQueryOptions } from "~/api/kits";
@@ -31,24 +32,31 @@ export default function Admin() {
 
   return (
     user && (
-      <div className="container mx-auto p-4 md:p-8 max-w-4xl min-h-screen flex flex-col gap-8">
-        <header className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-            <p className="text-white/60 mt-1">
-              Manage kits, categories, and sounds
+      <div className="container mx-auto p-8 flex flex-col gap-8 max-w-7xl">
+        <header className="flex justify-between items-center bg-white/5 p-6 rounded-2xl border border-white/10 backdrop-blur-sm">
+          <div className="flex flex-col gap-1">
+            <h1 className="text-3xl font-bold bg-linear-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
+              Admin Dashboard
+            </h1>
+            <p className="text-gray-400 font-medium">
+              Manage kits, categories, sounds, and genres
             </p>
           </div>
           <Link
             to="/"
-            className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+            className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors font-medium text-sm"
           >
             Back to App
           </Link>
         </header>
 
-        <div className="flex-1">
-          <Kits />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+            <Genres />
+          </div>
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+            <Kits />
+          </div>
         </div>
       </div>
     )

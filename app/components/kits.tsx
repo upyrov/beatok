@@ -1,13 +1,27 @@
 import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
-import { useKits, useCreateKit, useDeleteKit } from "~/api/kits";
+import {
+  useKits,
+  useCreateKit,
+  useDeleteKit,
+  useUpdateKitName,
+} from "~/api/kits";
 import { useGenres } from "~/api/genres";
 import { QueryBoundary } from "./error/query-boundary";
 import { LoadingButton } from "./loading";
 import type { Kit } from "~/api/types/kit/kit";
 import { Categories } from "./category/categories";
 import { FieldError, MutationBoundary } from "./error";
+import {
+  CgChevronDown,
+  CgChevronUp,
+  CgTrash,
+  CgPen,
+  CgCheck,
+  CgClose,
+  CgAdd,
+} from "react-icons/cg";
 
 export function Kits() {
   const kitsQuery = useKits();
@@ -31,8 +45,8 @@ export function Kits() {
 
   return (
     <div className="flex flex-col gap-6 flex-1">
-      <div className="bg-white/5 border border-white/10 rounded-xl p-4">
-        <h2 className="text-lg font-semibold mb-3">Create New Kit</h2>
+      <div>
+        <h2>Create New Kit</h2>
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -51,7 +65,7 @@ export function Kits() {
                 <div className="flex gap-2">
                   <input
                     name={field.name}
-                    className="flex-1 bg-black/20 border border-white/10 rounded px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+                    className="flex-1"
                     placeholder="Kit name..."
                     value={field.state.value}
                     onBlur={field.handleBlur}
@@ -62,11 +76,10 @@ export function Kits() {
                     children={([canSubmit, isSubmitting]) => (
                       <LoadingButton
                         type="submit"
-                        className="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded text-sm font-medium transition-colors"
                         disabled={!canSubmit}
                         isPending={isSubmitting || createMutation.isPending}
                       >
-                        Add Kit
+                        <CgAdd />
                       </LoadingButton>
                     )}
                   />
@@ -82,9 +95,7 @@ export function Kits() {
               <>
                 {genres.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
-                    <span className="text-sm text-white/60 mr-2 flex items-center">
-                      Genres:
-                    </span>
+                    <span className="flex items-center">Genres:</span>
                     {genres.map((genre) => {
                       const isSelected = field.state.value.includes(genre.id);
                       return (
@@ -99,11 +110,7 @@ export function Kits() {
                                 : [...prev, genre.id],
                             );
                           }}
-                          className={`px-3 py-1 text-xs rounded-full border transition-colors ${
-                            isSelected
-                              ? "bg-blue-500/20 border-blue-500/50 text-blue-200"
-                              : "bg-black/20 border-white/10 text-white/60 hover:bg-white/10"
-                          }`}
+                          className={isSelected ? "font-bold" : ""}
                         >
                           {genre.name}
                         </button>
@@ -111,9 +118,7 @@ export function Kits() {
                     })}
                   </div>
                 ) : (
-                  <p className="text-xs text-white/40">
-                    No genres available to select.
-                  </p>
+                  <p>No genres available to select.</p>
                 )}
               </>
             )}
@@ -123,10 +128,8 @@ export function Kits() {
         </form>
       </div>
 
-      <div className="space-y-4">
-        <h2 className="text-xl font-semibold border-b border-white/10 pb-2">
-          All Kits
-        </h2>
+      <div className="flex flex-col gap-4">
+        <h2>All Kits</h2>
         <QueryBoundary query={kitsQuery}>
           {(kits) => (
             <div className="flex flex-col gap-4">
@@ -137,11 +140,7 @@ export function Kits() {
                   onDelete={() => deleteMutation.mutate(kit.id)}
                 />
               ))}
-              {kits.length === 0 && (
-                <p className="text-white/50 text-center py-8">
-                  No kits found. Create one above!
-                </p>
-              )}
+              {kits.length === 0 && <p>No kits found. Create one above!</p>}
             </div>
           )}
         </QueryBoundary>
@@ -152,28 +151,80 @@ export function Kits() {
 
 function KitItem({ kit, onDelete }: { kit: Kit; onDelete: () => void }) {
   const [showCategories, setShowCategories] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editName, setEditName] = useState(kit.name);
+  const updateMutation = useUpdateKitName();
+
+  const handleUpdate = () => {
+    if (!editName.trim() || editName === kit.name) {
+      setIsEditing(false);
+      setEditName(kit.name);
+      return;
+    }
+    updateMutation.mutate(
+      {
+        id: kit.id,
+        data: { name: editName, genreIds: kit.genres?.map((g) => g.id) || [] },
+      },
+      { onSuccess: () => setIsEditing(false) },
+    );
+  };
 
   return (
-    <div className="border border-white/10 rounded-xl bg-black/20 overflow-hidden">
-      <div className="flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 transition-colors">
-        <div className="flex flex-col">
-          <span className="font-bold text-lg">{kit.name}</span>
-          {kit.genres?.length && (
-            <span className="text-xs text-black mt-1">
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center justify-between">
+        <div className="flex flex-col flex-1 mr-4">
+          {isEditing ? (
+            <div className="flex items-center gap-2">
+              <input
+                className="bg-gray-50 px-2 py-1 rounded border border-gray-300 text-gray-900 w-full max-w-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+                autoFocus
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleUpdate();
+                  if (e.key === "Escape") {
+                    setIsEditing(false);
+                    setEditName(kit.name);
+                  }
+                }}
+              />
+              <button
+                onClick={handleUpdate}
+                className="text-green-400 hover:text-green-300"
+              >
+                <CgCheck />
+              </button>
+              <button
+                onClick={() => {
+                  setIsEditing(false);
+                  setEditName(kit.name);
+                }}
+                className="text-red-400 hover:text-red-300"
+              >
+                <CgClose />
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <span>{kit.name}</span>
+              <button
+                onClick={() => setIsEditing(true)}
+                className="text-gray-500 hover:text-gray-900"
+              >
+                <CgPen />
+              </button>
+            </div>
+          )}
+          {kit.genres?.length > 0 && !isEditing && (
+            <span className="text-sm text-gray-500">
               Genres: {kit.genres.map((g) => g.name).join(", ")}
             </span>
           )}
         </div>
         <div className="flex gap-2 items-center">
-          <button
-            onClick={() => setShowCategories(!showCategories)}
-            className={`px-3 py-1.5 rounded text-sm transition-colors font-medium border ${
-              showCategories
-                ? "bg-blue-500/20 text-blue-300 border-blue-500/30"
-                : "bg-white/10 text-white border-transparent hover:bg-white/20"
-            }`}
-          >
-            {showCategories ? "Hide Categories" : "Fetch Categories"}
+          <button onClick={() => setShowCategories(!showCategories)}>
+            {showCategories ? <CgChevronUp /> : <CgChevronDown />}
           </button>
           <button
             onClick={(e) => {
@@ -181,15 +232,14 @@ function KitItem({ kit, onDelete }: { kit: Kit; onDelete: () => void }) {
               if (confirm(`Are you sure you want to delete kit "${kit.name}"?`))
                 onDelete();
             }}
-            className="text-red-400 hover:bg-red-400/20 px-3 py-1.5 rounded text-sm transition-colors"
           >
-            Delete
+            <CgTrash />
           </button>
         </div>
       </div>
 
       {showCategories && (
-        <div className="p-4 border-t border-white/10 bg-black/40">
+        <div>
           <Categories kitId={kit.id} />
         </div>
       )}

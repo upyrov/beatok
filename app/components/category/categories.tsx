@@ -9,6 +9,7 @@ import { QueryBoundary } from "../error/query-boundary";
 import { LoadingButton } from "../loading";
 import { FieldError, MutationBoundary } from "../error";
 import { CategoryItem } from "./category-item";
+import { CgAdd } from "react-icons/cg";
 
 export function Categories({ kitId }: { kitId: string }) {
   const categoriesQuery = useCategories(kitId);
@@ -43,7 +44,7 @@ export function Categories({ kitId }: { kitId: string }) {
               <div className="flex gap-2">
                 <input
                   name={field.name}
-                  className="flex-1 bg-black/20 border border-white/10 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-blue-500"
+                  className="flex-1"
                   placeholder="New category name..."
                   value={field.state.value}
                   onBlur={field.handleBlur}
@@ -54,11 +55,10 @@ export function Categories({ kitId }: { kitId: string }) {
                   children={([canSubmit, isSubmitting]) => (
                     <LoadingButton
                       type="submit"
-                      className="bg-white/10 hover:bg-white/20 px-4 py-1.5 rounded text-sm transition-colors"
                       disabled={!canSubmit}
                       isPending={isSubmitting || createMutation.isPending}
                     >
-                      Add Category
+                      <CgAdd />
                     </LoadingButton>
                   )}
                 />
@@ -81,11 +81,7 @@ export function Categories({ kitId }: { kitId: string }) {
                   onDelete={() => deleteMutation.mutate(cat.id)}
                 />
               ))}
-              {categories.length === 0 && (
-                <p className="text-white/40 text-sm text-center py-4">
-                  No categories found
-                </p>
-              )}
+              {categories.length === 0 && <p>No categories found</p>}
             </div>
           )}
         </QueryBoundary>

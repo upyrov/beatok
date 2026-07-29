@@ -1,6 +1,7 @@
 import { use, useMemo, useEffect } from "react";
 import { useCountdown } from "~/hooks/use-countdown";
 import { FileDropzone } from "~/components/file-dropzone";
+import { AudioPlayer } from "~/components/audio-player";
 import { RealtimeContext } from "~/contexts";
 import { useUploadUrl, useCreateSubmission } from "~/api/submissions";
 import { validateAudioFile } from "~/lib/audio";
@@ -108,7 +109,7 @@ export function Submitting() {
                   <li key={s.id} className="flex justify-between items-center">
                     <span className="truncate pr-2">{s.value}</span>
                     <div className="flex items-center gap-2">
-                      <audio controls src={s.value} className="h-8 flex-1" />
+                      <AudioPlayer src={s.value} className="flex-1" />
                       <button
                         onClick={(e) => {
                           e.preventDefault();
