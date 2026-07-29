@@ -68,15 +68,19 @@ function VoteForm({
           onChange: type("1 <= number <= 10"),
         }}
         children={(field) => (
-          <input
-            type="number"
-            min="1"
-            max="10"
-            value={field.state.value}
-            onBlur={field.handleBlur}
-            onChange={(e) => field.handleChange(Number(e.target.value))}
-            className="w-16 bg-white/10 border border-white/20 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-white/20 text-white"
-          />
+          <div className="flex items-center gap-3">
+            <input
+              type="range"
+              min="1"
+              max="10"
+              step="1"
+              value={field.state.value}
+              onBlur={field.handleBlur}
+              onChange={(e) => field.handleChange(Number(e.target.value))}
+              className="w-32 accent-blue-500"
+            />
+            <span className="font-mono font-medium w-4 text-center">{field.state.value}</span>
+          </div>
         )}
       />
       <MutationBoundary mutation={voteMutation}>
