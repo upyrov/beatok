@@ -99,9 +99,8 @@ function VoteForm({
 }
 
 export function Voting() {
-  const { lobby, setLobby } = use(LobbyContext);
+  const { lobby } = use(LobbyContext);
   const { user } = useOutletContext<{ user: User | null }>();
-  const { connection } = use(RealtimeContext);
   const { minutes, seconds } = useCountdown(
     lobby?.votingTime ?? "00:00:00",
     lobby?.votingStartedAt,
@@ -110,26 +109,6 @@ export function Voting() {
   const [votedSubmissionId, setVotedSubmissionId] = useState<string | null>(
     null,
   );
-
-  useEffect(() => {
-    if (!connection) return;
-
-    function handleEnded(submissionId: string | null) {
-      setLobby((prev) => {
-        if (!prev) return prev;
-        return {
-          ...prev,
-          state: LobbyState.Ended,
-          winningSubmissionId: prev.winningSubmissionId ?? submissionId,
-        };
-      });
-    }
-
-    connection.on("Ended", handleEnded);
-    return () => {
-      connection.off("Ended", handleEnded);
-    };
-  }, [connection, setLobby]);
 
   const participation = lobby?.participants.find((p) => p.user.id === user?.id);
 

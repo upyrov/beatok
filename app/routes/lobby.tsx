@@ -51,6 +51,26 @@ export default function Lobby() {
     }
   }, [connection, id, lobby]);
 
+  useEffect(() => {
+    if (!connection) return;
+
+    function handleEnded(submissionId: string | null) {
+      setLobby((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          state: LobbyState.Ended,
+          winningSubmissionId: prev.winningSubmissionId ?? submissionId,
+        };
+      });
+    }
+
+    connection.on("Ended", handleEnded);
+    return () => {
+      connection.off("Ended", handleEnded);
+    };
+  }, [connection, setLobby]);
+
   const StateView =
     lobby &&
     {
