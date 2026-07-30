@@ -16,14 +16,12 @@ export function LobbyCard({ lobby }: LobbyCardProps) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex justify-between items-start">
-        <div>
+      <div>
+        <span className="text-sm">{lobby.owner.name}</span>
+        <div className="flex justify-between items-start">
           <h3>{lobby.name}</h3>
-          <p>
-            Host: <span>{lobby.owner.name}</span>
-          </p>
+          <span>{lobby.genre.name}</span>
         </div>
-        <span>{lobby.genre.name}</span>
       </div>
 
       <div className="grow">

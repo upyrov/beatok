@@ -18,6 +18,9 @@ export async function clientLoader() {
   await getQueryClient().prefetchQuery(lobbiesQueryOptions());
 }
 
+const CR_BUTTON_CLASSES =
+  "px-4 py-1.5 h-auto min-h-[28px] bg-linear-to-b from-[#5c656d] to-[#495158] hover:from-[#656e76] hover:to-[#515961] active:from-[#434a51] active:to-[#3e444a] border border-[#2b3035] rounded text-[#e0e4e8] text-[13px] font-medium flex items-center justify-center cursor-pointer shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_1px_2px_rgba(0,0,0,0.3)] active:shadow-[inset_0_1px_3px_rgba(0,0,0,0.4)] transition-colors duration-100";
+
 export default function Home() {
   const lobbiesQuery = useLobbies();
   const { user } = useOutletContext<{ user: User | null }>();
@@ -30,30 +33,26 @@ export default function Home() {
           <h1>Beatok</h1>
           <p className="mt-2">Find your perfect beat making session</p>
         </div>
-        {user?.name ? (
-          <>
-            <span>{user.name}</span>{" "}
-            <Link
-              to="/create-lobby"
-              className="px-4 py-2 bg-gray-200 hover:bg-gray-300"
-            >
-              Create Lobby
+        <div className="flex items-center gap-3">
+          {user?.name ? (
+            <>
+              <span>{user.name}</span>{" "}
+              <Link to="/create-lobby" className={CR_BUTTON_CLASSES}>
+                Create Lobby
+              </Link>
+              <button
+                onClick={() => signOutMutation.mutate()}
+                className={CR_BUTTON_CLASSES}
+              >
+                Sign out
+              </button>
+            </>
+          ) : (
+            <Link to="/signin" className={CR_BUTTON_CLASSES}>
+              Sign in
             </Link>
-            <button
-              onClick={() => signOutMutation.mutate()}
-              className="px-4 py-2 bg-gray-200 hover:bg-gray-300"
-            >
-              Sign out
-            </button>
-          </>
-        ) : (
-          <Link
-            to="/signin"
-            className="px-4 py-2 bg-gray-200 hover:bg-gray-300"
-          >
-            Sign in
-          </Link>
-        )}
+          )}
+        </div>
       </header>
 
       <section>
@@ -67,15 +66,15 @@ export default function Home() {
               {lobbies.map((lobby) => (
                 <div
                   key={lobby.id}
-                  className="flex flex-col border border-white/10 rounded-xl p-5 bg-white/5"
+                  className="flex flex-col border border-gray-200 rounded-xl p-5 bg-white shadow-sm"
                 >
                   <LobbyCard lobby={lobby} />
                   <div className="mt-6">
                     <Link
                       to={`/lobbies/${lobby.id}`}
-                      className="w-full flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 py-2 rounded-lg transition-colors"
+                      className={`w-full ${CR_BUTTON_CLASSES}`}
                     >
-                      Join Lobby
+                      Join
                     </Link>
                   </div>
                 </div>
@@ -83,7 +82,9 @@ export default function Home() {
               {lobbies.length === 0 && (
                 <div className="col-span-full py-12 text-center">
                   <p>No active lobbies found</p>
-                  <p className="mt-1">Check back later or create your own</p>
+                  <p className="mt-1 text-gray-500">
+                    Check back later or create your own
+                  </p>
                 </div>
               )}
             </div>

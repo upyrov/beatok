@@ -7,6 +7,7 @@ import { LobbyContext, RealtimeContext } from "~/contexts";
 import { useOutletContext } from "react-router";
 import type { User } from "~/api/types/user/user";
 import type { SoundWithCategory } from "~/api/types/sound/sound-with-category";
+import type { Participation } from "~/api/types/participation";
 
 export function Waiting() {
   const { lobby, setLobby } = use(LobbyContext);
@@ -33,10 +34,45 @@ export function Waiting() {
       });
     }
 
+    function handleParticipantJoined(p: Participation) {
+      setLobby((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          participants: [...prev.participants, p],
+        };
+      });
+    }
+
+    function handleOwnerChanged(ownerId: string) {
+      setLobby((prev) => {
+        if (!prev) return prev;
+        return { ...prev, ownerId };
+      });
+    }
+
+    function handleParticipantDisconnected(userId: string) {
+      setLobby((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          participants: prev.participants.map((p) =>
+            p.user.id === userId ? { ...p, isConnected: false } : p,
+          ),
+        };
+      });
+    }
+
     connection.on("Started", handleStarted);
+    connection.on("ParticipantJoined", handleParticipantJoined);
+    connection.on("OwnerChanged", handleOwnerChanged);
+    connection.on("ParticipantDisconnected", handleParticipantDisconnected);
 
     return () => {
       connection.off("Started", handleStarted);
+      connection.off("ParticipantJoined", handleParticipantJoined);
+      connection.off("OwnerChanged", handleOwnerChanged);
+      connection.off("ParticipantDisconnected", handleParticipantDisconnected);
     };
   }, [connection, setLobby]);
 

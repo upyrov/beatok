@@ -1,6 +1,5 @@
 import { useEffect, use } from "react";
 import { RealtimeContext } from "~/contexts";
-import type { Participation } from "~/api/types/participation";
 import { useOutletContext } from "react-router";
 import type { User } from "~/api/types/user/user";
 import { LobbyContext } from "~/contexts";
@@ -12,16 +11,6 @@ export function ParticipantList() {
 
   useEffect(() => {
     if (!connection) return;
-
-    function handleParticipantJoined(p: Participation) {
-      setLobby((prev) => {
-        if (!prev) return prev;
-        return {
-          ...prev,
-          participants: [...prev.participants, p],
-        };
-      });
-    }
 
     function handleParticipantConnected(userId: string) {
       setLobby((prev) => {
@@ -45,37 +34,12 @@ export function ParticipantList() {
       });
     }
 
-    function handleParticipantDisconnected(userId: string) {
-      setLobby((prev) => {
-        if (!prev) return prev;
-        return {
-          ...prev,
-          participants: prev.participants.map((p) =>
-            p.user.id === userId ? { ...p, isConnected: false } : p,
-          ),
-        };
-      });
-    }
-
-    function handleOwnerChanged(ownerId: string) {
-      setLobby((prev) => {
-        if (!prev) return prev;
-        return { ...prev, ownerId };
-      });
-    }
-
-    connection.on("ParticipantJoined", handleParticipantJoined);
     connection.on("ParticipantRejoined", handleParticipantConnected);
     connection.on("ParticipantLeft", handleParticipantLeft);
-    connection.on("ParticipantDisconnected", handleParticipantDisconnected);
-    connection.on("OwnerChanged", handleOwnerChanged);
 
     return () => {
-      connection.off("ParticipantJoined", handleParticipantJoined);
       connection.off("ParticipantRejoined", handleParticipantConnected);
       connection.off("ParticipantLeft", handleParticipantLeft);
-      connection.off("ParticipantDisconnected", handleParticipantDisconnected);
-      connection.off("OwnerChanged", handleOwnerChanged);
     };
   }, [connection, setLobby]);
 

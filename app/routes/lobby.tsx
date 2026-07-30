@@ -25,7 +25,7 @@ export default function Lobby() {
   const [lobby, setLobby] = useState<LobbyWithParticipants | null>(null);
 
   const joinLobbyMutation = useJoinLobby();
-  const joinRealtimeMutation = useMutation({
+  const joinLobbyRealtimeMutation = useMutation({
     mutationFn() {
       if (!connection) throw new Error("No connection");
       return connection.invoke<LobbyWithParticipants>("Join", id);
@@ -46,7 +46,7 @@ export default function Lobby() {
     if (connection && id && !lobby) {
       joinLobbyMutation
         .mutateAsync(id)
-        .then(() => joinRealtimeMutation.mutate())
+        .then(() => joinLobbyRealtimeMutation.mutate())
         .catch(() => navigate("/"));
     }
   }, [connection, id, lobby]);
