@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useOutletContext, Link, useNavigate } from "react-router";
 import type { Route } from "./+types/admin";
 import { UserRole } from "~/api/types/enums/user-role";
@@ -8,7 +8,6 @@ import { Genres } from "~/components/genres";
 import { getQueryClient } from "~/lib/query-client";
 import { genresQueryOptions } from "~/api/genres";
 import { kitsQueryOptions } from "~/api/kits";
-import { Header } from "~/components/header";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Beatok | Admin" }];
@@ -34,7 +33,6 @@ export default function Admin() {
   return (
     user && (
       <>
-        <Header />
         <div className="container mx-auto p-8 flex flex-col gap-8 max-w-7xl">
           <header className="flex justify-between items-center bg-white/5 p-6 rounded-2xl border border-white/10 backdrop-blur-sm">
             <div className="flex flex-col gap-1">
