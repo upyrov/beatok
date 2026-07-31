@@ -8,7 +8,7 @@ import { validateAudioFile } from "~/lib/audio";
 import { uploadFile } from "~/lib/upload";
 import { handleDownload } from "~/lib/download";
 import { MutationBoundary } from "~/components/error/mutation-boundary";
-import type { User } from "~/api/types/user/user";
+import type { Me } from "~/api/types/user/me";
 import type { Submission as SubmissionType } from "~/api/types/submission/submission";
 import { LobbyState } from "~/api/types/enums/lobby-state";
 import { useOutletContext } from "react-router";
@@ -17,7 +17,7 @@ import { LobbyContext } from "~/contexts";
 export function Submitting() {
   const { lobby, setLobby } = use(LobbyContext);
   const { connection } = use(RealtimeContext);
-  const { user } = useOutletContext<{ user: User | null }>();
+  const { user } = useOutletContext<{ user: Me | null }>();
   const participation = lobby?.participants.find((p) => p.user.id === user?.id);
   const getUploadUrlMutation = useUploadUrl();
   const createSubmissionMutation = useCreateSubmission();

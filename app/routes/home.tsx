@@ -4,8 +4,6 @@ import { useLobbies, lobbiesQueryOptions } from "~/api/lobbies";
 import { LobbyCard } from "~/components/lobby-card";
 import { QueryBoundary } from "~/components/error/query-boundary";
 import { getQueryClient } from "~/lib/query-client";
-import type { User } from "~/api/types/user/user";
-import { useSignOut } from "~/api/auth";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -23,41 +21,12 @@ const CR_BUTTON_CLASSES =
 
 export default function Home() {
   const lobbiesQuery = useLobbies();
-  const { user } = useOutletContext<{ user: User | null }>();
-  const signOutMutation = useSignOut();
 
   return (
-    <main className="container mx-auto p-4 md:p-8 space-y-8 max-w-7xl min-h-screen">
-      <header className="flex justify-between items-center p-6">
-        <div>
-          <h1>Beatok</h1>
-          <p className="mt-2">Find your perfect beat making session</p>
-        </div>
-        <div className="flex items-center gap-3">
-          {user?.name ? (
-            <>
-              <span>{user.name}</span>{" "}
-              <Link to="/create-lobby" className={CR_BUTTON_CLASSES}>
-                Create Lobby
-              </Link>
-              <button
-                onClick={() => signOutMutation.mutate()}
-                className={CR_BUTTON_CLASSES}
-              >
-                Sign out
-              </button>
-            </>
-          ) : (
-            <Link to="/signin" className={CR_BUTTON_CLASSES}>
-              Sign in
-            </Link>
-          )}
-        </div>
-      </header>
-
+    <main className="container mx-auto p-4 md:p-8 space-y-8 max-w-7xl flex-1 w-full">
       <section>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="flex items-center gap-2">Available Lobbies</h2>
+          <h2 className="flex items-center gap-2">Lobbies</h2>
         </div>
 
         <QueryBoundary query={lobbiesQuery}>

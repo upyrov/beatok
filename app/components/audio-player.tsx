@@ -73,7 +73,7 @@ export function AudioPlayer({
       <button
         type="button"
         onClick={handleClick}
-        className="shrink-0 w-8 h-8 flex items-center justify-center bg-blue-500 hover:bg-blue-400 rounded-full text-white transition-colors focus:outline-none focus:ring-2 focus:ring-white/20"
+        className="shrink-0 w-8 h-8 flex items-center justify-center bg-blue-500 hover:bg-blue-400 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-white/20"
       >
         {isPlaying ? <CgPlayPause /> : <CgPlayButton />}
       </button>

@@ -8,7 +8,7 @@ import { LoadingButton } from "~/components/loading";
 import { AudioPlayer } from "~/components/audio-player";
 import { useOutletContext } from "react-router";
 import { LobbyContext } from "~/contexts";
-import type { User } from "~/api/types/user/user";
+import type { Me } from "~/api/types/user/me";
 
 function VoteForm({
   submissionId,
@@ -105,7 +105,7 @@ function VoteForm({
 
 export function Voting() {
   const { lobby } = use(LobbyContext);
-  const { user } = useOutletContext<{ user: User | null }>();
+  const { user } = useOutletContext<{ user: Me | null }>();
   const { minutes, seconds } = useCountdown(
     lobby?.votingTime ?? "00:00:00",
     lobby?.votingStartedAt,

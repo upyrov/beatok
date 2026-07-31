@@ -123,7 +123,7 @@ export function FileDropzone({
               className="bg-white/5 border border-white/10 p-3 rounded-lg flex flex-col gap-2 w-full"
             >
               <div className="flex justify-between items-center text-sm">
-                <span className="font-medium text-white truncate mr-2">
+                <span className="font-medium truncate mr-2">
                   {upload.file.name}
                 </span>
                 <span

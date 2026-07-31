@@ -54,6 +54,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 function AppContent() {
   const { data: user } = useUser();
+
   return <Outlet context={{ user }} />;
 }
 

@@ -1,6 +1,6 @@
 import { HubConnectionBuilder, type HubConnection } from "@microsoft/signalr";
 import { useEffect, useState } from "react";
-import { RealtimeContext } from "./contexts";
+import { RealtimeContext } from "~/contexts";
 import { Outlet, useOutletContext } from "react-router";
 
 export default function Layout() {

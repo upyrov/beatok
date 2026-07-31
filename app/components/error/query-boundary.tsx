@@ -34,7 +34,7 @@ export function QueryBoundary<T>({ query, children }: QueryBoundaryProps<T>) {
         <button
           type="button"
           onClick={() => query.refetch()}
-          className="text-xs bg-red-600 text-white hover:bg-red-700 px-3 py-1.5 rounded-lg transition-colors font-medium"
+          className="text-xs bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded-lg transition-colors font-medium"
         >
           Try Again
         </button>

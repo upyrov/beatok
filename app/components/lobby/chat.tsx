@@ -4,6 +4,7 @@ import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
 import type { User } from "~/api/types/user/user";
 import { LobbyContext } from "~/contexts";
+import { UserCard } from "~/components/user-card";
 
 export interface Message {
   content: string;
@@ -60,9 +61,11 @@ export function Chat() {
       <div className="p-4 border-b border-white/10 font-bold">Chat</div>
       <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-2">
         {messages.map((m, i) => (
-          <div key={i} className="text-sm">
-            <span className="font-bold text-gray-400">{m.sender.name}:</span>{" "}
-            <span className="text-gray-800">{m.content}</span>
+          <div key={i} className="text-sm flex items-start gap-2">
+            <UserCard user={m.sender} size="sm" className="shrink-0" />
+            <span className="text-gray-800 wrap-break-word mt-1">
+              {m.content}
+            </span>
           </div>
         ))}
       </div>

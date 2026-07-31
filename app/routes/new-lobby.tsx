@@ -12,7 +12,7 @@ export async function clientLoader() {
   await getQueryClient().prefetchQuery(genresQueryOptions());
 }
 
-export default function CreateLobby() {
+export default function NewLobby() {
   const navigate = useNavigate();
   const createLobbyMutation = useCreateLobby();
   const genresQuery = useGenres();
