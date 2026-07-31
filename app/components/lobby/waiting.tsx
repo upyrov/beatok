@@ -5,13 +5,13 @@ import { useEffect, use } from "react";
 import { LobbyState } from "~/api/types/enums/lobby-state";
 import { LobbyContext, RealtimeContext } from "~/contexts";
 import { useOutletContext } from "react-router";
-import type { User } from "~/api/types/user/user";
+import type { Me } from "~/api/types/user/me";
 import type { SoundWithCategory } from "~/api/types/sound/sound-with-category";
 import type { Participation } from "~/api/types/participation";
 
 export function Waiting() {
   const { lobby, setLobby } = use(LobbyContext);
-  const { user } = useOutletContext<{ user: User | null }>();
+  const { user } = useOutletContext<{ user: Me | null }>();
 
   if (!lobby) return;
 
@@ -85,7 +85,7 @@ export function Waiting() {
             <LoadingButton
               onClick={() => startLobbyMutation.mutate(lobby.id)}
               isPending={startLobbyMutation.isPending}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded text-white font-semibold"
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded font-semibold"
             >
               Start Lobby
             </LoadingButton>

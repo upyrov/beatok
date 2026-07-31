@@ -4,9 +4,12 @@ import type { User } from "./types/user/user";
 import type { Comment } from "./types/comment/comment";
 import type { CreateComment } from "./types/comment/create-comment";
 import type { PageResult } from "./types/page-result";
+import type { PictureUpload } from "./types/user/picture-upload";
+import type { UserUpdate } from "./types/user/user-update";
 import { fetchWithAuth } from "../lib/api-client";
+import type { Me } from "./types/user/me";
 
-async function getUser(): Promise<User> {
+async function getUser(): Promise<Me> {
   const response = await fetchWithAuth("/users/me");
 
   if (!response.ok) {
@@ -17,11 +20,15 @@ async function getUser(): Promise<User> {
   return response.json();
 }
 
-export function useUser() {
-  return useQuery({
+export function userQueryOptions() {
+  return {
     queryKey: queryKeys.users.me(),
     queryFn: getUser,
-  });
+  };
+}
+
+export function useUser() {
+  return useQuery(userQueryOptions());
 }
 
 async function getUserById(id: string): Promise<User> {
@@ -35,11 +42,15 @@ async function getUserById(id: string): Promise<User> {
   return response.json();
 }
 
-export function useUserById(id: string) {
-  return useQuery({
+export function userByIdQueryOptions(id: string) {
+  return {
     queryKey: queryKeys.users.detail(id),
     queryFn: () => getUserById(id),
-  });
+  };
+}
+
+export function useUserById(id: string) {
+  return useQuery(userByIdQueryOptions(id));
 }
 
 async function addComment(params: { userId: string; data: CreateComment }) {
@@ -91,9 +102,64 @@ async function getComments(
   return response.json();
 }
 
-export function useComments(userId: string, page = 1, pageSize = 25) {
-  return useQuery({
+export function commentsQueryOptions(userId: string, page = 1, pageSize = 25) {
+  return {
     queryKey: queryKeys.users.comments(userId, page, pageSize),
     queryFn: () => getComments(userId, page, pageSize),
+  };
+}
+
+export function useComments(userId: string, page = 1, pageSize = 25) {
+  return useQuery(commentsQueryOptions(userId, page, pageSize));
+}
+
+async function getUploadUrl(
+  extension: string,
+  contentType: string,
+): Promise<PictureUpload> {
+  const params = new URLSearchParams();
+  params.append("extension", extension);
+  params.append("contentType", contentType);
+
+  const response = await fetchWithAuth(`/users/upload?${params.toString()}`);
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message);
+  }
+
+  return response.json();
+}
+
+export function useUploadAvatarUrl() {
+  return useMutation({
+    mutationFn: (data: { extension: string; contentType: string }) =>
+      getUploadUrl(data.extension, data.contentType),
+  });
+}
+
+async function updateUser(data: UserUpdate): Promise<void> {
+  const response = await fetchWithAuth("/users", {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message);
+  }
+}
+
+export function useUpdateUser() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.users.me(),
+      });
+    },
   });
 }

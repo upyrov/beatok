@@ -82,7 +82,7 @@ export default function Signin() {
               type="submit"
               disabled={!canSubmit}
               isPending={isSubmitting || signInMutation.isPending}
-              className="bg-blue-600 text-white p-2 rounded font-medium"
+              className="bg-blue-600 p-2 rounded font-medium"
             >
               Sign in
             </LoadingButton>

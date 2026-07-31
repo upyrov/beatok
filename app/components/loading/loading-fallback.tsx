@@ -5,10 +5,6 @@ export interface LoadingFallbackProps {
   size?: "sm" | "md" | "lg" | "xl";
 }
 
-/**
- * A centered loading display component with a spinner,
- * suitable for QueryBoundary fallbacks, page loading, or section skeletons.
- */
 export function LoadingFallback({
   className = "",
   size = "md",

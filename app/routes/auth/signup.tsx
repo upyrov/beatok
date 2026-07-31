@@ -104,7 +104,7 @@ export default function Signup() {
               type="submit"
               disabled={!canSubmit}
               isPending={isSubmitting || signUpMutation.isPending}
-              className="bg-blue-600 text-white p-2 rounded font-medium"
+              className="bg-blue-600 p-2 rounded font-medium"
             >
               Sign up
             </LoadingButton>
