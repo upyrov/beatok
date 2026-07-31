@@ -12,6 +12,7 @@ import type { Route } from "./+types/root";
 import "./app.css";
 import { useUser } from "./api/users";
 import { LoadingFallback } from "./components/loading";
+import { Header } from "./components/header";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -55,7 +56,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
 function AppContent() {
   const { data: user } = useUser();
 
-  return <Outlet context={{ user }} />;
+  return (
+    <>
+      <Header user={user} />
+      <Outlet context={{ user }} />
+    </>
+  );
 }
 
 export default function App() {
