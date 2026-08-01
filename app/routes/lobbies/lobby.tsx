@@ -47,6 +47,7 @@ export default function Lobby() {
       return connection!.invoke("Leave", id);
     },
     onSuccess() {
+      queryClient.invalidateQueries({ queryKey: queryKeys.lobbies.list({}) });
       navigate("/");
     },
     onError(err) {
