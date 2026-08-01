@@ -8,7 +8,6 @@ export interface UserCardProps {
   className?: string;
   showRole?: boolean;
   showRating?: boolean;
-  disableLink?: boolean;
 }
 
 export function UserCard({
@@ -16,12 +15,7 @@ export function UserCard({
   size = "sm",
   className = "",
   showRating = false,
-  disableLink = false,
 }: UserCardProps) {
-  if (!user) {
-    return null;
-  }
-
   const isSm = size === "sm";
   const isMd = size === "md";
 
@@ -69,10 +63,6 @@ export function UserCard({
   );
 
   const classes = `inline-flex items-center gap-2 hover:bg-white/5 p-1 rounded transition-colors group ${containerSizeClass} ${className}`;
-
-  if (disableLink) {
-    return <div className={classes}>{content}</div>;
-  }
 
   return (
     <Link to={`/users/${user.id}`} className={classes}>

@@ -29,7 +29,7 @@ export function CommentList({ userId }: { userId: string }) {
             className="bg-white/5 rounded-lg p-4 flex flex-col gap-2"
           >
             <div className="flex items-center justify-between">
-              <UserCard user={comment.author} size="sm" disableLink />
+              <UserCard user={comment.author} size="sm" />
               <span className="text-xs text-gray-400">
                 {new Date(comment.createdAt).toLocaleString()}
               </span>
