@@ -13,7 +13,7 @@ export function Waiting() {
   const { lobby, setLobby } = use(LobbyContext);
   const { user } = useOutletContext<{ user: Me | null }>();
 
-  if (!lobby) return;
+  if (!lobby) return null;
 
   const isOwner = user?.id === lobby.ownerId;
   const startLobbyMutation = useStartLobby();
@@ -57,7 +57,7 @@ export function Waiting() {
         return {
           ...prev,
           participants: prev.participants.map((p) =>
-            p.user.id === userId ? { ...p, isConnected: false } : p,
+            p.user?.id === userId ? { ...p, isConnected: false } : p,
           ),
         };
       });

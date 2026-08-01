@@ -155,7 +155,7 @@ function KitItem({ kit, onDelete }: { kit: Kit; onDelete: () => void }) {
   const [editName, setEditName] = useState(kit.name);
   const updateMutation = useUpdateKitName();
 
-  const handleUpdate = () => {
+  function handleUpdate() {
     if (!editName.trim() || editName === kit.name) {
       setIsEditing(false);
       setEditName(kit.name);
@@ -168,7 +168,7 @@ function KitItem({ kit, onDelete }: { kit: Kit; onDelete: () => void }) {
       },
       { onSuccess: () => setIsEditing(false) },
     );
-  };
+  }
 
   return (
     <div className="flex flex-col gap-2">

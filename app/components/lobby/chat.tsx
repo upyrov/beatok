@@ -27,7 +27,7 @@ export function Chat() {
     function handleMessageReceived(userId: string, content: string) {
       setMessages((prev) => {
         const sender = participantsRef.current.find(
-          (p) => p.user.id === userId,
+          (p) => p.user?.id === userId,
         )?.user;
         if (!sender) return prev;
 

@@ -4,7 +4,7 @@ export interface FieldErrorProps {
 }
 
 export function FieldError({ errors, className = "" }: FieldErrorProps) {
-  if (!errors) return;
+  if (!errors) return null;
 
   const errorList = Array.isArray(errors)
     ? errors.map((e) => (typeof e === "string" ? e : e?.message || String(e)))

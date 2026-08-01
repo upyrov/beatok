@@ -18,7 +18,7 @@ export function Submitting() {
   const { lobby, setLobby } = use(LobbyContext);
   const { connection } = use(RealtimeContext);
   const { user } = useOutletContext<{ user: Me | null }>();
-  const participation = lobby?.participants.find((p) => p.user.id === user?.id);
+  const participation = lobby?.participants.find((p) => p.user?.id === user?.id);
   const getUploadUrlMutation = useUploadUrl();
   const createSubmissionMutation = useCreateSubmission();
 

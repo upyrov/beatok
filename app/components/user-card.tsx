@@ -19,7 +19,7 @@ export function UserCard({
   disableLink = false,
 }: UserCardProps) {
   if (!user) {
-    return;
+    return null;
   }
 
   const isSm = size === "sm";

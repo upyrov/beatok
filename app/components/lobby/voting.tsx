@@ -115,14 +115,15 @@ export function Voting() {
     null,
   );
 
-  const participation = lobby?.participants.find((p) => p.user.id === user?.id);
+  const participation = lobby?.participants.find(
+    (p) => p.user?.id === user?.id,
+  );
 
-  const safeSubmissions = Array.isArray(lobby?.submissions)
-    ? lobby.submissions
-    : [];
   const displayedSubmissions = votedSubmissionId
-    ? safeSubmissions.filter((s) => s.id === votedSubmissionId)
-    : safeSubmissions.filter((s) => s.participationId !== participation?.id);
+    ? lobby?.submissions?.filter((s) => s.id === votedSubmissionId)
+    : lobby?.submissions?.filter(
+        (s) => s.participationId !== participation?.id,
+      );
 
   return (
     <div className="flex flex-col gap-6">
@@ -133,7 +134,7 @@ export function Voting() {
         </div>
       </div>
       <ul className="space-y-4">
-        {displayedSubmissions.map((s) => (
+        {displayedSubmissions?.map((s) => (
           <li key={s.id} className="bg-white/5 p-4 rounded flex flex-col gap-4">
             <div className="font-semibold text-lg">
               Submission by{" "}
@@ -160,7 +161,7 @@ export function Voting() {
           </li>
         ))}
       </ul>
-      {!safeSubmissions.length && (
+      {!lobby?.submissions?.length && (
         <p className="text-gray-400">No submissions to vote on.</p>
       )}
     </div>
