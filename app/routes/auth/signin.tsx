@@ -2,8 +2,9 @@ import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
 import { Link, useNavigate } from "react-router";
 import { useSignIn } from "~/api/auth";
-import { FieldError, MutationBoundary } from "~/components/error";
-import { LoadingButton } from "~/components/loading";
+import { Button } from "~/components/button";
+import { FieldError } from "~/components/field-error";
+import { MutationBoundary } from "~/components/mutation-boundary";
 
 export default function Signin() {
   const navigate = useNavigate();
@@ -78,14 +79,14 @@ export default function Signin() {
         <form.Subscribe
           selector={(state) => [state.canSubmit, state.isSubmitting]}
           children={([canSubmit, isSubmitting]) => (
-            <LoadingButton
+            <Button
               type="submit"
               disabled={!canSubmit}
               isPending={isSubmitting || signInMutation.isPending}
               className="bg-blue-600 p-2 rounded font-medium"
             >
               Sign in
-            </LoadingButton>
+            </Button>
           )}
         />
       </form>

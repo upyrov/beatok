@@ -6,13 +6,13 @@ import {
   useSounds,
   useUpdateSoundValue,
   useUploadSoundUrl,
-} from "~/api/sounds";
+} from "~/api/sound";
 import type { Sound } from "~/api/types/sound/sound";
 import { validateAudioFile } from "~/lib/audio";
 import { uploadFile } from "~/lib/upload";
-import { AudioPlayer } from "./audio-player";
-import { QueryBoundary } from "./error/query-boundary";
-import { FileDropzone } from "./file-dropzone";
+import { AudioPlayer } from "../audio-player";
+import { FileDropzone } from "../file-dropzone";
+import { QueryBoundary } from "../query-boundary";
 
 function SoundItem({
   sound,

@@ -1,7 +1,7 @@
 import type { UseQueryResult } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 import { useEffect } from "react";
-import { LoadingFallback } from "../loading";
+import { Fallback } from "./fallback";
 
 interface QueryBoundaryProps<T> {
   query: UseQueryResult<T, Error>;
@@ -16,7 +16,7 @@ export function QueryBoundary<T>({ query, children }: QueryBoundaryProps<T>) {
   }, [query.isError, query.error]);
 
   if (query.isPending) {
-    return <LoadingFallback />;
+    return <Fallback />;
   }
 
   if (query.isError) {
@@ -49,7 +49,7 @@ export function QueryBoundary<T>({ query, children }: QueryBoundaryProps<T>) {
   return (
     <div className="relative">
       {/* Background refetch indicator */}
-      {query.isFetching && !query.isPending && <LoadingFallback />}
+      {query.isFetching && !query.isPending && <Fallback />}
       {children(query.data)}
     </div>
   );

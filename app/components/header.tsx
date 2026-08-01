@@ -22,7 +22,7 @@ export function Header({ user }: { user?: Me }) {
       </div>
       <div className="flex items-center gap-3">
         {user && params.id !== user.id && <UserCard user={user} size="md" />}
-        <Link to="/new-lobby" className={CR_BUTTON_CLASSES}>
+        <Link to="/lobbies/new" className={CR_BUTTON_CLASSES}>
           Create Lobby
         </Link>
         {user ? (

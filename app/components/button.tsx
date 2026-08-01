@@ -1,23 +1,19 @@
 import type { ReactNode } from "react";
-import { Spinner } from "./spinner";
+import { CgSpinner } from "react-icons/cg";
 
-export interface LoadingButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   isPending?: boolean;
   pendingText?: ReactNode;
   children: ReactNode;
 }
 
-/**
- * A button component that automatically displays a spinning loader and pending text
- * during asynchronous or submitting states.
- */
-export function LoadingButton({
+export function Button({
   isPending,
   children,
   className = "",
   disabled,
   ...props
-}: LoadingButtonProps) {
+}: ButtonProps) {
   return (
     <button
       {...props}
@@ -26,7 +22,12 @@ export function LoadingButton({
     >
       {isPending && (
         <div className="absolute inset-0 flex items-center justify-center">
-          <Spinner size="sm" />
+          <CgSpinner
+            role="status"
+            aria-label={"Loading..."}
+            size={16}
+            className="animate-spin text-gray-400"
+          />
         </div>
       )}
       <span className={isPending ? "opacity-0" : ""}>{children}</span>

@@ -1,12 +1,12 @@
 import { use, useEffect, useMemo } from "react";
 import { useOutletContext } from "react-router";
-import { useCreateSubmission, useUploadUrl } from "~/api/submissions";
+import { useCreateSubmission, useUploadUrl } from "~/api/submission";
 import { LobbyState } from "~/api/types/enums/lobby-state";
 import type { Submission as SubmissionType } from "~/api/types/submission/submission";
 import type { Me } from "~/api/types/user/me";
 import { AudioPlayer } from "~/components/audio-player";
-import { MutationBoundary } from "~/components/error/mutation-boundary";
 import { FileDropzone } from "~/components/file-dropzone";
+import { MutationBoundary } from "~/components/mutation-boundary";
 import { LobbyContext } from "~/contexts";
 import { useCountdown } from "~/hooks/use-countdown";
 import { validateAudioFile } from "~/lib/audio";

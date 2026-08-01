@@ -5,10 +5,11 @@ import {
   useCategories,
   useCreateCategory,
   useDeleteCategory,
-} from "~/api/categories";
-import { FieldError, MutationBoundary } from "../error";
-import { QueryBoundary } from "../error/query-boundary";
-import { LoadingButton } from "../loading";
+} from "~/api/category";
+import { Button } from "~/components/button";
+import { FieldError } from "~/components/field-error";
+import { MutationBoundary } from "~/components/mutation-boundary";
+import { QueryBoundary } from "~/components/query-boundary";
 import { CategoryItem } from "./category-item";
 
 export function Categories({ kitId }: { kitId: string }) {
@@ -53,13 +54,13 @@ export function Categories({ kitId }: { kitId: string }) {
                 <form.Subscribe
                   selector={(state) => [state.canSubmit, state.isSubmitting]}
                   children={([canSubmit, isSubmitting]) => (
-                    <LoadingButton
+                    <Button
                       type="submit"
                       disabled={!canSubmit}
                       isPending={isSubmitting || createMutation.isPending}
                     >
                       <CgAdd />
-                    </LoadingButton>
+                    </Button>
                   )}
                 />
               </div>

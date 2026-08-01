@@ -1,11 +1,12 @@
 import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
 import { useNavigate } from "react-router";
-import { genresQueryOptions, useGenres } from "~/api/genres";
-import { useCreateLobby } from "~/api/lobbies";
-import { FieldError, MutationBoundary } from "~/components/error";
-import { QueryBoundary } from "~/components/error/query-boundary";
-import { LoadingButton } from "~/components/loading";
+import { genresQueryOptions, useGenres } from "~/api/genre";
+import { useCreateLobby } from "~/api/lobby";
+import { Button } from "~/components/button";
+import { FieldError } from "~/components/field-error";
+import { MutationBoundary } from "~/components/mutation-boundary";
+import { QueryBoundary } from "~/components/query-boundary";
 import { getQueryClient } from "~/lib/query-client";
 
 export async function clientLoader() {
@@ -148,14 +149,14 @@ export default function NewLobby() {
         <form.Subscribe
           selector={(state) => [state.canSubmit, state.isSubmitting]}
           children={([canSubmit, isSubmitting]) => (
-            <LoadingButton
+            <Button
               type="submit"
               disabled={!canSubmit}
               isPending={isSubmitting || createLobbyMutation.isPending}
               className="mt-4 p-2 bg-gray-200 hover:bg-gray-300 font-medium rounded"
             >
               Create Lobby
-            </LoadingButton>
+            </Button>
           )}
         />
 

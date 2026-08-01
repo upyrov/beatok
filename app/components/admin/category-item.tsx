@@ -7,8 +7,8 @@ import {
   CgPen,
   CgTrash,
 } from "react-icons/cg";
-import { useUpdateCategoryName } from "~/api/categories";
-import { Sounds } from "../sounds";
+import { useUpdateCategoryName } from "~/api/category";
+import { Sounds } from "./sounds";
 
 export function CategoryItem({
   category,

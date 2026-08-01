@@ -1,11 +1,11 @@
 import { useEffect } from "react";
 import { Link, useNavigate, useOutletContext } from "react-router";
-import { genresQueryOptions } from "~/api/genres";
-import { kitsQueryOptions } from "~/api/kits";
+import { genresQueryOptions } from "~/api/genre";
+import { kitsQueryOptions } from "~/api/kit";
 import { UserRole } from "~/api/types/enums/user-role";
 import type { Me } from "~/api/types/user/me";
-import { Genres } from "~/components/genres";
-import { Kits } from "~/components/kits";
+import { Genres } from "~/components/admin/genres";
+import { Kits } from "~/components/admin/kits";
 import { getQueryClient } from "~/lib/query-client";
 import type { Route } from "./+types/admin";
 
