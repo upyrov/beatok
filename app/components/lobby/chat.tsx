@@ -1,9 +1,9 @@
-import { useState, useEffect, use, useRef } from "react";
 import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
+import { use, useEffect, useRef, useState } from "react";
 import type { User } from "~/api/types/user/user";
-import { LobbyContext } from "~/contexts";
 import { UserCard } from "~/components/user-card";
+import { LobbyContext } from "~/contexts";
 
 export interface Message {
   content: string;

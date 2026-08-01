@@ -1,3 +1,4 @@
+import { QueryClientProvider } from "@tanstack/react-query";
 import {
   isRouteErrorResponse,
   Links,
@@ -6,13 +7,12 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { getQueryClient } from "./lib/query-client";
 import type { Route } from "./+types/root";
-import "./app.css";
 import { useUser } from "./api/users";
-import { LoadingFallback } from "./components/loading";
+import "./app.css";
 import { Header } from "./components/header";
+import { LoadingFallback } from "./components/loading";
+import { getQueryClient } from "./lib/query-client";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },

@@ -1,10 +1,9 @@
-import { useEffect, use } from "react";
-
+import { use, useEffect } from "react";
 import { useOutletContext } from "react-router";
-import type { Me } from "~/api/types/user/me";
-import { LobbyContext } from "~/contexts";
-import { UserCard } from "~/components/user-card";
 import type { Participation } from "~/api/types/participation";
+import type { Me } from "~/api/types/user/me";
+import { UserCard } from "~/components/user-card";
+import { LobbyContext } from "~/contexts";
 
 export function ParticipantList() {
   const { lobby, setLobby, connection } = use(LobbyContext);

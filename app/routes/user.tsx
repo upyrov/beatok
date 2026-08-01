@@ -1,26 +1,26 @@
-import { useParams } from "react-router";
-import { useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
-import {
-  useUserById,
-  useComments,
-  useAddComment,
-  useUser,
-  useUploadAvatarUrl,
-  useUpdateUser,
-  userByIdQueryOptions,
-  commentsQueryOptions,
-} from "~/api/users";
-import { queryKeys } from "~/api/query-keys";
-import { uploadFile } from "~/lib/upload";
-import { FileDropzone } from "~/components/file-dropzone";
-import { UserCard } from "~/components/user-card";
-import { CgProfile } from "react-icons/cg";
 import { useForm } from "@tanstack/react-form";
+import { useQueryClient } from "@tanstack/react-query";
 import { type } from "arktype";
-import type { Route } from "./+types/user";
-import { getQueryClient } from "~/lib/query-client";
+import { useState } from "react";
+import { CgProfile } from "react-icons/cg";
+import { useParams } from "react-router";
+import { queryKeys } from "~/api/query-keys";
+import {
+  commentsQueryOptions,
+  useAddComment,
+  useComments,
+  useUpdateUser,
+  useUploadAvatarUrl,
+  useUser,
+  useUserById,
+  userByIdQueryOptions,
+} from "~/api/users";
+import { FileDropzone } from "~/components/file-dropzone";
 import { LoadingFallback } from "~/components/loading/loading-fallback";
+import { UserCard } from "~/components/user-card";
+import { getQueryClient } from "~/lib/query-client";
+import { uploadFile } from "~/lib/upload";
+import type { Route } from "./+types/user";
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   const queryClient = getQueryClient();

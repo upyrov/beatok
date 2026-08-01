@@ -1,13 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchWithAuth } from "../lib/api-client";
 import { queryKeys } from "./query-keys";
-import type { User } from "./types/user/user";
 import type { Comment } from "./types/comment/comment";
 import type { CreateComment } from "./types/comment/create-comment";
 import type { PageResult } from "./types/page-result";
-import type { PictureUpload } from "./types/user/picture-upload";
-import type { UserUpdate } from "./types/user/user-update";
-import { fetchWithAuth } from "../lib/api-client";
 import type { Me } from "./types/user/me";
+import type { PictureUpload } from "./types/user/picture-upload";
+import type { User } from "./types/user/user";
+import type { UserUpdate } from "./types/user/user-update";
 
 async function getUser(): Promise<Me> {
   const response = await fetchWithAuth("/users/me");

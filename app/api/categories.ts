@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "./query-keys";
+import type { Category } from "./types/category/category";
 import type { CreateCategory } from "./types/category/create-category";
 import type { UpdateCategory } from "./types/category/update-category";
-import type { Category } from "./types/category/category";
 
 import { fetchWithAuth } from "../lib/api-client";
 

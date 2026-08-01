@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchWithAuth } from "../lib/api-client";
 import { queryKeys } from "./query-keys";
 import type { CreateGenre } from "./types/genre/create-genre";
 import type { Genre } from "./types/genre/genre";
-import { fetchWithAuth } from "../lib/api-client";
 
 async function createGenre(data: CreateGenre) {
   const response = await fetchWithAuth("/genres", {

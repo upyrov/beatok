@@ -1,5 +1,5 @@
-import type { User } from "./user/user";
 import type { Score } from "./score/score";
+import type { User } from "./user/user";
 
 export interface Participation {
   id: string;

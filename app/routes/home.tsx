@@ -1,9 +1,9 @@
-import { Link, useOutletContext } from "react-router";
-import type { Route } from "./+types/home";
-import { useLobbies, lobbiesQueryOptions } from "~/api/lobbies";
-import { LobbyCard } from "~/components/lobby-card";
+import { Link } from "react-router";
+import { lobbiesQueryOptions, useLobbies } from "~/api/lobbies";
 import { QueryBoundary } from "~/components/error/query-boundary";
+import { LobbyCard } from "~/components/lobby-card";
 import { getQueryClient } from "~/lib/query-client";
+import type { Route } from "./+types/home";
 
 export function meta({}: Route.MetaArgs) {
   return [

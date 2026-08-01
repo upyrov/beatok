@@ -1,9 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { fetchWithAuth } from "../lib/api-client";
 import { queryKeys } from "./query-keys";
 import type { CreateSubmission } from "./types/submission/create-submission";
 import type { SubmissionUpload } from "./types/submission/submission-upload";
 import type { UpdateSubmission } from "./types/submission/update-submission";
-import { fetchWithAuth } from "../lib/api-client";
 
 async function getUploadUrl(
   extension: string,

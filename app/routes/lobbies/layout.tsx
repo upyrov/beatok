@@ -1,8 +1,8 @@
 import { HubConnectionBuilder, type HubConnection } from "@microsoft/signalr";
 import { useEffect, useState } from "react";
-import { LobbyContext } from "~/contexts";
 import { Outlet, useOutletContext } from "react-router";
 import type { LobbyWithParticipants } from "~/api/types/lobby/lobby-with-participants";
+import { LobbyContext } from "~/contexts";
 
 export default function Layout() {
   const context = useOutletContext();

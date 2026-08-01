@@ -1,12 +1,12 @@
-import { useNavigate } from "react-router";
 import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
+import { useNavigate } from "react-router";
+import { genresQueryOptions, useGenres } from "~/api/genres";
 import { useCreateLobby } from "~/api/lobbies";
-import { useGenres, genresQueryOptions } from "~/api/genres";
-import { getQueryClient } from "~/lib/query-client";
+import { FieldError, MutationBoundary } from "~/components/error";
 import { QueryBoundary } from "~/components/error/query-boundary";
-import { MutationBoundary, FieldError } from "~/components/error";
 import { LoadingButton } from "~/components/loading";
+import { getQueryClient } from "~/lib/query-client";
 
 export async function clientLoader() {
   await getQueryClient().prefetchQuery(genresQueryOptions());

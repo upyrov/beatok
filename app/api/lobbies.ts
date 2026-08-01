@@ -1,10 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchWithAuth } from "../lib/api-client";
 import { queryKeys } from "./query-keys";
+import type { LobbyFilter } from "./types/lobby-filter";
 import type { CreateLobby } from "./types/lobby/create-lobby";
 import type { Lobby } from "./types/lobby/lobby";
-import type { LobbyFilter } from "./types/lobby-filter";
 import type { CreateScore } from "./types/score/create-score";
-import { fetchWithAuth } from "../lib/api-client";
 
 async function createLobby(data: CreateLobby): Promise<string> {
   const response = await fetchWithAuth("/lobbies", {

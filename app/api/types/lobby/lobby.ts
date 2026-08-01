@@ -1,4 +1,3 @@
-import { LobbyState } from "../enums/lobby-state";
 import type { Genre } from "../genre/genre";
 import type { User } from "../user/user";
 

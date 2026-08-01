@@ -1,12 +1,12 @@
+import { use, useEffect } from "react";
+import { useOutletContext } from "react-router";
 import { useStartLobby } from "~/api/lobbies";
+import { LobbyState } from "~/api/types/enums/lobby-state";
+import type { SoundWithCategory } from "~/api/types/sound/sound-with-category";
+import type { Me } from "~/api/types/user/me";
 import { MutationBoundary } from "~/components/error/mutation-boundary";
 import { LoadingButton } from "~/components/loading";
-import { useEffect, use } from "react";
-import { LobbyState } from "~/api/types/enums/lobby-state";
 import { LobbyContext } from "~/contexts";
-import { useOutletContext } from "react-router";
-import type { Me } from "~/api/types/user/me";
-import type { SoundWithCategory } from "~/api/types/sound/sound-with-category";
 
 export function Waiting() {
   const { lobby, setLobby, connection } = use(LobbyContext);

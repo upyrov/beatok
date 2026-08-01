@@ -1,18 +1,18 @@
 import { useState } from "react";
+import { CgClose, CgPen, CgTrash } from "react-icons/cg";
 import {
-  useSounds,
   useCreateSound,
   useDeleteSound,
-  useUploadSoundUrl,
+  useSounds,
   useUpdateSoundValue,
+  useUploadSoundUrl,
 } from "~/api/sounds";
-import { QueryBoundary } from "./error/query-boundary";
+import type { Sound } from "~/api/types/sound/sound";
 import { validateAudioFile } from "~/lib/audio";
 import { uploadFile } from "~/lib/upload";
-import { FileDropzone } from "./file-dropzone";
 import { AudioPlayer } from "./audio-player";
-import { CgTrash, CgPen, CgCheck, CgClose } from "react-icons/cg";
-import type { Sound } from "~/api/types/sound/sound";
+import { QueryBoundary } from "./error/query-boundary";
+import { FileDropzone } from "./file-dropzone";
 
 function SoundItem({
   sound,

@@ -1,14 +1,14 @@
 import { useState } from "react";
-import { Sounds } from "../sounds";
 import {
+  CgCheck,
   CgChevronDown,
   CgChevronUp,
-  CgTrash,
-  CgPen,
-  CgCheck,
   CgClose,
+  CgPen,
+  CgTrash,
 } from "react-icons/cg";
 import { useUpdateCategoryName } from "~/api/categories";
+import { Sounds } from "../sounds";
 
 export function CategoryItem({
   category,

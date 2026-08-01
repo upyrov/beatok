@@ -1,10 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchWithAuth } from "../lib/api-client";
 import { queryKeys } from "./query-keys";
 import type { CreateSound } from "./types/sound/create-sound";
-import type { UpdateSound } from "./types/sound/update-sound";
 import type { Sound } from "./types/sound/sound";
 import type { SoundUpload } from "./types/sound/sound-upload";
-import { fetchWithAuth } from "../lib/api-client";
+import type { UpdateSound } from "./types/sound/update-sound";
 
 async function createSound(data: CreateSound) {
   const response = await fetchWithAuth("/sounds", {

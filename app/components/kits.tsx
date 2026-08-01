@@ -1,27 +1,27 @@
-import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
+import { useState } from "react";
 import {
-  useKits,
+  CgAdd,
+  CgCheck,
+  CgChevronDown,
+  CgChevronUp,
+  CgClose,
+  CgPen,
+  CgTrash,
+} from "react-icons/cg";
+import { useGenres } from "~/api/genres";
+import {
   useCreateKit,
   useDeleteKit,
+  useKits,
   useUpdateKitName,
 } from "~/api/kits";
-import { useGenres } from "~/api/genres";
-import { QueryBoundary } from "./error/query-boundary";
-import { LoadingButton } from "./loading";
 import type { Kit } from "~/api/types/kit/kit";
 import { Categories } from "./category/categories";
 import { FieldError, MutationBoundary } from "./error";
-import {
-  CgChevronDown,
-  CgChevronUp,
-  CgTrash,
-  CgPen,
-  CgCheck,
-  CgClose,
-  CgAdd,
-} from "react-icons/cg";
+import { QueryBoundary } from "./error/query-boundary";
+import { LoadingButton } from "./loading";
 
 export function Kits() {
   const kitsQuery = useKits();

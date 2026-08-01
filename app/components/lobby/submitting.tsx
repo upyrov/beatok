@@ -1,18 +1,17 @@
-import { use, useMemo, useEffect } from "react";
-import { useCountdown } from "~/hooks/use-countdown";
-import { FileDropzone } from "~/components/file-dropzone";
-import { AudioPlayer } from "~/components/audio-player";
-
-import { useUploadUrl, useCreateSubmission } from "~/api/submissions";
-import { validateAudioFile } from "~/lib/audio";
-import { uploadFile } from "~/lib/upload";
-import { handleDownload } from "~/lib/download";
-import { MutationBoundary } from "~/components/error/mutation-boundary";
-import type { Me } from "~/api/types/user/me";
-import type { Submission as SubmissionType } from "~/api/types/submission/submission";
-import { LobbyState } from "~/api/types/enums/lobby-state";
+import { use, useEffect, useMemo } from "react";
 import { useOutletContext } from "react-router";
+import { useCreateSubmission, useUploadUrl } from "~/api/submissions";
+import { LobbyState } from "~/api/types/enums/lobby-state";
+import type { Submission as SubmissionType } from "~/api/types/submission/submission";
+import type { Me } from "~/api/types/user/me";
+import { AudioPlayer } from "~/components/audio-player";
+import { MutationBoundary } from "~/components/error/mutation-boundary";
+import { FileDropzone } from "~/components/file-dropzone";
 import { LobbyContext } from "~/contexts";
+import { useCountdown } from "~/hooks/use-countdown";
+import { validateAudioFile } from "~/lib/audio";
+import { handleDownload } from "~/lib/download";
+import { uploadFile } from "~/lib/upload";
 
 export function Submitting() {
   const { lobby, setLobby, connection } = use(LobbyContext);

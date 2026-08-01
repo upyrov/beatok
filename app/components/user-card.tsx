@@ -1,6 +1,6 @@
+import { CgProfile } from "react-icons/cg";
 import { Link } from "react-router";
 import type { User } from "~/api/types/user/user";
-import { CgProfile } from "react-icons/cg";
 
 export interface UserCardProps {
   user: User;

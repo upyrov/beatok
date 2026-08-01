@@ -1,15 +1,15 @@
 import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
+import { CgAdd } from "react-icons/cg";
 import {
   useCategories,
   useCreateCategory,
   useDeleteCategory,
 } from "~/api/categories";
+import { FieldError, MutationBoundary } from "../error";
 import { QueryBoundary } from "../error/query-boundary";
 import { LoadingButton } from "../loading";
-import { FieldError, MutationBoundary } from "../error";
 import { CategoryItem } from "./category-item";
-import { CgAdd } from "react-icons/cg";
 
 export function Categories({ kitId }: { kitId: string }) {
   const categoriesQuery = useCategories(kitId);

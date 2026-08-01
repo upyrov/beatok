@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CgPlayButton, CgPlayPause } from "react-icons/cg";
 
 function formatTime(seconds: number) {

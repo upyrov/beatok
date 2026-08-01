@@ -1,10 +1,10 @@
 import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
-import { useGenres, useCreateGenre, useDeleteGenre } from "~/api/genres";
+import { CgTrash } from "react-icons/cg";
+import { useCreateGenre, useDeleteGenre, useGenres } from "~/api/genres";
+import { FieldError, MutationBoundary } from "./error";
 import { QueryBoundary } from "./error/query-boundary";
 import { LoadingButton } from "./loading";
-import { FieldError, MutationBoundary } from "./error";
-import { CgTrash } from "react-icons/cg";
 
 export function Genres() {
   const genresQuery = useGenres();

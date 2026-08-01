@@ -1,13 +1,13 @@
 import { useEffect } from "react";
-import { useOutletContext, Link, useNavigate } from "react-router";
-import type { Route } from "./+types/admin";
-import { UserRole } from "~/api/types/enums/user-role";
-import type { Me } from "~/api/types/user/me";
-import { Kits } from "~/components/kits";
-import { Genres } from "~/components/genres";
-import { getQueryClient } from "~/lib/query-client";
+import { Link, useNavigate, useOutletContext } from "react-router";
 import { genresQueryOptions } from "~/api/genres";
 import { kitsQueryOptions } from "~/api/kits";
+import { UserRole } from "~/api/types/enums/user-role";
+import type { Me } from "~/api/types/user/me";
+import { Genres } from "~/components/genres";
+import { Kits } from "~/components/kits";
+import { getQueryClient } from "~/lib/query-client";
+import type { Route } from "./+types/admin";
 
 export function meta({}: Route.MetaArgs) {
   return [{ title: "Beatok | Admin" }];
