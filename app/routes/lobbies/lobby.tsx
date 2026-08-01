@@ -45,6 +45,9 @@ export default function Lobby() {
     },
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: queryKeys.lobbies.list({}) });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.lobbies.toRejoinList(),
+      });
       navigate("/");
     },
     onError(err) {
