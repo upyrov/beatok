@@ -18,6 +18,10 @@ export function UserCard({
   showRating = false,
   disableLink = false,
 }: UserCardProps) {
+  if (!user) {
+    return;
+  }
+
   const isSm = size === "sm";
   const isMd = size === "md";
 
