@@ -4,7 +4,6 @@ import type { CreateLobby } from "./types/lobby/create-lobby";
 import type { Lobby } from "./types/lobby/lobby";
 import type { LobbyFilter } from "./types/lobby-filter";
 import type { CreateScore } from "./types/score/create-score";
-
 import { fetchWithAuth } from "../lib/api-client";
 
 async function createLobby(data: CreateLobby): Promise<string> {
@@ -82,50 +81,6 @@ export function useStartLobby() {
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.lobbies.detail(id) });
       queryClient.invalidateQueries({ queryKey: queryKeys.lobbies.lists() });
-    },
-  });
-}
-
-async function joinLobby(id: string) {
-  const response = await fetchWithAuth(`/lobbies/${id}/participants`, {
-    method: "POST",
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message);
-  }
-}
-
-export function useJoinLobby() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: joinLobby,
-    onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.lobbies.detail(id) });
-    },
-  });
-}
-
-async function leaveLobby(id: string) {
-  const response = await fetchWithAuth(`/lobbies/${id}/participants/me`, {
-    method: "DELETE",
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message);
-  }
-}
-
-export function useLeaveLobby() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: leaveLobby,
-    onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.lobbies.detail(id) });
     },
   });
 }
