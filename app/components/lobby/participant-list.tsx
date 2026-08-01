@@ -19,7 +19,7 @@ export function ParticipantList() {
         return {
           ...prev,
           participants: prev.participants.map((p) =>
-            p.user.id === userId ? { ...p, isConnected: true } : p,
+            p.user?.id === userId ? { ...p, isConnected: true } : p,
           ),
         };
       });
@@ -30,7 +30,7 @@ export function ParticipantList() {
         if (!prev) return prev;
         return {
           ...prev,
-          participants: prev.participants.filter((p) => p.user.id !== userId),
+          participants: prev.participants.filter((p) => p.user?.id !== userId),
         };
       });
     }
@@ -55,10 +55,10 @@ export function ParticipantList() {
               {!p.isConnected && (
                 <span className="text-gray-400">(Disconnected)</span>
               )}
-              {p.user.id === lobby.ownerId && (
+              {p.user?.id === lobby.ownerId && (
                 <span className="text-gray-400">(Owner)</span>
               )}
-              {p.user.id === user?.id && (
+              {p.user?.id === user?.id && (
                 <span className="text-gray-400">(You)</span>
               )}
             </div>

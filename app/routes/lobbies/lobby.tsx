@@ -1,9 +1,8 @@
 import { use, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { RealtimeContext, LobbyContext } from "~/contexts";
 import type { LobbyWithParticipants } from "~/api/types/lobby/lobby-with-participants";
-import { useJoinLobby } from "~/api/lobbies";
 import { LoadingFallback } from "~/components/loading";
 import {
   ParticipantList,
@@ -14,28 +13,41 @@ import {
   End,
 } from "~/components/lobby";
 import { LobbyState } from "~/api/types/enums/lobby-state";
+import { queryKeys } from "~/api/query-keys";
 
 export default function Lobby() {
   const { id } = useParams();
-
-  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { connection } = use(RealtimeContext);
 
   const [lobby, setLobby] = useState<LobbyWithParticipants | null>(null);
 
-  const joinLobbyMutation = useJoinLobby();
-  const joinLobbyRealtimeMutation = useMutation({
+  const joinMutation = useMutation({
     mutationFn() {
-      if (!connection) throw new Error("No connection");
-      return connection.invoke<LobbyWithParticipants>("Join", id);
+      return connection!.invoke<LobbyWithParticipants>("Join", id);
     },
     retry: 5,
     retryDelay: 1000,
-    onSuccess(joinedLobby) {
-      if (joinedLobby) {
-        setLobby(joinedLobby);
+    onSuccess(lobby) {
+      if (lobby) {
+        setLobby(lobby);
+        queryClient.setQueryData(queryKeys.lobbies.detail(lobby.id), lobby);
       }
+    },
+    onError(err) {
+      console.error(err);
+    },
+  });
+
+  const navigate = useNavigate();
+
+  const leaveMutation = useMutation({
+    mutationFn() {
+      return connection!.invoke("Leave", id);
+    },
+    onSuccess() {
+      navigate("/");
     },
     onError(err) {
       console.error(err);
@@ -44,10 +56,7 @@ export default function Lobby() {
 
   useEffect(() => {
     if (connection && id && !lobby) {
-      joinLobbyMutation
-        .mutateAsync(id)
-        .then(() => joinLobbyRealtimeMutation.mutate())
-        .catch(() => navigate("/"));
+      joinMutation.mutate();
     }
   }, [connection, id, lobby]);
 
@@ -87,7 +96,16 @@ export default function Lobby() {
       ) : (
         <LobbyContext value={{ lobby, setLobby }}>
           <div className="flex flex-col gap-4 flex-1">
-            <h1 className="text-2xl font-bold">{lobby.name}</h1>
+            <div className="flex items-center justify-between">
+              <h1 className="text-2xl font-bold">{lobby.name}</h1>
+              <button
+                onClick={() => leaveMutation.mutate()}
+                disabled={leaveMutation.isPending}
+                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors disabled:opacity-50"
+              >
+                {leaveMutation.isPending ? <LoadingFallback /> : "Leave"}
+              </button>
+            </div>
             <div className="flex gap-8">
               <div>
                 <p className="font-semibold">Genre</p>
