@@ -2,7 +2,7 @@ import { use, useMemo, useEffect } from "react";
 import { useCountdown } from "~/hooks/use-countdown";
 import { FileDropzone } from "~/components/file-dropzone";
 import { AudioPlayer } from "~/components/audio-player";
-import { RealtimeContext } from "~/contexts";
+
 import { useUploadUrl, useCreateSubmission } from "~/api/submissions";
 import { validateAudioFile } from "~/lib/audio";
 import { uploadFile } from "~/lib/upload";
@@ -15,10 +15,9 @@ import { useOutletContext } from "react-router";
 import { LobbyContext } from "~/contexts";
 
 export function Submitting() {
-  const { lobby, setLobby } = use(LobbyContext);
-  const { connection } = use(RealtimeContext);
+  const { lobby, setLobby, connection } = use(LobbyContext);
   const { user } = useOutletContext<{ user: Me | null }>();
-  const participation = lobby?.participants.find((p) => p.user?.id === user?.id);
+  const participation = lobby?.participants.find((p) => p.user.id === user?.id);
   const getUploadUrlMutation = useUploadUrl();
   const createSubmissionMutation = useCreateSubmission();
 

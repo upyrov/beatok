@@ -1,26 +1,24 @@
 import { useEffect, use } from "react";
-import { RealtimeContext } from "~/contexts";
+
 import { useOutletContext } from "react-router";
 import type { Me } from "~/api/types/user/me";
 import { LobbyContext } from "~/contexts";
 import { UserCard } from "~/components/user-card";
+import type { Participation } from "~/api/types/participation";
 
 export function ParticipantList() {
-  const { lobby, setLobby } = use(LobbyContext);
-  const { connection } = use(RealtimeContext);
+  const { lobby, setLobby, connection } = use(LobbyContext);
   const { user } = useOutletContext<{ user: Me | null }>();
 
   useEffect(() => {
     if (!connection) return;
 
-    function handleParticipantConnected(userId: string) {
+    function handleParticipantJoined(p: Participation) {
       setLobby((prev) => {
         if (!prev) return prev;
         return {
           ...prev,
-          participants: prev.participants.map((p) =>
-            p.user?.id === userId ? { ...p, isConnected: true } : p,
-          ),
+          participants: [...prev.participants, p],
         };
       });
     }
@@ -30,16 +28,16 @@ export function ParticipantList() {
         if (!prev) return prev;
         return {
           ...prev,
-          participants: prev.participants.filter((p) => p.user?.id !== userId),
+          participants: prev.participants.filter((p) => p.user.id !== userId),
         };
       });
     }
 
-    connection.on("ParticipantConnected", handleParticipantConnected);
+    connection.on("ParticipantJoined", handleParticipantJoined);
     connection.on("ParticipantLeft", handleParticipantLeft);
 
     return () => {
-      connection.off("ParticipantConnected", handleParticipantConnected);
+      connection.off("ParticipantJoined", handleParticipantJoined);
       connection.off("ParticipantLeft", handleParticipantLeft);
     };
   }, [connection, setLobby]);
@@ -55,10 +53,10 @@ export function ParticipantList() {
               {!p.isConnected && (
                 <span className="text-gray-400">(Disconnected)</span>
               )}
-              {p.user?.id === lobby.ownerId && (
+              {p.user.id === lobby.ownerId && (
                 <span className="text-gray-400">(Owner)</span>
               )}
-              {p.user?.id === user?.id && (
+              {p.user.id === user?.id && (
                 <span className="text-gray-400">(You)</span>
               )}
             </div>

@@ -115,11 +115,8 @@ export function Voting() {
     null,
   );
 
-  const participation = lobby?.participants.find(
-    (p) => p.user?.id === user?.id,
-  );
-
-  const displayedSubmissions = votedSubmissionId
+  const participation = lobby?.participants.find((p) => p.user.id === user?.id);
+  const submissions = votedSubmissionId
     ? lobby?.submissions?.filter((s) => s.id === votedSubmissionId)
     : lobby?.submissions?.filter(
         (s) => s.participationId !== participation?.id,
@@ -134,7 +131,7 @@ export function Voting() {
         </div>
       </div>
       <ul className="space-y-4">
-        {displayedSubmissions?.map((s) => (
+        {submissions?.map((s) => (
           <li key={s.id} className="bg-white/5 p-4 rounded flex flex-col gap-4">
             <div className="font-semibold text-lg">
               Submission by{" "}

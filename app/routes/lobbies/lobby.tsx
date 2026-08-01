@@ -1,7 +1,7 @@
 import { use, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { RealtimeContext, LobbyContext } from "~/contexts";
+import { LobbyContext } from "~/contexts";
 import type { LobbyWithParticipants } from "~/api/types/lobby/lobby-with-participants";
 import { LoadingFallback } from "~/components/loading";
 import {
@@ -19,9 +19,7 @@ export default function Lobby() {
   const { id } = useParams();
   const queryClient = useQueryClient();
 
-  const { connection } = use(RealtimeContext);
-
-  const [lobby, setLobby] = useState<LobbyWithParticipants | null>(null);
+  const { connection, lobby, setLobby } = use(LobbyContext);
 
   const joinMutation = useMutation({
     mutationFn() {
@@ -95,7 +93,7 @@ export default function Lobby() {
       {!lobby ? (
         <LoadingFallback className="m-auto" />
       ) : (
-        <LobbyContext value={{ lobby, setLobby }}>
+        <>
           <div className="flex flex-col gap-4 flex-1">
             <div className="flex items-center justify-between">
               <h1 className="text-2xl font-bold">{lobby.name}</h1>
@@ -132,7 +130,7 @@ export default function Lobby() {
           <div className="flex-1">
             <Chat />
           </div>
-        </LobbyContext>
+        </>
       )}
     </main>
   );

@@ -3,21 +3,17 @@ import { MutationBoundary } from "~/components/error/mutation-boundary";
 import { LoadingButton } from "~/components/loading";
 import { useEffect, use } from "react";
 import { LobbyState } from "~/api/types/enums/lobby-state";
-import { LobbyContext, RealtimeContext } from "~/contexts";
+import { LobbyContext } from "~/contexts";
 import { useOutletContext } from "react-router";
 import type { Me } from "~/api/types/user/me";
 import type { SoundWithCategory } from "~/api/types/sound/sound-with-category";
-import type { Participation } from "~/api/types/participation";
 
 export function Waiting() {
-  const { lobby, setLobby } = use(LobbyContext);
+  const { lobby, setLobby, connection } = use(LobbyContext);
   const { user } = useOutletContext<{ user: Me | null }>();
-
-  if (!lobby) return null;
-
-  const isOwner = user?.id === lobby.ownerId;
   const startLobbyMutation = useStartLobby();
-  const { connection } = use(RealtimeContext);
+
+  const isOwner = user?.id === lobby?.ownerId;
 
   useEffect(() => {
     if (!connection) return;
@@ -34,12 +30,14 @@ export function Waiting() {
       });
     }
 
-    function handleParticipantJoined(p: Participation) {
+    function handleParticipantConnected(userId: string) {
       setLobby((prev) => {
         if (!prev) return prev;
         return {
           ...prev,
-          participants: [...prev.participants, p],
+          participants: prev.participants.map((p) =>
+            p.user.id === userId ? { ...p, isConnected: true } : p,
+          ),
         };
       });
     }
@@ -57,45 +55,46 @@ export function Waiting() {
         return {
           ...prev,
           participants: prev.participants.map((p) =>
-            p.user?.id === userId ? { ...p, isConnected: false } : p,
+            p.user.id === userId ? { ...p, isConnected: false } : p,
           ),
         };
       });
     }
 
     connection.on("Started", handleStarted);
-    connection.on("ParticipantJoined", handleParticipantJoined);
     connection.on("OwnerChanged", handleOwnerChanged);
+    connection.on("ParticipantConnected", handleParticipantConnected);
     connection.on("ParticipantDisconnected", handleParticipantDisconnected);
-
     return () => {
       connection.off("Started", handleStarted);
-      connection.off("ParticipantJoined", handleParticipantJoined);
       connection.off("OwnerChanged", handleOwnerChanged);
+      connection.off("ParticipantConnected", handleParticipantConnected);
       connection.off("ParticipantDisconnected", handleParticipantDisconnected);
     };
   }, [connection, setLobby]);
 
   return (
-    <div>
-      <h2 className="text-xl font-bold mb-4">Not Started</h2>
-      {isOwner ? (
-        lobby.participants.length > 1 ? (
-          <MutationBoundary mutation={startLobbyMutation}>
-            <LoadingButton
-              onClick={() => startLobbyMutation.mutate(lobby.id)}
-              isPending={startLobbyMutation.isPending}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded font-semibold"
-            >
-              Start Lobby
-            </LoadingButton>
-          </MutationBoundary>
+    lobby && (
+      <div>
+        <h2 className="text-xl font-bold mb-4">Not Started</h2>
+        {isOwner ? (
+          lobby.participants.length > 1 ? (
+            <MutationBoundary mutation={startLobbyMutation}>
+              <LoadingButton
+                onClick={() => startLobbyMutation.mutate(lobby.id)}
+                isPending={startLobbyMutation.isPending}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded font-semibold"
+              >
+                Start Lobby
+              </LoadingButton>
+            </MutationBoundary>
+          ) : (
+            <p className="text-gray-400">Waiting for users to join...</p>
+          )
         ) : (
-          <p className="text-gray-400">Waiting for users to join...</p>
-        )
-      ) : (
-        <p className="text-gray-400">Waiting for host to start...</p>
-      )}
-    </div>
+          <p className="text-gray-400">Waiting for host to start...</p>
+        )}
+      </div>
+    )
   );
 }

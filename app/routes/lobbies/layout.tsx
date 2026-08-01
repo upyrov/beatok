@@ -1,12 +1,14 @@
 import { HubConnectionBuilder, type HubConnection } from "@microsoft/signalr";
 import { useEffect, useState } from "react";
-import { RealtimeContext } from "~/contexts";
+import { LobbyContext } from "~/contexts";
 import { Outlet, useOutletContext } from "react-router";
+import type { LobbyWithParticipants } from "~/api/types/lobby/lobby-with-participants";
 
 export default function Layout() {
   const context = useOutletContext();
 
   const [connection, setConnection] = useState<HubConnection | null>(null);
+  const [lobby, setLobby] = useState<LobbyWithParticipants | null>(null);
 
   useEffect(() => {
     const newConnection = new HubConnectionBuilder()
@@ -27,8 +29,8 @@ export default function Layout() {
   }, []);
 
   return (
-    <RealtimeContext value={{ connection }}>
+    <LobbyContext value={{ connection, lobby, setLobby }}>
       <Outlet context={context} />
-    </RealtimeContext>
+    </LobbyContext>
   );
 }

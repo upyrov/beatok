@@ -1,5 +1,4 @@
 import { useState, useEffect, use, useRef } from "react";
-import { RealtimeContext } from "~/contexts";
 import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
 import type { User } from "~/api/types/user/user";
@@ -12,8 +11,7 @@ export interface Message {
 }
 
 export function Chat() {
-  const { lobby } = use(LobbyContext);
-  const { connection } = use(RealtimeContext);
+  const { lobby, connection } = use(LobbyContext);
   const [messages, setMessages] = useState<Message[]>([]);
 
   const participantsRef = useRef(lobby?.participants || []);
@@ -27,7 +25,7 @@ export function Chat() {
     function handleMessageReceived(userId: string, content: string) {
       setMessages((prev) => {
         const sender = participantsRef.current.find(
-          (p) => p.user?.id === userId,
+          (p) => p.user.id === userId,
         )?.user;
         if (!sender) return prev;
 
