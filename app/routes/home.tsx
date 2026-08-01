@@ -1,7 +1,7 @@
 import { Link } from "react-router";
-import { lobbiesQueryOptions, useLobbies } from "~/api/lobbies";
-import { QueryBoundary } from "~/components/error/query-boundary";
+import { lobbiesQueryOptions, useLobbies } from "~/api/lobby";
 import { LobbyCard } from "~/components/lobby-card";
+import { QueryBoundary } from "~/components/query-boundary";
 import { getQueryClient } from "~/lib/query-client";
 import type { Route } from "./+types/home";
 

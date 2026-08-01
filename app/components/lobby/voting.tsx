@@ -1,107 +1,10 @@
-import { useForm } from "@tanstack/react-form";
-import { type } from "arktype";
-import { use, useState } from "react";
+import { use, useMemo, useState } from "react";
 import { useOutletContext } from "react-router";
-import { useVote } from "~/api/lobbies";
 import type { Me } from "~/api/types/user/me";
 import { AudioPlayer } from "~/components/audio-player";
-import { MutationBoundary } from "~/components/error/mutation-boundary";
-import { LoadingButton } from "~/components/loading";
 import { LobbyContext } from "~/contexts";
 import { useCountdown } from "~/hooks/use-countdown";
-
-function VoteForm({
-  submissionId,
-  lobbyId,
-  isOwnTrack,
-  isVoted,
-  onVote,
-}: {
-  submissionId: string;
-  lobbyId: string;
-  isOwnTrack?: boolean;
-  isVoted?: boolean;
-  onVote: () => void;
-}) {
-  const voteMutation = useVote();
-
-  const form = useForm({
-    defaultValues: { score: 5 },
-    onSubmit: async ({ value }) => {
-      onVote();
-      await voteMutation.mutateAsync({
-        id: lobbyId,
-        data: { value: value.score, submissionId },
-      });
-    },
-  });
-
-  if (isVoted || voteMutation.isSuccess || voteMutation.isPending) {
-    return (
-      <div className="text-green-400 font-medium text-sm py-1">
-        Vote registered!
-      </div>
-    );
-  }
-
-  if (isOwnTrack) {
-    return (
-      <span className="text-gray-400 text-sm">
-        Cannot vote on your own track
-      </span>
-    );
-  }
-
-  return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        form.handleSubmit();
-      }}
-      className="flex items-center gap-2"
-    >
-      <form.Field
-        name="score"
-        validators={{
-          onChange: type("1 <= number <= 10"),
-        }}
-        children={(field) => (
-          <div className="flex items-center gap-3">
-            <input
-              type="range"
-              min="1"
-              max="10"
-              step="1"
-              value={field.state.value}
-              onBlur={field.handleBlur}
-              onChange={(e) => field.handleChange(Number(e.target.value))}
-              className="w-32 accent-blue-500"
-            />
-            <span className="font-mono font-medium w-4 text-center">
-              {field.state.value}
-            </span>
-          </div>
-        )}
-      />
-      <MutationBoundary mutation={voteMutation}>
-        <form.Subscribe
-          selector={(state) => [state.canSubmit, state.isSubmitting]}
-          children={([canSubmit, isSubmitting]) => (
-            <LoadingButton
-              type="submit"
-              disabled={!canSubmit}
-              isPending={isSubmitting || voteMutation.isPending}
-              className="bg-blue-600 hover:bg-blue-500 px-3 py-1 text-sm rounded transition-colors font-medium text-white"
-            >
-              Vote
-            </LoadingButton>
-          )}
-        />
-      </MutationBoundary>
-    </form>
-  );
-}
+import { VoteForm } from "./vote-form";
 
 export function Voting() {
   const { lobby } = use(LobbyContext);
@@ -116,11 +19,15 @@ export function Voting() {
   );
 
   const participation = lobby?.participants.find((p) => p.user.id === user?.id);
-  const submissions = votedSubmissionId
-    ? lobby?.submissions?.filter((s) => s.id === votedSubmissionId)
-    : lobby?.submissions?.filter(
-        (s) => s.participationId !== participation?.id,
-      );
+  const submissions = useMemo(
+    () =>
+      votedSubmissionId
+        ? lobby?.submissions?.filter((s) => s.id === votedSubmissionId)
+        : lobby?.submissions?.filter(
+            (s) => s.participationId !== participation?.id,
+          ),
+    [votedSubmissionId, lobby?.submissions, participation?.id],
+  );
 
   return (
     <div className="flex flex-col gap-6">

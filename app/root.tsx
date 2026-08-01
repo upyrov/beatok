@@ -7,11 +7,11 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
+import { Header } from "~/components/header";
 import type { Route } from "./+types/root";
-import { useUser } from "./api/users";
+import { useUser } from "./api/user";
 import "./app.css";
-import { Header } from "./components/header";
-import { LoadingFallback } from "./components/loading";
+import { Fallback } from "./components/fallback";
 import { getQueryClient } from "./lib/query-client";
 
 export const links: Route.LinksFunction = () => [
@@ -30,7 +30,7 @@ export const links: Route.LinksFunction = () => [
 export function HydrateFallback() {
   return (
     <div className="min-h-screen flex">
-      <LoadingFallback className="m-auto" />
+      <Fallback className="m-auto" />
     </div>
   );
 }

@@ -10,18 +10,19 @@ import {
   CgPen,
   CgTrash,
 } from "react-icons/cg";
-import { useGenres } from "~/api/genres";
+import { useGenres } from "~/api/genre";
 import {
   useCreateKit,
   useDeleteKit,
   useKits,
   useUpdateKitName,
-} from "~/api/kits";
+} from "~/api/kit";
 import type { Kit } from "~/api/types/kit/kit";
-import { Categories } from "./category/categories";
-import { FieldError, MutationBoundary } from "./error";
-import { QueryBoundary } from "./error/query-boundary";
-import { LoadingButton } from "./loading";
+import { Button } from "~/components/button";
+import { FieldError } from "~/components/field-error";
+import { MutationBoundary } from "~/components/mutation-boundary";
+import { QueryBoundary } from "~/components/query-boundary";
+import { Categories } from "./categories";
 
 export function Kits() {
   const kitsQuery = useKits();
@@ -74,13 +75,13 @@ export function Kits() {
                   <form.Subscribe
                     selector={(state) => [state.canSubmit, state.isSubmitting]}
                     children={([canSubmit, isSubmitting]) => (
-                      <LoadingButton
+                      <Button
                         type="submit"
                         disabled={!canSubmit}
                         isPending={isSubmitting || createMutation.isPending}
                       >
                         <CgAdd />
-                      </LoadingButton>
+                      </Button>
                     )}
                   />
                 </div>

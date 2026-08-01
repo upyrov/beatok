@@ -1,10 +1,11 @@
 import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
 import { CgTrash } from "react-icons/cg";
-import { useCreateGenre, useDeleteGenre, useGenres } from "~/api/genres";
-import { FieldError, MutationBoundary } from "./error";
-import { QueryBoundary } from "./error/query-boundary";
-import { LoadingButton } from "./loading";
+import { useCreateGenre, useDeleteGenre, useGenres } from "~/api/genre";
+import { Button } from "~/components/button";
+import { FieldError } from "~/components/field-error";
+import { MutationBoundary } from "~/components/mutation-boundary";
+import { QueryBoundary } from "~/components/query-boundary";
 
 export function Genres() {
   const genresQuery = useGenres();
@@ -50,13 +51,13 @@ export function Genres() {
                   <form.Subscribe
                     selector={(state) => [state.canSubmit, state.isSubmitting]}
                     children={([canSubmit, isSubmitting]) => (
-                      <LoadingButton
+                      <Button
                         type="submit"
                         disabled={!canSubmit}
                         isPending={isSubmitting || createMutation.isPending}
                       >
                         Add Genre
-                      </LoadingButton>
+                      </Button>
                     )}
                   />
                 </div>

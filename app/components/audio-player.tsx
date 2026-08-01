@@ -1,12 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { CgPlayButton, CgPlayPause } from "react-icons/cg";
-
-function formatTime(seconds: number) {
-  if (isNaN(seconds) || !isFinite(seconds)) return "0:00";
-  const m = Math.floor(seconds / 60);
-  const s = Math.floor(seconds % 60);
-  return `${m}:${s.toString().padStart(2, "0")}`;
-}
+import { formatTime } from "~/lib/time";
 
 export function AudioPlayer({
   src,
@@ -21,30 +15,6 @@ export function AudioPlayer({
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
 
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    const onTimeUpdate = () => setCurrentTime(audio.currentTime);
-    const onLoadedMetadata = () => setDuration(audio.duration);
-    const onEnded = () => setIsPlaying(false);
-
-    // In case duration is already available
-    if (audio.readyState > 0) {
-      setDuration(audio.duration);
-    }
-
-    audio.addEventListener("timeupdate", onTimeUpdate);
-    audio.addEventListener("loadedmetadata", onLoadedMetadata);
-    audio.addEventListener("ended", onEnded);
-
-    return () => {
-      audio.removeEventListener("timeupdate", onTimeUpdate);
-      audio.removeEventListener("loadedmetadata", onLoadedMetadata);
-      audio.removeEventListener("ended", onEnded);
-    };
-  }, []);
-
   function handleClick() {
     if (audioRef.current) {
       if (isPlaying) {
@@ -52,7 +22,6 @@ export function AudioPlayer({
       } else {
         audioRef.current.play();
       }
-      setIsPlaying(!isPlaying);
     }
   }
 
@@ -68,7 +37,16 @@ export function AudioPlayer({
     <div
       className={`flex items-center gap-3 bg-gray-50 p-2 rounded-lg border border-gray-200 w-full ${className}`}
     >
-      <audio ref={audioRef} src={src} preload="metadata" />
+      <audio
+        ref={audioRef}
+        src={src}
+        preload="metadata"
+        onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
+        onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
+        onEnded={() => setIsPlaying(false)}
+      />
 
       <button
         type="button"
