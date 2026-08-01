@@ -12,6 +12,7 @@ export const queryKeys = {
       [...queryKeys.lobbies.lists(), { filters }] as const,
     details: () => [...queryKeys.lobbies.all, "detail"] as const,
     detail: (id: string) => [...queryKeys.lobbies.details(), id] as const,
+    toRejoinList: () => [...queryKeys.lobbies.all, "toRejoinList"] as const,
   },
   categories: {
     all: ["categories"] as const,

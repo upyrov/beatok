@@ -62,6 +62,28 @@ export function useLobbies(filter?: LobbyFilter) {
   return useQuery(lobbiesQueryOptions(filter));
 }
 
+export async function getLobbiesToRejoin(): Promise<Lobby[]> {
+  const response = await fetchWithAuth("/lobbies/to-rejoin");
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message);
+  }
+
+  return response.json();
+}
+
+export function lobbiesToRejoinQueryOptions() {
+  return {
+    queryKey: queryKeys.lobbies.toRejoinList(),
+    queryFn: getLobbiesToRejoin,
+  };
+}
+
+export function useLobbiesToRejoin() {
+  return useQuery(lobbiesToRejoinQueryOptions());
+}
+
 async function startLobby(id: string) {
   const response = await fetchWithAuth(`/lobbies/${id}/start`, {
     method: "PATCH",
