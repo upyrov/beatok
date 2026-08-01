@@ -35,11 +35,11 @@ export function ParticipantList() {
       });
     }
 
-    connection.on("ParticipantRejoined", handleParticipantConnected);
+    connection.on("ParticipantConnected", handleParticipantConnected);
     connection.on("ParticipantLeft", handleParticipantLeft);
 
     return () => {
-      connection.off("ParticipantRejoined", handleParticipantConnected);
+      connection.off("ParticipantConnected", handleParticipantConnected);
       connection.off("ParticipantLeft", handleParticipantLeft);
     };
   }, [connection, setLobby]);
