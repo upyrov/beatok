@@ -8,6 +8,7 @@ import type { Me } from "./types/user/me";
 import type { PictureUpload } from "./types/user/picture-upload";
 import type { User } from "./types/user/user";
 import type { UserUpdate } from "./types/user/user-update";
+import type { Lobby } from "./types/lobby/lobby";
 
 async function getUser(): Promise<Me> {
   const response = await fetchWithAuth("/users/me");
@@ -162,4 +163,36 @@ export function useUpdateUser() {
       });
     },
   });
+}
+
+async function getUserHistory(
+  userId: string,
+  page = 1,
+  pageSize = 25,
+): Promise<PageResult<Lobby>> {
+  const params = new URLSearchParams();
+  params.append("page", page.toString());
+  params.append("pageSize", pageSize.toString());
+
+  const response = await fetchWithAuth(
+    `/users/history/${userId}?${params.toString()}`,
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message);
+  }
+
+  return response.json();
+}
+
+export function userHistoryQueryOptions(userId: string, page = 1, pageSize = 25) {
+  return {
+    queryKey: queryKeys.users.history(userId, page, pageSize),
+    queryFn: () => getUserHistory(userId, page, pageSize),
+  };
+}
+
+export function useUserHistory(userId: string, page = 1, pageSize = 25) {
+  return useQuery(userHistoryQueryOptions(userId, page, pageSize));
 }

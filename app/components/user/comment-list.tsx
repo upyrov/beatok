@@ -41,7 +41,6 @@ export function CommentList({ userId }: { userId: string }) {
         ))
       )}
 
-      {/* Pagination Controls */}
       {commentsResult && commentsResult.totalCount > 25 && (
         <div className="flex items-center justify-between mt-6 pt-4 border-t border-white/10">
           <button

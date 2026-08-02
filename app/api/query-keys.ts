@@ -61,6 +61,8 @@ export const queryKeys = {
     detail: (id: string) => [...queryKeys.users.details(), id] as const,
     comments: (id: string, page?: number, pageSize?: number) =>
       [...queryKeys.users.detail(id), "comments", { page, pageSize }] as const,
+    history: (id: string, page?: number, pageSize?: number) =>
+      [...queryKeys.users.detail(id), "history", { page, pageSize }] as const,
     upload: (extension: string) =>
       [...queryKeys.users.all, "upload", extension] as const,
   },

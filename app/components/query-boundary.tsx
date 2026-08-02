@@ -48,7 +48,6 @@ export function QueryBoundary<T>({ query, children }: QueryBoundaryProps<T>) {
 
   return (
     <div className="relative">
-      {/* Background refetch indicator */}
       {query.isFetching && !query.isPending && <Fallback />}
       {children(query.data)}
     </div>
