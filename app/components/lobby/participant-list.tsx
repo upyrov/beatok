@@ -1,11 +1,11 @@
 import { use, useEffect } from "react";
-import { useOutletContext, useNavigate } from "react-router";
+import { useNavigate, useOutletContext } from "react-router";
 import { useKickParticipant } from "~/api/lobby";
 import type { Participation } from "~/api/types/participation";
 import type { Me } from "~/api/types/user/me";
 import { Button } from "~/components/button";
-import { UserCard } from "~/components/user-card";
 import { MutationBoundary } from "~/components/mutation-boundary";
+import { UserCard } from "~/components/user-card";
 import { LobbyContext } from "~/contexts";
 
 export function ParticipantList() {
@@ -14,7 +14,7 @@ export function ParticipantList() {
   const kickParticipantMutation = useKickParticipant();
   const navigate = useNavigate();
 
-  const isOwner = lobby?.owner?.id === user?.id || (lobby as any)?.ownerId === user?.id;
+  const isOwner = lobby?.ownerId === user?.id;
 
   useEffect(() => {
     if (!connection) return;
@@ -64,9 +64,7 @@ export function ParticipantList() {
               {!p.isConnected && (
                 <span className="text-gray-400">(Disconnected)</span>
               )}
-              {(p.user.id === lobby.owner?.id || p.user.id === (lobby as any).ownerId) && (
-                <span className="text-gray-400">(Owner)</span>
-              )}
+              {isOwner && <span className="text-gray-400">(Owner)</span>}
               {p.user.id === user?.id && (
                 <span className="text-gray-400">(You)</span>
               )}
