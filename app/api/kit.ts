@@ -53,8 +53,8 @@ export function useKits() {
 }
 
 async function updateKitName(params: { id: string; data: UpdateKit }) {
-  const response = await fetchWithAuth(`/kits?id=${params.id}`, {
-    method: "PUT",
+  const response = await fetchWithAuth(`/kits/${params.id}`, {
+    method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(params.data),
   });

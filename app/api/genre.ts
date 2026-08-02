@@ -3,6 +3,7 @@ import { fetchWithAuth } from "../lib/api-client";
 import { queryKeys } from "./query-keys";
 import type { CreateGenre } from "./types/genre/create-genre";
 import type { Genre } from "./types/genre/genre";
+import type { UpdateGenre } from "./types/genre/update-genre";
 
 async function createGenre(data: CreateGenre) {
   const response = await fetchWithAuth("/genres", {
@@ -66,6 +67,31 @@ export function useDeleteGenre() {
     mutationFn: deleteGenre,
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.genres.detail(id) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.genres.lists() });
+    },
+  });
+}
+
+async function updateGenreName(params: { id: string; data: UpdateGenre }) {
+  const response = await fetchWithAuth(`/genres/${params.id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(params.data),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message);
+  }
+}
+
+export function useUpdateGenreName() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateGenreName,
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.genres.detail(variables.id) });
       queryClient.invalidateQueries({ queryKey: queryKeys.genres.lists() });
     },
   });

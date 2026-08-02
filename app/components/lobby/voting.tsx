@@ -52,15 +52,21 @@ export function Voting() {
               <p className="text-sm text-gray-400 mb-2">
                 Rate this submission:
               </p>
-              <VoteForm
-                submissionId={s.id}
-                lobbyId={lobby?.id ?? ""}
-                isOwnTrack={s.participationId === participation?.id}
-                isVoted={participation?.scores?.some(
+              {(() => {
+                const existingScore = participation?.scores?.find(
                   (score) => score.submissionId === s.id,
-                )}
-                onVote={() => setVotedSubmissionId(s.id)}
-              />
+                );
+                return (
+                  <VoteForm
+                    submissionId={s.id}
+                    lobbyId={lobby?.id ?? ""}
+                    isOwnTrack={s.participationId === participation?.id}
+                    existingScoreId={existingScore?.id}
+                    existingScoreValue={existingScore?.value}
+                    onVote={() => setVotedSubmissionId(s.id)}
+                  />
+                );
+              })()}
             </div>
           </li>
         ))}

@@ -90,3 +90,30 @@ export function useUpdateSubmissionValue() {
     },
   });
 }
+
+async function deleteSubmission(id: string) {
+  const response = await fetchWithAuth(`/submissions/${id}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message);
+  }
+}
+
+export function useDeleteSubmission() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: deleteSubmission,
+    onSuccess: (_, id) => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.submissions.detail(id),
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.submissions.lists(),
+      });
+    },
+  });
+}

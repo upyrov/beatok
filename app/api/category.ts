@@ -52,8 +52,8 @@ async function updateCategoryName(params: {
   id: string;
   data: UpdateCategory;
 }) {
-  const response = await fetchWithAuth(`/categories?id=${params.id}`, {
-    method: "PUT",
+  const response = await fetchWithAuth(`/categories/${params.id}`, {
+    method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(params.data),
   });

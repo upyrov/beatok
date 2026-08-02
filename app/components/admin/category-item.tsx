@@ -40,7 +40,7 @@ export function CategoryItem({
         {isEditing ? (
           <div className="flex items-center gap-2 flex-1 mr-4">
             <input
-              className="bg-gray-50 px-2 py-1 rounded border border-gray-300 text-gray-900 w-full max-w-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 bg-white/5 border border-white/10 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-500"
               value={editName}
               onChange={(e) => setEditName(e.target.value)}
               autoFocus
@@ -54,18 +54,19 @@ export function CategoryItem({
             />
             <button
               onClick={handleUpdate}
-              className="text-green-400 hover:text-green-300"
+              disabled={!editName.trim()}
+              className="text-green-400 hover:text-green-300 transition-colors disabled:opacity-50"
             >
-              <CgCheck />
+              <CgCheck size={18} />
             </button>
             <button
               onClick={() => {
                 setIsEditing(false);
                 setEditName(category.name);
               }}
-              className="text-red-400 hover:text-red-300"
+              className="text-gray-400 hover:text-gray-300 transition-colors"
             >
-              <CgClose />
+              <CgClose size={18} />
             </button>
           </div>
         ) : (
@@ -73,15 +74,18 @@ export function CategoryItem({
             <span>{category.name}</span>
             <button
               onClick={() => setIsEditing(true)}
-              className="text-gray-500 hover:text-gray-900"
+              className="text-gray-400 hover:text-blue-400 transition-colors"
             >
-              <CgPen />
+              <CgPen size={18} />
             </button>
           </div>
         )}
-        <div className="flex gap-2 items-center">
-          <button onClick={() => setShowSounds(!showSounds)}>
-            {showSounds ? <CgChevronUp /> : <CgChevronDown />}
+        <div className="flex gap-3 items-center">
+          <button
+            onClick={() => setShowSounds(!showSounds)}
+            className="text-gray-400 hover:text-gray-300 transition-colors"
+          >
+            {showSounds ? <CgChevronUp size={18} /> : <CgChevronDown size={18} />}
           </button>
           <button
             onClick={(e) => {
@@ -93,8 +97,9 @@ export function CategoryItem({
               )
                 onDelete();
             }}
+            className="text-gray-400 hover:text-red-400 transition-colors"
           >
-            <CgTrash />
+            <CgTrash size={18} />
           </button>
         </div>
       </div>

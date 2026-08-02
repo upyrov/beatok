@@ -1,16 +1,15 @@
 import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
-import { CgTrash } from "react-icons/cg";
-import { useCreateGenre, useDeleteGenre, useGenres } from "~/api/genre";
+import { useCreateGenre, useGenres } from "~/api/genre";
 import { Button } from "~/components/button";
 import { FieldError } from "~/components/field-error";
 import { MutationBoundary } from "~/components/mutation-boundary";
 import { QueryBoundary } from "~/components/query-boundary";
+import { GenreItem } from "./genre-item";
 
 export function Genres() {
   const genresQuery = useGenres();
   const createMutation = useCreateGenre();
-  const deleteMutation = useDeleteGenre();
 
   const form = useForm({
     defaultValues: { name: "" },
@@ -42,7 +41,7 @@ export function Genres() {
                 <div className="flex gap-2">
                   <input
                     name={field.name}
-                    className="flex-1"
+                    className="flex-1 bg-white/5 border border-white/10 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
                     placeholder="Genre name..."
                     value={field.state.value}
                     onBlur={field.handleBlur}
@@ -75,21 +74,7 @@ export function Genres() {
           {(genres) => (
             <div className="flex flex-col gap-2">
               {genres.map((genre) => (
-                <div
-                  key={genre.id}
-                  className="flex justify-between items-center"
-                >
-                  <span>{genre.name}</span>
-                  <button
-                    onClick={() => {
-                      if (confirm(`Delete genre "${genre.name}"?`)) {
-                        deleteMutation.mutate(genre.id);
-                      }
-                    }}
-                  >
-                    <CgTrash />
-                  </button>
-                </div>
+                <GenreItem key={genre.id} genre={genre} />
               ))}
               {genres.length === 0 && <p>No genres found. Create one above!</p>}
             </div>

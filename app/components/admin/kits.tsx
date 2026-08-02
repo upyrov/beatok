@@ -66,7 +66,7 @@ export function Kits() {
                 <div className="flex gap-2">
                   <input
                     name={field.name}
-                    className="flex-1"
+                    className="flex-1 bg-white/5 border border-white/10 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
                     placeholder="Kit name..."
                     value={field.state.value}
                     onBlur={field.handleBlur}
@@ -111,7 +111,11 @@ export function Kits() {
                                 : [...prev, genre.id],
                             );
                           }}
-                          className={isSelected ? "font-bold" : ""}
+                          className={`text-sm px-2 py-1 rounded transition-colors ${
+                            isSelected
+                              ? "bg-blue-600 text-white"
+                              : "bg-white/10 text-gray-300 hover:bg-white/20"
+                          }`}
                         >
                           {genre.name}
                         </button>
@@ -178,7 +182,7 @@ function KitItem({ kit, onDelete }: { kit: Kit; onDelete: () => void }) {
           {isEditing ? (
             <div className="flex items-center gap-2">
               <input
-                className="bg-gray-50 px-2 py-1 rounded border border-gray-300 text-gray-900 w-full max-w-xs focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 bg-white/5 border border-white/10 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-500"
                 value={editName}
                 onChange={(e) => setEditName(e.target.value)}
                 autoFocus
@@ -192,28 +196,29 @@ function KitItem({ kit, onDelete }: { kit: Kit; onDelete: () => void }) {
               />
               <button
                 onClick={handleUpdate}
-                className="text-green-400 hover:text-green-300"
+                disabled={!editName.trim()}
+                className="text-green-400 hover:text-green-300 transition-colors disabled:opacity-50"
               >
-                <CgCheck />
+                <CgCheck size={18} />
               </button>
               <button
                 onClick={() => {
                   setIsEditing(false);
                   setEditName(kit.name);
                 }}
-                className="text-red-400 hover:text-red-300"
+                className="text-gray-400 hover:text-gray-300 transition-colors"
               >
-                <CgClose />
+                <CgClose size={18} />
               </button>
             </div>
           ) : (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-1">
               <span>{kit.name}</span>
               <button
                 onClick={() => setIsEditing(true)}
-                className="text-gray-500 hover:text-gray-900"
+                className="text-gray-400 hover:text-blue-400 transition-colors"
               >
-                <CgPen />
+                <CgPen size={18} />
               </button>
             </div>
           )}
@@ -223,9 +228,12 @@ function KitItem({ kit, onDelete }: { kit: Kit; onDelete: () => void }) {
             </span>
           )}
         </div>
-        <div className="flex gap-2 items-center">
-          <button onClick={() => setShowCategories(!showCategories)}>
-            {showCategories ? <CgChevronUp /> : <CgChevronDown />}
+        <div className="flex gap-3 items-center">
+          <button
+            onClick={() => setShowCategories(!showCategories)}
+            className="text-gray-400 hover:text-gray-300 transition-colors"
+          >
+            {showCategories ? <CgChevronUp size={18} /> : <CgChevronDown size={18} />}
           </button>
           <button
             onClick={(e) => {
@@ -233,8 +241,9 @@ function KitItem({ kit, onDelete }: { kit: Kit; onDelete: () => void }) {
               if (confirm(`Are you sure you want to delete kit "${kit.name}"?`))
                 onDelete();
             }}
+            className="text-gray-400 hover:text-red-400 transition-colors"
           >
-            <CgTrash />
+            <CgTrash size={18} />
           </button>
         </div>
       </div>

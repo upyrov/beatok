@@ -45,7 +45,7 @@ export function Categories({ kitId }: { kitId: string }) {
               <div className="flex gap-2">
                 <input
                   name={field.name}
-                  className="flex-1"
+                  className="flex-1 bg-white/5 border border-white/10 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
                   placeholder="New category name..."
                   value={field.state.value}
                   onBlur={field.handleBlur}

@@ -1,13 +1,20 @@
 import { use, useEffect } from "react";
-import { useOutletContext } from "react-router";
+import { useOutletContext, useNavigate } from "react-router";
+import { useKickParticipant } from "~/api/lobby";
 import type { Participation } from "~/api/types/participation";
 import type { Me } from "~/api/types/user/me";
+import { Button } from "~/components/button";
 import { UserCard } from "~/components/user-card";
+import { MutationBoundary } from "~/components/mutation-boundary";
 import { LobbyContext } from "~/contexts";
 
 export function ParticipantList() {
   const { lobby, setLobby, connection } = use(LobbyContext);
   const { user } = useOutletContext<{ user: Me | null }>();
+  const kickParticipantMutation = useKickParticipant();
+  const navigate = useNavigate();
+
+  const isOwner = lobby?.owner?.id === user?.id || (lobby as any)?.ownerId === user?.id;
 
   useEffect(() => {
     if (!connection) return;
@@ -23,6 +30,11 @@ export function ParticipantList() {
     }
 
     function handleParticipantLeft(userId: string) {
+      if (user?.id && userId === user.id) {
+        navigate("/");
+        return;
+      }
+
       setLobby((prev) => {
         if (!prev) return prev;
         return {
@@ -39,7 +51,7 @@ export function ParticipantList() {
       connection.off("ParticipantJoined", handleParticipantJoined);
       connection.off("ParticipantLeft", handleParticipantLeft);
     };
-  }, [connection, setLobby]);
+  }, [connection, setLobby, user?.id, navigate]);
 
   return (
     <div className="bg-white/5 border border-white/10 rounded-xl p-4">
@@ -52,13 +64,29 @@ export function ParticipantList() {
               {!p.isConnected && (
                 <span className="text-gray-400">(Disconnected)</span>
               )}
-              {p.user.id === lobby.ownerId && (
+              {(p.user.id === lobby.owner?.id || p.user.id === (lobby as any).ownerId) && (
                 <span className="text-gray-400">(Owner)</span>
               )}
               {p.user.id === user?.id && (
                 <span className="text-gray-400">(You)</span>
               )}
             </div>
+            {isOwner && p.user.id !== user?.id && (
+              <MutationBoundary mutation={kickParticipantMutation}>
+                <Button
+                  onClick={() =>
+                    kickParticipantMutation.mutate({
+                      id: lobby.id,
+                      targetUserId: p.user.id,
+                    })
+                  }
+                  isPending={kickParticipantMutation.isPending}
+                  className="ml-auto text-xs bg-red-600/50 hover:bg-red-600 px-2 py-1 rounded transition-colors"
+                >
+                  Kick
+                </Button>
+              </MutationBoundary>
+            )}
           </li>
         ))}
       </ul>

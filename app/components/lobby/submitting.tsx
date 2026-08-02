@@ -1,10 +1,11 @@
 import { use, useEffect, useMemo } from "react";
 import { useOutletContext } from "react-router";
-import { useCreateSubmission, useUploadUrl } from "~/api/submission";
+import { useCreateSubmission, useUploadUrl, useDeleteSubmission } from "~/api/submission";
 import { LobbyState } from "~/api/types/enums/lobby-state";
 import type { Submission as SubmissionType } from "~/api/types/submission/submission";
 import type { Me } from "~/api/types/user/me";
 import { AudioPlayer } from "~/components/audio-player";
+import { Button } from "~/components/button";
 import { FileDropzone } from "~/components/file-dropzone";
 import { MutationBoundary } from "~/components/mutation-boundary";
 import { LobbyContext } from "~/contexts";
@@ -19,6 +20,8 @@ export function Submitting() {
   const participation = lobby?.participants.find((p) => p.user.id === user?.id);
   const getUploadUrlMutation = useUploadUrl();
   const createSubmissionMutation = useCreateSubmission();
+  const deleteSubmissionMutation = useDeleteSubmission();
+  const mySubmission = lobby?.submissions?.find((s) => s.participationId === participation?.id);
 
   const { minutes, seconds } = useCountdown(
     lobby?.submissionTime ?? "00:00:00",
@@ -128,9 +131,20 @@ export function Submitting() {
 
       <div className="bg-white/5 p-4 rounded border border-white/10">
         <h3 className="font-bold mb-2">Submit Your Beat</h3>
-        {lobby?.submissions.some(
-          (s) => s.participationId === participation?.id,
-        ) || createSubmissionMutation.isSuccess ? (
+        {mySubmission ? (
+          <div className="flex flex-col gap-4">
+            <AudioPlayer src={mySubmission.value} />
+            <MutationBoundary mutation={deleteSubmissionMutation}>
+              <Button
+                onClick={() => deleteSubmissionMutation.mutate(mySubmission.id)}
+                isPending={deleteSubmissionMutation.isPending}
+                className="w-full text-sm bg-red-600/50 hover:bg-red-600 px-3 py-2 rounded transition-colors"
+              >
+                Delete Submission
+              </Button>
+            </MutationBoundary>
+          </div>
+        ) : createSubmissionMutation.isSuccess ? (
           <div className="text-green-400 font-semibold text-center py-4">
             Submission registered!
           </div>

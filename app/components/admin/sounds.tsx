@@ -75,9 +75,9 @@ function SoundItem({
             </span>
             <button
               onClick={() => setIsEditing(true)}
-              className="text-gray-500 hover:text-gray-900"
+              className="text-gray-400 hover:text-blue-400 transition-colors"
             >
-              <CgPen />
+              <CgPen size={18} />
             </button>
           </div>
         )}
@@ -86,9 +86,9 @@ function SoundItem({
             e.stopPropagation();
             onDelete();
           }}
-          className="text-gray-500 hover:text-gray-900"
+          className="text-gray-400 hover:text-red-400 transition-colors ml-2"
         >
-          <CgTrash />
+          <CgTrash size={18} />
         </button>
       </div>
       <AudioPlayer src={sound.value} />
