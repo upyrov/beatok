@@ -10,4 +10,5 @@ export interface Lobby {
   createdAt: string;
   genre: Genre;
   owner: User;
+  isJoined: boolean;
 }

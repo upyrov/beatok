@@ -6,4 +6,5 @@ export interface Me {
   role: UserRole;
   rating: number;
   picture: string | null;
+  isAnonymous: boolean;
 }
