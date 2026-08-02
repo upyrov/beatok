@@ -14,7 +14,7 @@ export function ParticipantList() {
   const kickParticipantMutation = useKickParticipant();
   const navigate = useNavigate();
 
-  const isOwner = lobby?.ownerId === user?.id;
+  const isOwner = user?.id === lobby?.ownerId;
 
   useEffect(() => {
     if (!connection) return;

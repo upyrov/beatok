@@ -1,9 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { use, useEffect } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, useOutletContext, useParams } from "react-router";
 import { queryKeys } from "~/api/query-keys";
 import { LobbyState } from "~/api/types/enums/lobby-state";
 import type { LobbyWithParticipants } from "~/api/types/lobby/lobby-with-participants";
+import type { Me } from "~/api/types/user/me";
 import { Fallback } from "~/components/fallback";
 import { Chat } from "~/components/lobby/chat";
 import { End } from "~/components/lobby/end";
@@ -19,6 +20,15 @@ export default function Lobby() {
   const queryClient = useQueryClient();
 
   const { connection, lobby, setLobby } = use(LobbyContext);
+  const { user } = useOutletContext<{ user: Me | null }>();
+
+  if (!user) {
+    return (
+      <main className="container mx-auto p-4 md:p-8 max-w-7xl flex-1 w-full flex gap-8">
+        <span>You need to have cookies enabled to join the lobby</span>
+      </main>
+    );
+  }
 
   const joinMutation = useMutation({
     mutationFn() {
