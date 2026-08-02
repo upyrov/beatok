@@ -1,4 +1,5 @@
-import { useRef, useState } from "react";
+import { useWavesurfer } from "@wavesurfer/react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { CgPlayButton, CgPlayPause } from "react-icons/cg";
 import { formatTime } from "~/lib/time";
 
@@ -9,70 +10,60 @@ export function AudioPlayer({
   src: string;
   className?: string;
 }) {
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
+  const { wavesurfer, isReady, isPlaying, currentTime } = useWavesurfer({
+    container: containerRef,
+    url: src,
+    waveColor: "#4b5563",
+    progressColor: "#f97316",
+    height: 80,
+    cursorWidth: 1,
+    cursorColor: "#ffffff",
+    normalize: true,
+  });
+
   const [duration, setDuration] = useState(0);
 
-  function handleClick() {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-      } else {
-        audioRef.current.play();
-      }
-    }
-  }
+  useEffect(() => {
+    if (!wavesurfer) return;
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const time = Number(e.target.value);
-    if (audioRef.current) {
-      audioRef.current.currentTime = time;
-    }
-    setCurrentTime(time);
-  }
+    const subscriptions = [
+      wavesurfer.on("decode", (duration) => setDuration(duration)),
+    ];
+
+    return () => subscriptions.forEach((unsubscribe) => unsubscribe());
+  }, [wavesurfer]);
+
+  const handleClick = useCallback(() => wavesurfer?.playPause(), [wavesurfer]);
 
   return (
     <div
-      className={`flex items-center gap-3 bg-gray-50 p-2 rounded-lg border border-gray-200 w-full ${className}`}
+      className={`flex items-center gap-4 bg-gray-900 p-4 rounded-xl border border-gray-800 w-full shadow-2xl ${className}`}
     >
-      <audio
-        ref={audioRef}
-        src={src}
-        preload="metadata"
-        onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
-        onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
-        onPlay={() => setIsPlaying(true)}
-        onPause={() => setIsPlaying(false)}
-        onEnded={() => setIsPlaying(false)}
-      />
-
       <button
         type="button"
         onClick={handleClick}
-        className="shrink-0 w-8 h-8 flex items-center justify-center bg-blue-500 hover:bg-blue-400 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-white/20"
+        disabled={!isReady}
+        className="shrink-0 w-12 h-12 flex items-center justify-center bg-orange-500 hover:bg-orange-400 disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500/50 text-white shadow-lg"
       >
-        {isPlaying ? <CgPlayPause /> : <CgPlayButton />}
+        {isPlaying ? <CgPlayPause size={24} /> : <CgPlayButton size={24} />}
       </button>
 
-      <span className="text-xs font-mono font-medium text-gray-600 w-10 text-right">
-        {formatTime(currentTime)}
-      </span>
-
-      <input
-        type="range"
-        min="0"
-        max={duration || 100}
-        value={currentTime}
-        onChange={handleChange}
-        step="0.01"
-        className="flex-1 h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-500"
-      />
-
-      <span className="text-xs font-mono font-medium text-gray-600 w-10">
-        {formatTime(duration)}
-      </span>
+      <div className="flex flex-col flex-1 gap-2 overflow-hidden">
+        <div className="flex justify-between items-center w-full px-1">
+          <span className="text-xs font-mono font-medium text-orange-500/80">
+            {formatTime(currentTime)}
+          </span>
+          <span className="text-xs font-mono font-medium text-gray-500">
+            {formatTime(duration)}
+          </span>
+        </div>
+        <div
+          className="flex-1 bg-gray-950/50 rounded-lg overflow-hidden border border-gray-800/50"
+          ref={containerRef}
+        />
+      </div>
     </div>
   );
 }
