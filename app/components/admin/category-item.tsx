@@ -85,7 +85,11 @@ export function CategoryItem({
             onClick={() => setShowSounds(!showSounds)}
             className="text-gray-400 hover:text-gray-300 transition-colors"
           >
-            {showSounds ? <CgChevronUp size={18} /> : <CgChevronDown size={18} />}
+            {showSounds ? (
+              <CgChevronUp size={18} />
+            ) : (
+              <CgChevronDown size={18} />
+            )}
           </button>
           <button
             onClick={(e) => {

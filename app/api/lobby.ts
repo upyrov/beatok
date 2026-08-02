@@ -86,7 +86,10 @@ export function useStartLobby() {
   });
 }
 
-async function vote(params: { id: string; data: CreateScore }) {
+async function vote(params: {
+  id: string;
+  data: CreateScore;
+}): Promise<string> {
   const response = await fetchWithAuth(`/lobbies/${params.id}/scores`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -97,6 +100,8 @@ async function vote(params: { id: string; data: CreateScore }) {
     const error = await response.json();
     throw new Error(error.message);
   }
+
+  return response.json();
 }
 
 export function useVote() {
@@ -112,12 +117,19 @@ export function useVote() {
   });
 }
 
-async function updateScore(params: { id: string; scoreId: string; data: UpdateScore }) {
-  const response = await fetchWithAuth(`/lobbies/${params.id}/scores/${params.scoreId}`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(params.data),
-  });
+async function updateScore(params: {
+  id: string;
+  scoreId: string;
+  data: UpdateScore;
+}) {
+  const response = await fetchWithAuth(
+    `/lobbies/${params.id}/scores/${params.scoreId}`,
+    {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(params.data),
+    },
+  );
 
   if (!response.ok) {
     const error = await response.json();
@@ -139,9 +151,12 @@ export function useUpdateScore() {
 }
 
 async function kickParticipant(params: { id: string; targetUserId: string }) {
-  const response = await fetchWithAuth(`/lobbies/${params.id}/participants/${params.targetUserId}`, {
-    method: "DELETE",
-  });
+  const response = await fetchWithAuth(
+    `/lobbies/${params.id}/participants/${params.targetUserId}`,
+    {
+      method: "DELETE",
+    },
+  );
 
   if (!response.ok) {
     const error = await response.json();

@@ -91,7 +91,9 @@ export function useUpdateGenreName() {
   return useMutation({
     mutationFn: updateGenreName,
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.genres.detail(variables.id) });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.genres.detail(variables.id),
+      });
       queryClient.invalidateQueries({ queryKey: queryKeys.genres.lists() });
     },
   });

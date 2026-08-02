@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { use, useEffect } from "react";
+import { use, useCallback, useEffect } from "react";
 import { useNavigate, useOutletContext, useParams } from "react-router";
 import { queryKeys } from "~/api/query-keys";
 import { LobbyState } from "~/api/types/enums/lobby-state";
@@ -12,7 +12,6 @@ import { ParticipantList } from "~/components/lobby/participant-list";
 import { Submitting } from "~/components/lobby/submitting";
 import { Voting } from "~/components/lobby/voting";
 import { Waiting } from "~/components/lobby/waiting";
-
 import { LobbyContext } from "~/contexts";
 
 export default function Lobby() {
@@ -62,11 +61,16 @@ export default function Lobby() {
     },
   });
 
+  const handleLeave = useCallback(
+    () => leaveMutation.mutate(),
+    [leaveMutation],
+  );
+
   useEffect(() => {
     if (connection && id && !lobby) {
       joinMutation.mutate();
     }
-  }, [connection, id, lobby]);
+  }, [connection, id, lobby, joinMutation]);
 
   useEffect(() => {
     if (!connection) return;
@@ -107,7 +111,7 @@ export default function Lobby() {
             <div className="flex items-center justify-between">
               <h1 className="text-2xl font-bold">{lobby.name}</h1>
               <button
-                onClick={() => leaveMutation.mutate()}
+                onClick={handleLeave}
                 disabled={leaveMutation.isPending}
                 className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors disabled:opacity-50"
               >

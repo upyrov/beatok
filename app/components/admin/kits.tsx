@@ -233,7 +233,11 @@ function KitItem({ kit, onDelete }: { kit: Kit; onDelete: () => void }) {
             onClick={() => setShowCategories(!showCategories)}
             className="text-gray-400 hover:text-gray-300 transition-colors"
           >
-            {showCategories ? <CgChevronUp size={18} /> : <CgChevronDown size={18} />}
+            {showCategories ? (
+              <CgChevronUp size={18} />
+            ) : (
+              <CgChevronDown size={18} />
+            )}
           </button>
           <button
             onClick={(e) => {

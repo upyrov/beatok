@@ -1,4 +1,4 @@
-import { use, useEffect } from "react";
+import { use, useCallback, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router";
 import { useKickParticipant } from "~/api/lobby";
 import type { Participation } from "~/api/types/participation";
@@ -53,6 +53,17 @@ export function ParticipantList() {
     };
   }, [connection, setLobby, user?.id, navigate]);
 
+  const handleKick = useCallback(
+    (targetUserId: string) => {
+      if (!lobby?.id) return;
+      kickParticipantMutation.mutate({
+        id: lobby.id,
+        targetUserId,
+      });
+    },
+    [kickParticipantMutation, lobby?.id],
+  );
+
   return (
     <div className="bg-white/5 border border-white/10 rounded-xl p-4">
       <h2 className="text-xl font-bold mb-4">Participants</h2>
@@ -72,12 +83,7 @@ export function ParticipantList() {
             {isOwner && p.user.id !== user?.id && (
               <MutationBoundary mutation={kickParticipantMutation}>
                 <Button
-                  onClick={() =>
-                    kickParticipantMutation.mutate({
-                      id: lobby.id,
-                      targetUserId: p.user.id,
-                    })
-                  }
+                  onClick={() => handleKick(p.user.id)}
                   isPending={kickParticipantMutation.isPending}
                   className="ml-auto text-xs bg-red-600/50 hover:bg-red-600 px-2 py-1 rounded transition-colors"
                 >

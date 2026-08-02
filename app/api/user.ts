@@ -3,12 +3,12 @@ import { fetchWithAuth } from "../lib/api-client";
 import { queryKeys } from "./query-keys";
 import type { Comment } from "./types/comment/comment";
 import type { CreateComment } from "./types/comment/create-comment";
+import type { Lobby } from "./types/lobby/lobby";
 import type { PageResult } from "./types/page-result";
 import type { Me } from "./types/user/me";
 import type { PictureUpload } from "./types/user/picture-upload";
 import type { User } from "./types/user/user";
 import type { UserUpdate } from "./types/user/user-update";
-import type { Lobby } from "./types/lobby/lobby";
 
 async function getUser(): Promise<Me> {
   const response = await fetchWithAuth("/users/me");
@@ -175,7 +175,7 @@ async function getUserHistory(
   params.append("pageSize", pageSize.toString());
 
   const response = await fetchWithAuth(
-    `/users/history/${userId}?${params.toString()}`,
+    `/users/${userId}/history?${params.toString()}`,
   );
 
   if (!response.ok) {
@@ -186,13 +186,17 @@ async function getUserHistory(
   return response.json();
 }
 
-export function userHistoryQueryOptions(userId: string, page = 1, pageSize = 25) {
+export function userHistoryQueryOptions(
+  userId: string,
+  page = 1,
+  pageSize = 25,
+) {
   return {
     queryKey: queryKeys.users.history(userId, page, pageSize),
     queryFn: () => getUserHistory(userId, page, pageSize),
   };
 }
 
-export function useUserHistory(userId: string, page = 1, pageSize = 25) {
-  return useQuery(userHistoryQueryOptions(userId, page, pageSize));
+export function useUserHistory(id: string, page = 1, pageSize = 25) {
+  return useQuery(userHistoryQueryOptions(id, page, pageSize));
 }

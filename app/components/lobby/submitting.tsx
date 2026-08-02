@@ -1,6 +1,10 @@
-import { use, useEffect, useMemo } from "react";
+import { use, useCallback, useEffect, useMemo } from "react";
 import { useOutletContext } from "react-router";
-import { useCreateSubmission, useUploadUrl, useDeleteSubmission } from "~/api/submission";
+import {
+  useCreateSubmission,
+  useDeleteSubmission,
+  useUploadUrl,
+} from "~/api/submission";
 import { LobbyState } from "~/api/types/enums/lobby-state";
 import type { Submission as SubmissionType } from "~/api/types/submission/submission";
 import type { Me } from "~/api/types/user/me";
@@ -21,7 +25,9 @@ export function Submitting() {
   const getUploadUrlMutation = useUploadUrl();
   const createSubmissionMutation = useCreateSubmission();
   const deleteSubmissionMutation = useDeleteSubmission();
-  const mySubmission = lobby?.submissions?.find((s) => s.participationId === participation?.id);
+  const mySubmission = lobby?.submissions?.find(
+    (s) => s.participationId === participation?.id,
+  );
 
   const { minutes, seconds } = useCountdown(
     lobby?.submissionTime ?? "00:00:00",
@@ -67,28 +73,53 @@ export function Submitting() {
     };
   }, [connection, setLobby]);
 
-  async function handleUpload(
-    file: File,
-    onProgress: (progress: number) => void,
-  ) {
-    const validation = await validateAudioFile(file);
-    if (!validation.valid) throw new Error(validation.error);
+  const handleUpload = useCallback(
+    async (file: File, onProgress: (progress: number) => void) => {
+      const validation = await validateAudioFile(file);
+      if (!validation.valid) throw new Error(validation.error);
 
-    const fileExtension = file.name.split(".").pop() || "";
-    const { uploadUrl, fileKey } = await getUploadUrlMutation.mutateAsync({
-      extension: fileExtension,
-      contentType: file.type,
+      const fileExtension = file.name.split(".").pop() || "";
+      const { uploadUrl, fileKey } = await getUploadUrlMutation.mutateAsync({
+        extension: fileExtension,
+        contentType: file.type,
+      });
+
+      await uploadFile(file, uploadUrl, onProgress);
+
+      if (!lobby) return;
+      await createSubmissionMutation.mutateAsync({
+        lobbyId: lobby.id,
+        value: fileKey,
+        durationSeconds: validation.durationSeconds,
+      });
+    },
+    [getUploadUrlMutation, createSubmissionMutation, lobby],
+  );
+
+  const handleDeleteSubmission = useCallback(() => {
+    if (!mySubmission) return;
+    deleteSubmissionMutation.mutate(mySubmission.id, {
+      onSuccess: () => {
+        setLobby((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            submissions: prev.submissions?.filter(
+              (s) => s.id !== mySubmission.id,
+            ),
+          };
+        });
+      },
     });
+  }, [deleteSubmissionMutation, mySubmission, setLobby]);
 
-    await uploadFile(file, uploadUrl, onProgress);
-
-    if (!lobby) return;
-    await createSubmissionMutation.mutateAsync({
-      lobbyId: lobby.id,
-      value: fileKey,
-      durationSeconds: validation.durationSeconds,
-    });
-  }
+  const onDownload = useCallback(
+    (e: React.MouseEvent, sound: { id: string; value: string }) => {
+      e.preventDefault();
+      handleDownload(sound.value, `beatok-${sound.id}.wav`);
+    },
+    [],
+  );
 
   return (
     <div className="flex flex-col gap-6">
@@ -112,10 +143,7 @@ export function Submitting() {
                     <div className="flex items-center gap-2">
                       <AudioPlayer src={s.value} className="flex-1" />
                       <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleDownload(s.value, `sound-${s.id}.wav`);
-                        }}
+                        onClick={(e) => onDownload(e, s)}
                         className="text-xs bg-blue-600/50 hover:bg-blue-600 px-3 py-1.5 rounded transition-colors whitespace-nowrap"
                       >
                         Download
@@ -136,7 +164,7 @@ export function Submitting() {
             <AudioPlayer src={mySubmission.value} />
             <MutationBoundary mutation={deleteSubmissionMutation}>
               <Button
-                onClick={() => deleteSubmissionMutation.mutate(mySubmission.id)}
+                onClick={handleDeleteSubmission}
                 isPending={deleteSubmissionMutation.isPending}
                 className="w-full text-sm bg-red-600/50 hover:bg-red-600 px-3 py-2 rounded transition-colors"
               >

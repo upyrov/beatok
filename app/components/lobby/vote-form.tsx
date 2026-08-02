@@ -1,8 +1,12 @@
 import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
-import { useVote, useUpdateScore } from "~/api/lobby";
+import { use } from "react";
+import { useOutletContext } from "react-router";
+import { useUpdateScore, useVote } from "~/api/lobby";
+import type { Me } from "~/api/types/user/me";
 import { Button } from "~/components/button";
 import { MutationBoundary } from "~/components/mutation-boundary";
+import { LobbyContext } from "~/contexts";
 
 export function VoteForm({
   submissionId,
@@ -21,6 +25,8 @@ export function VoteForm({
 }) {
   const voteMutation = useVote();
   const updateScoreMutation = useUpdateScore();
+  const { setLobby } = use(LobbyContext);
+  const { user } = useOutletContext<{ user: Me | null }>();
 
   const form = useForm({
     defaultValues: { score: existingScoreValue ?? 5 },
@@ -32,10 +38,46 @@ export function VoteForm({
           scoreId: existingScoreId,
           data: { value: value.score },
         });
+        setLobby((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            participants: prev.participants.map((p) => {
+              if (p.user.id !== user?.id) return p;
+              return {
+                ...p,
+                scores: p.scores?.map((s) =>
+                  s.id === existingScoreId
+                    ? { ...s, value: String(value.score) }
+                    : s,
+                ),
+              };
+            }),
+          };
+        });
       } else {
-        await voteMutation.mutateAsync({
+        const scoreId = await voteMutation.mutateAsync({
           id: lobbyId,
           data: { value: value.score, submissionId },
+        });
+        setLobby((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            participants: prev.participants.map((p) => {
+              if (p.user.id !== user?.id) return p;
+              const newScore = {
+                id: scoreId,
+                value: String(value.score),
+                submissionId,
+                participationId: p.id,
+              };
+              return {
+                ...p,
+                scores: [...(p.scores || []), newScore],
+              };
+            }),
+          };
         });
       }
     },

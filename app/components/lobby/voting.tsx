@@ -1,4 +1,4 @@
-import { use, useMemo, useState } from "react";
+import { use, useCallback, useMemo, useState } from "react";
 import { useOutletContext } from "react-router";
 import type { Me } from "~/api/types/user/me";
 import { AudioPlayer } from "~/components/audio-player";
@@ -27,6 +27,11 @@ export function Voting() {
             (s) => s.participationId !== participation?.id,
           ),
     [votedSubmissionId, lobby?.submissions, participation?.id],
+  );
+
+  const handleVote = useCallback(
+    (submissionId: string) => setVotedSubmissionId(submissionId),
+    [],
   );
 
   return (
@@ -62,8 +67,8 @@ export function Voting() {
                     lobbyId={lobby?.id ?? ""}
                     isOwnTrack={s.participationId === participation?.id}
                     existingScoreId={existingScore?.id}
-                    existingScoreValue={existingScore?.value}
-                    onVote={() => setVotedSubmissionId(s.id)}
+                    existingScoreValue={Number(existingScore?.value)}
+                    onVote={() => handleVote(s.id)}
                   />
                 );
               })()}

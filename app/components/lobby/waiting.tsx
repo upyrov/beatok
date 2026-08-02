@@ -1,4 +1,4 @@
-import { use, useEffect } from "react";
+import { use, useCallback, useEffect } from "react";
 import { useOutletContext } from "react-router";
 import { useStartLobby } from "~/api/lobby";
 import { LobbyState } from "~/api/types/enums/lobby-state";
@@ -14,6 +14,10 @@ export function Waiting() {
   const startLobbyMutation = useStartLobby();
 
   const isOwner = user?.id === lobby?.ownerId;
+
+  const handleStartLobby = useCallback(() => {
+    if (lobby?.id) startLobbyMutation.mutate(lobby.id);
+  }, [lobby?.id, startLobbyMutation]);
 
   useEffect(() => {
     if (!connection) return;
@@ -81,7 +85,7 @@ export function Waiting() {
           lobby.participants.length > 1 ? (
             <MutationBoundary mutation={startLobbyMutation}>
               <Button
-                onClick={() => startLobbyMutation.mutate(lobby.id)}
+                onClick={handleStartLobby}
                 isPending={startLobbyMutation.isPending}
                 className="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded font-semibold"
               >
