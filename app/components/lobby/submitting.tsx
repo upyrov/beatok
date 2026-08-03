@@ -8,8 +8,8 @@ import {
 import { LobbyState } from "~/api/types/enums/lobby-state";
 import type { Submission as SubmissionType } from "~/api/types/submission/submission";
 import type { Me } from "~/api/types/user/me";
+import { ActionButton } from "~/components/action-button";
 import { AudioPlayer } from "~/components/audio-player";
-import { Button } from "~/components/button";
 import { FileDropzone } from "~/components/file-dropzone";
 import { MutationBoundary } from "~/components/mutation-boundary";
 import { LobbyContext } from "~/contexts";
@@ -17,6 +17,7 @@ import { useCountdown } from "~/hooks/use-countdown";
 import { validateAudioFile } from "~/lib/audio";
 import { handleDownload } from "~/lib/download";
 import { uploadFile } from "~/lib/upload";
+import { Button } from "../button";
 
 export function Submitting() {
   const { lobby, setLobby, connection } = use(LobbyContext);
@@ -142,12 +143,9 @@ export function Submitting() {
                     <span className="truncate pr-2">{s.value}</span>
                     <div className="flex items-center gap-2">
                       <AudioPlayer src={s.value} className="flex-1" />
-                      <button
-                        onClick={(e) => onDownload(e, s)}
-                        className="text-xs bg-blue-600/50 hover:bg-blue-600 px-3 py-1.5 rounded transition-colors whitespace-nowrap"
-                      >
+                      <Button onClick={(e) => onDownload(e, s)}>
                         Download
-                      </button>
+                      </Button>
                     </div>
                   </li>
                 ))}
@@ -163,13 +161,12 @@ export function Submitting() {
           <div className="flex flex-col gap-4">
             <AudioPlayer src={mySubmission.value} />
             <MutationBoundary mutation={deleteSubmissionMutation}>
-              <Button
+              <ActionButton
                 onClick={handleDeleteSubmission}
                 isPending={deleteSubmissionMutation.isPending}
-                className="w-full text-sm bg-red-600/50 hover:bg-red-600 px-3 py-2 rounded transition-colors"
               >
                 Delete Submission
-              </Button>
+              </ActionButton>
             </MutationBoundary>
           </div>
         ) : createSubmissionMutation.isSuccess ? (

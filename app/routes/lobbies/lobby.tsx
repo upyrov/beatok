@@ -6,6 +6,7 @@ import { queryKeys } from "~/api/query-keys";
 import { LobbyState } from "~/api/types/enums/lobby-state";
 import type { LobbyWithParticipants } from "~/api/types/lobby/lobby-with-participants";
 import type { Me } from "~/api/types/user/me";
+import { ActionButton } from "~/components/action-button";
 import { Fallback } from "~/components/fallback";
 import { Chat } from "~/components/lobby/chat";
 import { End } from "~/components/lobby/end";
@@ -115,13 +116,12 @@ export default function Lobby() {
           <div className="flex flex-col gap-4 flex-1">
             <div className="flex items-center justify-between">
               <h1 className="text-2xl font-bold">{lobby.name}</h1>
-              <button
+              <ActionButton
                 onClick={handleLeave}
                 disabled={leaveMutation.isPending}
-                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors disabled:opacity-50"
               >
                 {leaveMutation.isPending ? <Fallback /> : "Leave"}
-              </button>
+              </ActionButton>
             </div>
             <div className="flex gap-8">
               <div>

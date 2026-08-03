@@ -7,6 +7,7 @@ import type { User } from "~/api/types/user/user";
 import { useUpdateUser, useUploadAvatarUrl } from "~/api/user";
 import { FileDropzone } from "~/components/file-dropzone";
 import { uploadFile } from "~/lib/upload";
+import { ActionButton } from "../action-button";
 
 interface ProfileProps {
   user: User;
@@ -108,15 +109,13 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
             <nameForm.Subscribe
               selector={(state) => [state.canSubmit, state.isSubmitting]}
               children={([canSubmit, isSubmitting]) => (
-                <button
-                  type="submit"
+                <ActionButton
                   disabled={
                     !canSubmit || isSubmitting || updateUserMutation.isPending
                   }
-                  className="bg-primary hover:bg-primary/90 px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50"
                 >
                   Save
-                </button>
+                </ActionButton>
               )}
             />
           </form>

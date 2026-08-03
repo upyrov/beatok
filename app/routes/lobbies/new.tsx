@@ -3,7 +3,7 @@ import { type } from "arktype";
 import { useNavigate } from "react-router";
 import { genresQueryOptions, useGenres } from "~/api/genre";
 import { useCreateLobby } from "~/api/lobby";
-import { Button } from "~/components/button";
+import { ActionButton } from "~/components/action-button";
 import { FieldError } from "~/components/field-error";
 import { MutationBoundary } from "~/components/mutation-boundary";
 import { QueryBoundary } from "~/components/query-boundary";
@@ -149,14 +149,12 @@ export default function NewLobby() {
         <form.Subscribe
           selector={(state) => [state.canSubmit, state.isSubmitting]}
           children={([canSubmit, isSubmitting]) => (
-            <Button
-              type="submit"
+            <ActionButton
               disabled={!canSubmit}
               isPending={isSubmitting || createLobbyMutation.isPending}
-              className="mt-4 p-2 bg-gray-200 hover:bg-gray-300 font-medium rounded"
             >
               Create Lobby
-            </Button>
+            </ActionButton>
           )}
         />
 

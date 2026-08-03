@@ -4,7 +4,7 @@ import { use } from "react";
 import { useOutletContext } from "react-router";
 import { useUpdateScore, useVote } from "~/api/lobby";
 import type { Me } from "~/api/types/user/me";
-import { Button } from "~/components/button";
+import { ActionButton } from "~/components/action-button";
 import { MutationBoundary } from "~/components/mutation-boundary";
 import { LobbyContext } from "~/contexts";
 
@@ -132,14 +132,12 @@ export function VoteForm({
             <form.Subscribe
               selector={(state) => [state.canSubmit, state.isSubmitting]}
               children={([canSubmit, isSubmitting]) => (
-                <Button
-                  type="submit"
+                <ActionButton
                   disabled={!canSubmit}
                   isPending={isSubmitting || isPending}
-                  className="bg-blue-600 hover:bg-blue-500 px-3 py-1 text-sm rounded transition-colors font-medium text-white"
                 >
                   {existingScoreId ? "Update" : "Vote"}
-                </Button>
+                </ActionButton>
               )}
             />
           </MutationBoundary>

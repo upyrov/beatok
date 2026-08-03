@@ -3,7 +3,7 @@ import { useNavigate, useOutletContext } from "react-router";
 import { useKickParticipant } from "~/api/lobby";
 import type { Participation } from "~/api/types/participation";
 import type { Me } from "~/api/types/user/me";
-import { Button } from "~/components/button";
+import { ActionButton } from "~/components/action-button";
 import { MutationBoundary } from "~/components/mutation-boundary";
 import { UserCard } from "~/components/user-card";
 import { LobbyContext } from "~/contexts";
@@ -82,13 +82,12 @@ export function ParticipantList() {
             </div>
             {user?.id === lobby?.ownerId && p.user.id !== user?.id && (
               <MutationBoundary mutation={kickParticipantMutation}>
-                <Button
+                <ActionButton
                   onClick={() => handleKick(p.user.id)}
                   isPending={kickParticipantMutation.isPending}
-                  className="ml-auto text-xs bg-red-600/50 hover:bg-red-600 px-2 py-1 rounded transition-colors"
                 >
                   Kick
-                </Button>
+                </ActionButton>
               </MutationBoundary>
             )}
           </li>

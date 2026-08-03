@@ -1,6 +1,7 @@
 import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
 import { useAddComment } from "~/api/user";
+import { ActionButton } from "../action-button";
 
 export function CommentForm({ userId }: { userId: string }) {
   const addComment = useAddComment(userId);
@@ -48,13 +49,11 @@ export function CommentForm({ userId }: { userId: string }) {
         <form.Subscribe
           selector={(state) => [state.canSubmit, state.isSubmitting]}
           children={([canSubmit, isSubmitting]) => (
-            <button
-              type="submit"
+            <ActionButton
               disabled={!canSubmit || isSubmitting || addComment.isPending}
-              className="bg-primary hover:bg-primary/90 px-6 py-2 rounded-lg font-medium transition-colors disabled:opacity-50"
             >
               Post Comment
-            </button>
+            </ActionButton>
           )}
         />
       </div>

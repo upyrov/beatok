@@ -2,9 +2,8 @@ import { Link, useParams } from "react-router";
 import { useSignOut } from "~/api/auth";
 import type { Me } from "~/api/types/user/me";
 import { UserCard } from "~/components/user-card";
-
-const CR_BUTTON_CLASSES =
-  "px-4 py-1.5 h-auto min-h-[28px] bg-linear-to-b from-[#5c656d] to-[#495158] hover:from-[#656e76] hover:to-[#515961] active:from-[#434a51] active:to-[#3e444a] border border-[#2b3035] rounded text-[#e0e4e8] text-[13px] font-medium flex items-center justify-center cursor-pointer shadow-[inset_0_1px_0_rgba(255,255,255,0.1),0_1px_2px_rgba(0,0,0,0.3)] active:shadow-[inset_0_1px_3px_rgba(0,0,0,0.4)] transition-colors duration-100";
+import { ActionButton } from "./action-button";
+import { Button } from "./button";
 
 export function Header({ user }: { user?: Me }) {
   const signOutMutation = useSignOut();
@@ -22,21 +21,21 @@ export function Header({ user }: { user?: Me }) {
       </div>
       <div className="flex items-center gap-3">
         {user && params.id !== user.id && <UserCard user={user} size="md" />}
-        <Link to="/lobbies/new" className={CR_BUTTON_CLASSES}>
-          Create Lobby
+        <Link to="/lobbies/new">
+          <Button>Create Lobby</Button>
         </Link>
         {user ? (
           <>
-            <button
+            <ActionButton
               onClick={() => signOutMutation.mutate()}
-              className={CR_BUTTON_CLASSES}
+              isPending={signOutMutation.isPending}
             >
               Sign out
-            </button>
+            </ActionButton>
           </>
         ) : (
-          <Link to="/signin" className={CR_BUTTON_CLASSES}>
-            Sign in
+          <Link to="/signin">
+            <Button>Sign in</Button>
           </Link>
         )}
       </div>

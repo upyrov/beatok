@@ -1,8 +1,9 @@
 import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
+import { CgGoogle } from "react-icons/cg";
 import { Link, useNavigate } from "react-router";
 import { useGoogleAuthUrl, useSignIn } from "~/api/auth";
-import { Button } from "~/components/button";
+import { ActionButton } from "~/components/action-button";
 import { FieldError } from "~/components/field-error";
 import { MutationBoundary } from "~/components/mutation-boundary";
 
@@ -81,14 +82,12 @@ export default function Signin() {
         <form.Subscribe
           selector={(state) => [state.canSubmit, state.isSubmitting]}
           children={([canSubmit, isSubmitting]) => (
-            <Button
-              type="submit"
+            <ActionButton
               disabled={!canSubmit}
               isPending={isSubmitting || signInMutation.isPending}
-              className="bg-blue-600 p-2 rounded font-medium"
             >
               Sign in
-            </Button>
+            </ActionButton>
           )}
         />
       </form>
@@ -99,14 +98,13 @@ export default function Signin() {
         <hr className="w-full border-gray-300" />
       </div>
 
-      <Button
+      <ActionButton
         type="button"
         onClick={() => googleAuthUrlMutation.mutate()}
         isPending={googleAuthUrlMutation.isPending}
-        className="w-full flex items-center justify-center gap-2 p-2 rounded font-medium border"
       >
-        Continue with Google
-      </Button>
+        <CgGoogle /> Continue with Google
+      </ActionButton>
 
       <Link to="/signup" className="text-blue-500 hover:underline mt-4 block">
         Don't have an account?

@@ -4,7 +4,7 @@ import { useStartLobby } from "~/api/lobby";
 import { LobbyState } from "~/api/types/enums/lobby-state";
 import type { SoundWithCategory } from "~/api/types/sound/sound-with-category";
 import type { Me } from "~/api/types/user/me";
-import { Button } from "~/components/button";
+import { ActionButton } from "~/components/action-button";
 import { MutationBoundary } from "~/components/mutation-boundary";
 import { LobbyContext } from "~/contexts";
 
@@ -84,13 +84,12 @@ export function Waiting() {
         {isOwner ? (
           lobby.participants.length > 1 ? (
             <MutationBoundary mutation={startLobbyMutation}>
-              <Button
+              <ActionButton
                 onClick={handleStartLobby}
                 isPending={startLobbyMutation.isPending}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded font-semibold"
               >
                 Start Lobby
-              </Button>
+              </ActionButton>
             </MutationBoundary>
           ) : (
             <p className="text-gray-400">Waiting for users to join...</p>

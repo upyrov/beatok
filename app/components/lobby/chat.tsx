@@ -4,6 +4,7 @@ import { use, useEffect, useRef, useState } from "react";
 import type { User } from "~/api/types/user/user";
 import { UserCard } from "~/components/user-card";
 import { LobbyContext } from "~/contexts";
+import { ActionButton } from "../action-button";
 
 export interface Message {
   content: string;
@@ -95,13 +96,9 @@ export function Chat() {
         <form.Subscribe
           selector={(state) => [state.canSubmit, state.isSubmitting]}
           children={([canSubmit, isSubmitting]) => (
-            <button
-              type="submit"
-              disabled={!canSubmit || isSubmitting}
-              className="bg-white/10 hover:bg-white/20 px-3 py-2 rounded text-sm transition-colors disabled:opacity-50"
-            >
+            <ActionButton disabled={!canSubmit || isSubmitting}>
               Send
-            </button>
+            </ActionButton>
           )}
         />
       </form>

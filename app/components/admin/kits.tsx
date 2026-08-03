@@ -18,7 +18,7 @@ import {
   useUpdateKitName,
 } from "~/api/kit";
 import type { Kit } from "~/api/types/kit/kit";
-import { Button } from "~/components/button";
+import { ActionButton } from "~/components/action-button";
 import { FieldError } from "~/components/field-error";
 import { MutationBoundary } from "~/components/mutation-boundary";
 import { QueryBoundary } from "~/components/query-boundary";
@@ -75,13 +75,12 @@ export function Kits() {
                   <form.Subscribe
                     selector={(state) => [state.canSubmit, state.isSubmitting]}
                     children={([canSubmit, isSubmitting]) => (
-                      <Button
-                        type="submit"
+                      <ActionButton
                         disabled={!canSubmit}
                         isPending={isSubmitting || createMutation.isPending}
                       >
                         <CgAdd />
-                      </Button>
+                      </ActionButton>
                     )}
                   />
                 </div>
