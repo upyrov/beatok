@@ -33,7 +33,7 @@ export default function Lobby() {
   const joinMutation = useMutation({
     mutationFn() {
       return connection?.state !== HubConnectionState.Connected
-        ? Promise.reject()
+        ? Promise.reject(new Error("Connection is not established"))
         : connection.invoke<LobbyWithParticipants>("Join", id);
     },
     retry: 5,
