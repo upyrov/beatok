@@ -18,7 +18,7 @@ export function History({ userId }: { userId: string }) {
 
   return (
     <div className="flex flex-col gap-4">
-      {history?.items.length && (
+      {history?.items.length !== 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {history?.items.map((lobby) => (
             <Link
