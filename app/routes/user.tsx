@@ -1,10 +1,10 @@
 import { useParams } from "react-router";
 import {
   commentsQueryOptions,
+  historyQueryOptions,
   useUser,
   useUserById,
   userByIdQueryOptions,
-  userHistoryQueryOptions,
 } from "~/api/user";
 import { Fallback } from "~/components/fallback";
 import { CommentForm } from "~/components/user/comment-form";
@@ -20,7 +20,7 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   await Promise.all([
     queryClient.prefetchQuery(userByIdQueryOptions(id)),
     queryClient.prefetchQuery(commentsQueryOptions(id, 1, 25)),
-    queryClient.prefetchQuery(userHistoryQueryOptions(id, 1, 25)),
+    queryClient.prefetchQuery(historyQueryOptions(id, 1, 25)),
   ]);
 }
 

@@ -165,7 +165,7 @@ export function useUpdateUser() {
   });
 }
 
-async function getUserHistory(
+async function getHistory(
   userId: string,
   page = 1,
   pageSize = 25,
@@ -186,17 +186,13 @@ async function getUserHistory(
   return response.json();
 }
 
-export function userHistoryQueryOptions(
-  userId: string,
-  page = 1,
-  pageSize = 25,
-) {
+export function historyQueryOptions(userId: string, page = 1, pageSize = 25) {
   return {
     queryKey: queryKeys.users.history(userId, page, pageSize),
-    queryFn: () => getUserHistory(userId, page, pageSize),
+    queryFn: () => getHistory(userId, page, pageSize),
   };
 }
 
-export function useUserHistory(id: string, page = 1, pageSize = 25) {
-  return useQuery(userHistoryQueryOptions(id, page, pageSize));
+export function useHistory(id: string, page = 1, pageSize = 25) {
+  return useQuery(historyQueryOptions(id, page, pageSize));
 }
