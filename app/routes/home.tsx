@@ -96,11 +96,12 @@ export default function Home() {
                   {active.length === 0 && (
                     <div className="col-span-full py-12 text-center">
                       <p>No active lobbies found</p>
-                      <p className="mt-1 text-gray-500">
-                        Check back later or create your own
-                      </p>
-                      <Link to="/lobbies/new">
-                        <Button>Create Lobby</Button>
+                      <p className="mt-1 text-gray-500">Check back later or</p>
+                      <Link
+                        to="/lobbies/new"
+                        className="flex justify-center p-2"
+                      >
+                        <Button>Create your own</Button>
                       </Link>
                     </div>
                   )}
