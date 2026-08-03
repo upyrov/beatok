@@ -17,6 +17,6 @@ export async function handleDownload(url: string, filename: string) {
     a.remove();
     URL.revokeObjectURL(blobUrl);
   } catch (error) {
-    console.error("Failed to download file:", error);
+    console.error(error);
   }
 }

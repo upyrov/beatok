@@ -35,7 +35,7 @@ export default function NewLobby() {
         });
         navigate(`/lobbies/${createdLobbyId}`);
       } catch (error) {
-        console.error("Failed to create lobby", error);
+        console.error(error);
       }
     },
   });

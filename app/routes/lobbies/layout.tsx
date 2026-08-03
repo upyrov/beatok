@@ -21,7 +21,7 @@ export default function Layout() {
     newConnection
       .start()
       .then(() => setConnection(newConnection))
-      .catch((err) => console.error("Realtime connection failed: ", err));
+      .catch((error) => console.error(error));
 
     return () => {
       newConnection.stop();

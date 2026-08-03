@@ -41,8 +41,8 @@ export default function Lobby() {
         queryClient.setQueryData(queryKeys.lobbies.detail(lobby.id), lobby);
       }
     },
-    onError(err) {
-      console.error(err);
+    onError(error) {
+      console.error(error);
     },
   });
 
@@ -56,8 +56,8 @@ export default function Lobby() {
       queryClient.invalidateQueries({ queryKey: queryKeys.lobbies.list({}) });
       navigate("/");
     },
-    onError(err) {
-      console.error(err);
+    onError(error) {
+      console.error(error);
     },
   });
 

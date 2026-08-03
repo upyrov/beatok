@@ -48,8 +48,8 @@ export function Chat() {
       try {
         await connection.invoke("SendMessage", lobby.id, value.content);
         form.reset();
-      } catch (err) {
-        console.error("Failed to send message:", err);
+      } catch (error) {
+        console.error(error);
       }
     },
   });

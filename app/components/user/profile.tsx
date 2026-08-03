@@ -49,8 +49,8 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
           queryKey: queryKeys.users.detail(user.id),
         });
         queryClient.invalidateQueries({ queryKey: queryKeys.users.me() });
-      } catch (e) {
-        console.error(e);
+      } catch (error) {
+        console.error(error);
       }
     },
   });

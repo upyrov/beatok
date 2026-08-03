@@ -16,7 +16,7 @@ export function MutationBoundary({
 
   useEffect(() => {
     if (activeError) {
-      console.error("Mutation/Form Error:", activeError);
+      console.error(activeError);
     }
   }, [activeError]);
 

@@ -60,7 +60,7 @@ export function FileDropzone({
           setUploads((prev) => prev.filter((u) => u.id !== upload.id));
         }, 3000);
       } catch (error) {
-        console.error("Failed to upload", error);
+        console.error(error);
         updateUpload({ status: "error", error: (error as Error).message });
       }
     },

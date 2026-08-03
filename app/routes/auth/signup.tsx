@@ -1,7 +1,7 @@
 import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
 import { Link, useNavigate } from "react-router";
-import { useSignUp } from "~/api/auth";
+import { useGoogleAuthUrl, useSignUp } from "~/api/auth";
 import { Button } from "~/components/button";
 import { FieldError } from "~/components/field-error";
 import { MutationBoundary } from "~/components/mutation-boundary";
@@ -9,6 +9,7 @@ import { MutationBoundary } from "~/components/mutation-boundary";
 export default function Signup() {
   const navigate = useNavigate();
   const signUpMutation = useSignUp();
+  const googleAuthUrlMutation = useGoogleAuthUrl();
 
   const form = useForm({
     defaultValues: {
@@ -32,6 +33,7 @@ export default function Signup() {
         className="flex flex-col gap-4"
       >
         <MutationBoundary error={signUpMutation.error} />
+        <MutationBoundary error={googleAuthUrlMutation.error} />
 
         <form.Field
           name="name"
@@ -112,6 +114,21 @@ export default function Signup() {
           )}
         />
       </form>
+
+      <div className="my-4 flex items-center justify-between">
+        <hr className="w-full border-gray-300" />
+        <span className="p-2 text-gray-400">or</span>
+        <hr className="w-full border-gray-300" />
+      </div>
+
+      <Button
+        type="button"
+        onClick={() => googleAuthUrlMutation.mutate()}
+        isPending={googleAuthUrlMutation.isPending}
+        className="w-full flex items-center justify-center gap-2 p-2 rounded font-medium border"
+      >
+        Continue with Google
+      </Button>
 
       <Link to="/signin" className="text-blue-500 hover:underline mt-4 block">
         Already have an account?

@@ -45,9 +45,9 @@ function SoundItem({
         { id: sound.id, data: { value: fileKey } },
         { onSuccess: () => setIsEditing(false) },
       );
-    } catch (e) {
-      console.error(e);
-      alert(e instanceof Error ? e.message : "Upload failed");
+    } catch (error) {
+      console.error(error);
+      alert(error instanceof Error ? error.message : "Upload failed");
     }
   }
 

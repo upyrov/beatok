@@ -88,7 +88,7 @@ export async function validateAudioFile(file: File): Promise<{
       };
     }
     return { valid: true, durationSeconds };
-  } catch (err) {
+  } catch (error) {
     return {
       valid: false,
       durationSeconds: 0,

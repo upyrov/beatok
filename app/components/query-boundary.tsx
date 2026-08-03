@@ -11,7 +11,7 @@ interface QueryBoundaryProps<T> {
 export function QueryBoundary<T>({ query, children }: QueryBoundaryProps<T>) {
   useEffect(() => {
     if (query.isError) {
-      console.error("QueryError:", query.error);
+      console.error(query.error);
     }
   }, [query.isError, query.error]);
 

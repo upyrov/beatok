@@ -47,9 +47,11 @@ export async function fetchWithAuth(
       });
       queryClient.setQueryData(["auth", "status"], "authenticated");
       return fetchWithAuth(input, init);
-    } catch (err) {
+    } catch (error) {
       queryClient.setQueryData(["auth", "status"], "unauthenticated");
-      throw new AuthError(err instanceof Error ? err.message : String(err));
+      throw new AuthError(
+        error instanceof Error ? error.message : String(error),
+      );
     }
   }
 

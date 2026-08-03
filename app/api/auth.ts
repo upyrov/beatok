@@ -60,6 +60,47 @@ export function useSignUp() {
   });
 }
 
+async function getGoogleAuthUrl() {
+  const response = await fetch(
+    `${import.meta.env.VITE_API_BASE_URL}/auth/google/url`,
+    {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    },
+  );
+
+  if (!response.ok) {
+    await handleApiError(response);
+  }
+
+  return response.text();
+}
+
+export function useGoogleAuthUrl() {
+  return useMutation({
+    mutationFn: getGoogleAuthUrl,
+    onSuccess: (url) => {
+      window.location.href = url;
+    },
+  });
+}
+
+export async function googleCallback(search: string) {
+  const response = await fetch(
+    `${import.meta.env.VITE_API_BASE_URL}/auth/google/callback${search}`,
+    {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    },
+  );
+
+  if (!response.ok) {
+    await handleApiError(response);
+  }
+}
+
 async function signOut() {
   await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/sign-out`, {
     method: "POST",
