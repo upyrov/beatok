@@ -11,6 +11,7 @@ export default function Layout() {
   const [lobby, setLobby] = useState<LobbyWithParticipants | null>(null);
 
   useEffect(() => {
+    let isActive = true;
     const newConnection = new HubConnectionBuilder()
       .withUrl(`${import.meta.env.VITE_API_BASE_URL}/lobby`, {
         withCredentials: true,
@@ -20,16 +21,23 @@ export default function Layout() {
 
     newConnection
       .start()
-      .then(() => setConnection(newConnection))
+      .then(() => {
+        if (isActive) {
+          setConnection(newConnection);
+        } else {
+          newConnection.stop();
+        }
+      })
       .catch((error) => console.error(error));
 
     return () => {
+      isActive = false;
       newConnection.stop();
     };
   }, []);
 
   return (
-    <LobbyContext value={{ connection, lobby, setLobby }}>
+    <LobbyContext value={{ lobby, setLobby, connection }}>
       <Outlet context={context} />
     </LobbyContext>
   );

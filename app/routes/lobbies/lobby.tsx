@@ -1,3 +1,4 @@
+import { HubConnectionState } from "@microsoft/signalr";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { use, useCallback, useEffect } from "react";
 import { useNavigate, useOutletContext, useParams } from "react-router";
@@ -31,7 +32,9 @@ export default function Lobby() {
 
   const joinMutation = useMutation({
     mutationFn() {
-      return connection!.invoke<LobbyWithParticipants>("Join", id);
+      return connection?.state !== HubConnectionState.Connected
+        ? Promise.reject()
+        : connection.invoke<LobbyWithParticipants>("Join", id);
     },
     retry: 5,
     retryDelay: 1000,
