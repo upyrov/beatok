@@ -1,6 +1,6 @@
 import { HubConnectionState } from "@microsoft/signalr";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { use, useCallback, useEffect } from "react";
+import { use, useCallback, useEffect, useRef } from "react";
 import { useNavigate, useOutletContext, useParams } from "react-router";
 import { queryKeys } from "~/api/query-keys";
 import { LobbyState } from "~/api/types/enums/lobby-state";
@@ -16,19 +16,15 @@ import { Waiting } from "~/components/lobby/waiting";
 import { LobbyContext } from "~/contexts";
 
 export default function Lobby() {
-  const { id } = useParams();
-  const queryClient = useQueryClient();
-
   const { connection, lobby, setLobby } = use(LobbyContext);
   const { user } = useOutletContext<{ user: Me | null }>();
 
-  if (!user) {
-    return (
-      <main className="container mx-auto p-4 md:p-8 max-w-7xl flex-1 w-full flex gap-8">
-        <span>You need to have cookies enabled to join the lobby</span>
-      </main>
-    );
-  }
+  const { id } = useParams();
+  const queryClient = useQueryClient();
+
+  const joinAttemptId = useRef<string | null>(null);
+
+  const navigate = useNavigate();
 
   const joinMutation = useMutation({
     mutationFn() {
@@ -48,9 +44,6 @@ export default function Lobby() {
       console.error(error);
     },
   });
-
-  const navigate = useNavigate();
-
   const leaveMutation = useMutation({
     mutationFn() {
       return connection!.invoke("Leave", id);
@@ -66,17 +59,18 @@ export default function Lobby() {
 
   const handleLeave = useCallback(
     () => leaveMutation.mutate(),
-    [leaveMutation],
+    [leaveMutation.mutate],
   );
 
   useEffect(() => {
-    if (connection && id && !lobby) {
+    if (user && connection && id && !lobby && joinAttemptId.current !== id) {
+      joinAttemptId.current = id;
       joinMutation.mutate();
     }
-  }, [connection, id, lobby, joinMutation]);
+  }, [user, connection, id, lobby, joinMutation.mutate]);
 
   useEffect(() => {
-    if (!connection) return;
+    if (!user || !connection) return;
 
     function handleEnded(submissionId: string | null) {
       setLobby((prev) => {
@@ -93,7 +87,15 @@ export default function Lobby() {
     return () => {
       connection.off("Ended", handleEnded);
     };
-  }, [connection, setLobby]);
+  }, [user, connection, setLobby]);
+
+  if (!user) {
+    return (
+      <main className="container mx-auto p-4 md:p-8 max-w-7xl flex-1 w-full flex gap-8">
+        <span>You need to have cookies enabled to join the lobby</span>
+      </main>
+    );
+  }
 
   const StateView =
     lobby &&
