@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import { lobbiesQueryOptions, useLobbies } from "~/api/lobby";
 import type { Lobby } from "~/api/types/lobby/lobby";
+import { Button } from "~/components/button";
 import { LobbyCard } from "~/components/lobby-card";
 import { QueryBoundary } from "~/components/query-boundary";
 import { getQueryClient } from "~/lib/query-client";
@@ -98,6 +99,9 @@ export default function Home() {
                       <p className="mt-1 text-gray-500">
                         Check back later or create your own
                       </p>
+                      <Link to="/lobbies/new">
+                        <Button>Create Lobby</Button>
+                      </Link>
                     </div>
                   )}
                 </div>
