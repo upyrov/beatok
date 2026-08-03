@@ -1,5 +1,6 @@
 import { use } from "react";
 import { LobbyContext } from "~/contexts";
+import { AudioPlayer } from "../audio-player";
 
 export function End() {
   const { lobby } = use(LobbyContext);
@@ -21,7 +22,7 @@ export function End() {
             }{" "}
             won with this submission:
           </p>
-          <audio src={winningSubmission.value} controls className="w-full" />
+          <AudioPlayer src={winningSubmission.value} />
         </div>
       ) : (
         <p className="text-gray-400">

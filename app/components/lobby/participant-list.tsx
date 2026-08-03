@@ -14,8 +14,6 @@ export function ParticipantList() {
   const kickParticipantMutation = useKickParticipant();
   const navigate = useNavigate();
 
-  const isOwner = user?.id === lobby?.ownerId;
-
   useEffect(() => {
     if (!connection) return;
 
@@ -75,12 +73,14 @@ export function ParticipantList() {
               {!p.isConnected && (
                 <span className="text-gray-400">(Disconnected)</span>
               )}
-              {isOwner && <span className="text-gray-400">(Owner)</span>}
+              {p.user.id === lobby?.ownerId && (
+                <span className="text-gray-400">(Owner)</span>
+              )}
               {p.user.id === user?.id && (
                 <span className="text-gray-400">(You)</span>
               )}
             </div>
-            {isOwner && p.user.id !== user?.id && (
+            {user?.id === lobby?.ownerId && p.user.id !== user?.id && (
               <MutationBoundary mutation={kickParticipantMutation}>
                 <Button
                   onClick={() => handleKick(p.user.id)}
