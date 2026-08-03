@@ -1,4 +1,8 @@
-import { HubConnectionBuilder, type HubConnection } from "@microsoft/signalr";
+import {
+  HubConnectionBuilder,
+  LogLevel,
+  type HubConnection,
+} from "@microsoft/signalr";
 import { useEffect, useState } from "react";
 import { Outlet, useOutletContext } from "react-router";
 import type { LobbyWithParticipants } from "~/api/types/lobby/lobby-with-participants";
@@ -16,6 +20,7 @@ export default function Layout() {
       .withUrl(`${import.meta.env.VITE_API_BASE_URL}/lobby`, {
         withCredentials: true,
       })
+      .configureLogging(LogLevel.Warning)
       .withAutomaticReconnect()
       .build();
 
