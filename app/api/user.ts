@@ -9,6 +9,7 @@ import type { Me } from "./types/user/me";
 import type { PictureUpload } from "./types/user/picture-upload";
 import type { User } from "./types/user/user";
 import type { UserUpdate } from "./types/user/user-update";
+import type { Profile } from "./types/user/profile";
 
 async function getUser(): Promise<Me> {
   const response = await fetchWithAuth("/users/me");
@@ -32,8 +33,9 @@ export function useUser() {
   return useQuery(userQueryOptions());
 }
 
-async function getUserById(id: string): Promise<User> {
-  const response = await fetchWithAuth(`/users/${id}`);
+async function getUserById(id: string, year?: number): Promise<Profile> {
+  const query = year ? `?year=${year}` : "";
+  const response = await fetchWithAuth(`/users/${id}${query}`);
 
   if (!response.ok) {
     const error = await response.json();
@@ -43,15 +45,15 @@ async function getUserById(id: string): Promise<User> {
   return response.json();
 }
 
-export function userByIdQueryOptions(id: string) {
+export function userByIdQueryOptions(id: string, year?: number) {
   return {
-    queryKey: queryKeys.users.detail(id),
-    queryFn: () => getUserById(id),
+    queryKey: [...queryKeys.users.detail(id), year].filter(Boolean),
+    queryFn: () => getUserById(id, year),
   };
 }
 
-export function useUserById(id: string) {
-  return useQuery(userByIdQueryOptions(id));
+export function useUserById(id: string, year?: number) {
+  return useQuery(userByIdQueryOptions(id, year));
 }
 
 async function addComment(params: { userId: string; data: CreateComment }) {
@@ -165,17 +167,15 @@ export function useUpdateUser() {
   });
 }
 
-async function getHistory(
+async function getActivity(
   userId: string,
-  page = 1,
-  pageSize = 25,
-): Promise<PageResult<Lobby>> {
+  date: string,
+): Promise<Lobby[]> {
   const params = new URLSearchParams();
-  params.append("page", page.toString());
-  params.append("pageSize", pageSize.toString());
+  params.append("date", date);
 
   const response = await fetchWithAuth(
-    `/users/${userId}/history?${params.toString()}`,
+    `/users/${userId}/activity?${params.toString()}`,
   );
 
   if (!response.ok) {
@@ -186,13 +186,13 @@ async function getHistory(
   return response.json();
 }
 
-export function historyQueryOptions(userId: string, page = 1, pageSize = 25) {
+export function activityQueryOptions(userId: string, date: string) {
   return {
-    queryKey: queryKeys.users.history(userId, page, pageSize),
-    queryFn: () => getHistory(userId, page, pageSize),
+    queryKey: queryKeys.users.activity(userId, date),
+    queryFn: () => getActivity(userId, date),
   };
 }
 
-export function useHistory(id: string, page = 1, pageSize = 25) {
-  return useQuery(historyQueryOptions(id, page, pageSize));
+export function useActivity(id: string, date: string) {
+  return useQuery(activityQueryOptions(id, date));
 }

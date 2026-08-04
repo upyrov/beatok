@@ -6,7 +6,7 @@ import {
   useUploadUrl,
 } from "~/api/submission";
 import { LobbyState } from "~/api/types/enums/lobby-state";
-import type { Submission as SubmissionType } from "~/api/types/submission/submission";
+import type { Submission as ISubmission } from "~/api/types/submission/submission";
 import type { Me } from "~/api/types/user/me";
 import { ActionButton } from "~/components/action-button";
 import { AudioPlayer } from "~/components/audio-player";
@@ -52,7 +52,7 @@ export function Submitting() {
 
     function handleVotingStarted(
       votingTime: string,
-      votingSubmissions: SubmissionType[],
+      votingSubmissions: ISubmission[],
     ) {
       setLobby((prev) => {
         if (!prev) return prev;

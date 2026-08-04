@@ -67,7 +67,11 @@ export function Voting() {
                     lobbyId={lobby?.id ?? ""}
                     isOwnTrack={s.participationId === participation?.id}
                     existingScoreId={existingScore?.id}
-                    existingScoreValue={Number(existingScore?.value)}
+                    existingScoreValue={
+                      existingScore?.value
+                        ? Number(existingScore.value)
+                        : undefined
+                    }
                     onVote={() => handleVote(s.id)}
                   />
                 );

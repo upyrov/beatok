@@ -1,43 +1,47 @@
 import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { type } from "arktype";
+import { useCallback } from "react";
 import { CgProfile } from "react-icons/cg";
 import { queryKeys } from "~/api/query-keys";
-import type { User } from "~/api/types/user/user";
+import type { Profile as IProfile } from "~/api/types/user/profile";
 import { useUpdateUser, useUploadAvatarUrl } from "~/api/user";
 import { FileDropzone } from "~/components/file-dropzone";
 import { uploadFile } from "~/lib/upload";
 import { ActionButton } from "../action-button";
 
 interface ProfileProps {
-  user: User;
+  user: IProfile;
   isCurrentUser: boolean;
 }
 
-export function Profile({ user, isCurrentUser }: ProfileProps) {
+export function Profile({
+  user,
+  isCurrentUser,
+}: ProfileProps) {
   const getUploadUrlMutation = useUploadAvatarUrl();
   const updateUserMutation = useUpdateUser();
   const queryClient = useQueryClient();
 
-  async function handleAvatarUpload(
-    file: File,
-    onProgress: (progress: number) => void,
-  ) {
-    const fileExtension = file.name.split(".").pop() || "";
-    const { uploadUrl, fileKey } = await getUploadUrlMutation.mutateAsync({
-      extension: fileExtension,
-      contentType: file.type,
-    });
+  const handleAvatarUpload = useCallback(
+    async (file: File, onProgress: (progress: number) => void) => {
+      const fileExtension = file.name.split(".").pop() || "";
+      const { uploadUrl, fileKey } = await getUploadUrlMutation.mutateAsync({
+        extension: fileExtension,
+        contentType: file.type,
+      });
 
-    await uploadFile(file, uploadUrl, onProgress);
-    await updateUserMutation.mutateAsync({ picture: fileKey });
+      await uploadFile(file, uploadUrl, onProgress);
+      await updateUserMutation.mutateAsync({ picture: fileKey });
 
-    // Invalidate queries to refresh the user profile picture
-    queryClient.invalidateQueries({
-      queryKey: queryKeys.users.detail(user.id),
-    });
-    queryClient.invalidateQueries({ queryKey: queryKeys.users.me() });
-  }
+      // Invalidate queries to refresh the user profile picture
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.users.detail(user.id),
+      });
+      queryClient.invalidateQueries({ queryKey: queryKeys.users.me() });
+    },
+    [getUploadUrlMutation, updateUserMutation, queryClient, user.id],
+  );
 
   const nameForm = useForm({
     defaultValues: {
@@ -122,7 +126,9 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
         ) : (
           <h1 className="text-3xl font-bold text-gray-200">{user.name}</h1>
         )}
-        <span className="text-gray-400">Rating: {user.rating}</span>
+        <div className="flex items-center gap-4 text-gray-400">
+          <span>Rating: {user.rating}</span>
+        </div>
       </div>
     </div>
   );
