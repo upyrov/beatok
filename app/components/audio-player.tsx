@@ -1,7 +1,6 @@
 import { useWavesurfer } from "@wavesurfer/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CgPlayButton, CgPlayPause } from "react-icons/cg";
-import { formatTime } from "~/lib/time";
 
 export function AudioPlayer({
   src,
@@ -36,6 +35,13 @@ export function AudioPlayer({
   }, [wavesurfer]);
 
   const handleClick = useCallback(() => wavesurfer?.playPause(), [wavesurfer]);
+
+  const formatTime = useCallback((seconds: number) => {
+    if (isNaN(seconds) || !isFinite(seconds)) return "0:00";
+    const m = Math.floor(seconds / 60);
+    const s = Math.floor(seconds % 60);
+    return `${m}:${s.toString().padStart(2, "0")}`;
+  }, []);
 
   return (
     <div
