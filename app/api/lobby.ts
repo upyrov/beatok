@@ -5,7 +5,7 @@ import type { LobbyFilter } from "./types/lobby-filter";
 import type { CreateLobby } from "./types/lobby/create-lobby";
 import type { Lobby } from "./types/lobby/lobby";
 import type { CreateScore } from "./types/score/create-score";
-import type { UpdateScore } from "./types/score/update-score";
+import type { ScoreUpdate } from "./types/score/score-update";
 
 async function createLobby(data: CreateLobby): Promise<string> {
   const response = await fetchWithAuth("/lobbies", {
@@ -120,7 +120,7 @@ export function useVote() {
 async function updateScore(params: {
   id: string;
   scoreId: string;
-  data: UpdateScore;
+  data: ScoreUpdate;
 }) {
   const response = await fetchWithAuth(
     `/lobbies/${params.id}/scores/${params.scoreId}`,

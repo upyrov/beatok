@@ -2,8 +2,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchWithAuth } from "../lib/api-client";
 import { queryKeys } from "./query-keys";
 import type { CreateSubmission } from "./types/submission/create-submission";
+import type { SubmissionUpdate } from "./types/submission/submission-update";
 import type { SubmissionUpload } from "./types/submission/submission-upload";
-import type { UpdateSubmission } from "./types/submission/update-submission";
 
 async function getUploadUrl(
   extension: string,
@@ -61,7 +61,7 @@ export function useCreateSubmission() {
 
 async function updateSubmissionValue(params: {
   id: string;
-  data: UpdateSubmission;
+  data: SubmissionUpdate;
 }) {
   const response = await fetchWithAuth(`/submissions/${params.id}`, {
     method: "PATCH",

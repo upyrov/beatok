@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "./query-keys";
 import type { Category } from "./types/category/category";
+import type { CategoryUpdate } from "./types/category/category-update";
 import type { CreateCategory } from "./types/category/create-category";
-import type { UpdateCategory } from "./types/category/update-category";
 
 import { fetchWithAuth } from "../lib/api-client";
 
@@ -50,7 +50,7 @@ export function useCategories(kitId: string) {
 
 async function updateCategoryName(params: {
   id: string;
-  data: UpdateCategory;
+  data: CategoryUpdate;
 }) {
   const response = await fetchWithAuth(`/categories/${params.id}`, {
     method: "PATCH",

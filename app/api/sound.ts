@@ -3,8 +3,8 @@ import { fetchWithAuth } from "../lib/api-client";
 import { queryKeys } from "./query-keys";
 import type { CreateSound } from "./types/sound/create-sound";
 import type { Sound } from "./types/sound/sound";
+import type { SoundUpdate } from "./types/sound/sound-update";
 import type { SoundUpload } from "./types/sound/sound-upload";
-import type { UpdateSound } from "./types/sound/update-sound";
 
 async function createSound(data: CreateSound) {
   const response = await fetchWithAuth("/sounds", {
@@ -76,7 +76,7 @@ export function useSounds(categoryId: string) {
   });
 }
 
-async function updateSoundValue(params: { id: string; data: UpdateSound }) {
+async function updateSoundValue(params: { id: string; data: SoundUpdate }) {
   const response = await fetchWithAuth(`/sounds/${params.id}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },

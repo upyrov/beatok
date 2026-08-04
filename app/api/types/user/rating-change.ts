@@ -1,4 +1,4 @@
-export interface UserRatingChange {
+export interface RatingChange {
   userId: string;
   ratingChange: number;
 }

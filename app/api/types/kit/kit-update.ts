@@ -1,4 +1,4 @@
-export interface UpdateKit {
+export interface KitUpdate {
   name: string;
   genreIds: string[];
 }

@@ -5,14 +5,14 @@ import {
 } from "@microsoft/signalr";
 import { useEffect, useState } from "react";
 import { Outlet, useOutletContext } from "react-router";
-import type { LobbyWithParticipants } from "~/api/types/lobby/lobby-with-participants";
+import type { DetailedLobby } from "~/api/types/lobby/detailed-lobby";
 import { LobbyContext } from "~/contexts";
 
 export default function Layout() {
   const context = useOutletContext();
 
   const [connection, setConnection] = useState<HubConnection | null>(null);
-  const [lobby, setLobby] = useState<LobbyWithParticipants | null>(null);
+  const [lobby, setLobby] = useState<DetailedLobby | null>(null);
 
   useEffect(() => {
     let isActive = true;

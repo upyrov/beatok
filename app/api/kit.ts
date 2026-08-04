@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { queryKeys } from "./query-keys";
 import type { CreateKit } from "./types/kit/create-kit";
 import type { Kit } from "./types/kit/kit";
-import type { UpdateKit } from "./types/kit/update-kit";
+import type { KitUpdate } from "./types/kit/kit-update";
 
 import { fetchWithAuth } from "../lib/api-client";
 
@@ -52,7 +52,7 @@ export function useKits() {
   return useQuery(kitsQueryOptions());
 }
 
-async function updateKitName(params: { id: string; data: UpdateKit }) {
+async function updateKitName(params: { id: string; data: KitUpdate }) {
   const response = await fetchWithAuth(`/kits/${params.id}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },

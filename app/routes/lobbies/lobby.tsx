@@ -4,7 +4,7 @@ import { use, useCallback, useEffect, useRef } from "react";
 import { useNavigate, useOutletContext, useParams } from "react-router";
 import { queryKeys } from "~/api/query-keys";
 import { LobbyState } from "~/api/types/enums/lobby-state";
-import type { LobbyWithParticipants } from "~/api/types/lobby/lobby-with-participants";
+import type { DetailedLobby } from "~/api/types/lobby/detailed-lobby";
 import type { Me } from "~/api/types/user/me";
 import { ActionButton } from "~/components/action-button";
 import { Fallback } from "~/components/fallback";
@@ -31,7 +31,7 @@ export default function Lobby() {
     mutationFn() {
       return connection?.state !== HubConnectionState.Connected
         ? Promise.reject(new Error("Connection is not established"))
-        : connection.invoke<LobbyWithParticipants>("Join", id);
+        : connection.invoke<DetailedLobby>("Join", id);
     },
     retry: 5,
     retryDelay: 1000,

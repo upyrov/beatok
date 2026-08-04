@@ -4,7 +4,7 @@ import type { Participation } from "../participation";
 import type { SoundWithCategory } from "../sound/sound-with-category";
 import type { Submission } from "../submission/submission";
 
-export interface LobbyWithParticipants {
+export interface DetailedLobby {
   id: string;
   name: string;
   participantLimit: number;

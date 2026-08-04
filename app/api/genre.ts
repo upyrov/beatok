@@ -3,7 +3,7 @@ import { fetchWithAuth } from "../lib/api-client";
 import { queryKeys } from "./query-keys";
 import type { CreateGenre } from "./types/genre/create-genre";
 import type { Genre } from "./types/genre/genre";
-import type { UpdateGenre } from "./types/genre/update-genre";
+import type { GenreUpdate } from "./types/genre/genre-update";
 
 async function createGenre(data: CreateGenre) {
   const response = await fetchWithAuth("/genres", {
@@ -72,7 +72,7 @@ export function useDeleteGenre() {
   });
 }
 
-async function updateGenreName(params: { id: string; data: UpdateGenre }) {
+async function updateGenreName(params: { id: string; data: GenreUpdate }) {
   const response = await fetchWithAuth(`/genres/${params.id}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
