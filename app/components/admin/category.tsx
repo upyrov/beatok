@@ -10,7 +10,7 @@ import {
 import { useUpdateCategoryName } from "~/api/category";
 import { Sounds } from "./sounds";
 
-export function CategoryItem({
+export function Category({
   category,
   onDelete,
 }: {

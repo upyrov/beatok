@@ -10,7 +10,7 @@ import { ActionButton } from "~/components/action-button";
 import { FieldError } from "~/components/field-error";
 import { MutationBoundary } from "~/components/mutation-boundary";
 import { QueryBoundary } from "~/components/query-boundary";
-import { CategoryItem } from "./category-item";
+import { Category } from "./category";
 
 export function Categories({ kitId }: { kitId: string }) {
   const categoriesQuery = useCategories(kitId);
@@ -75,13 +75,13 @@ export function Categories({ kitId }: { kitId: string }) {
           {(categories) => (
             <div className="flex flex-col gap-3">
               {categories.map((cat) => (
-                <CategoryItem
+                <Category
                   key={cat.id}
                   category={cat}
                   onDelete={() => deleteMutation.mutate(cat.id)}
                 />
               ))}
-              {categories.length === 0 && <p>No categories found</p>}
+              {!categories.length && <p>No categories found</p>}
             </div>
           )}
         </QueryBoundary>

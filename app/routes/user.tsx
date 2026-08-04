@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useParams } from "react-router";
 import {
   commentsQueryOptions,
@@ -6,7 +6,9 @@ import {
   useUserById,
   userByIdQueryOptions,
 } from "~/api/user";
+import { Card } from "~/components/card";
 import { Fallback } from "~/components/fallback";
+import { PageContainer } from "~/components/page-container";
 import { Activity } from "~/components/user/activity";
 import { ActivityGraph } from "~/components/user/activity-graph";
 import { CommentForm } from "~/components/user/comment-form";
@@ -23,29 +25,17 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   ]);
 }
 
-export default function User() {
-  const { id } = useParams<{ id: string }>();
-  const { data: currentUser } = useUser();
+function ActivitySection({ userId, initialAvailableYears }: { userId: string, initialAvailableYears?: number[] }) {
   const [selectedYear, setSelectedYear] = useState<number | undefined>();
   const [selectedDate, setSelectedDate] = useState<string | undefined>();
 
-  const { data: user, isLoading: isUserLoading } = useUserById(
-    id!,
-    selectedYear,
-  );
-
-  if (isUserLoading) {
-    return <Fallback />;
-  }
-
-  if (!id || !user) {
-    return <div className="p-8 text-center text-red-500">User not found</div>;
-  }
+  const { data: user, isFetching } = useUserById(userId, selectedYear);
+  const availableYears = user?.availableYears || initialAvailableYears;
+  const activity = user?.activity || [];
 
   return (
-    <div className="max-w-4xl mx-auto p-4 md:p-8 flex flex-col gap-8">
-      <Profile user={user} isCurrentUser={currentUser?.id === user.id} />
-      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+    <>
+      <Card>
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-gray-200">Activity Graph</h2>
           <select
@@ -61,35 +51,63 @@ export default function User() {
             <option value="default" className="bg-neutral-800">
               Last 365 days
             </option>
-            {user.availableYears?.map((y) => (
+            {availableYears?.map((y) => (
               <option key={y} value={y} className="bg-neutral-800">
                 {y}
               </option>
             ))}
           </select>
         </div>
-        <ActivityGraph
-          activity={user.activity}
-          year={selectedYear}
-          selectedDate={selectedDate}
-          onDateSelect={setSelectedDate}
-        />
-      </div>
-      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-        {selectedDate && (
-          <>
-            <h2 className="text-2xl font-bold mb-6">
-              Activity for {selectedDate}
-            </h2>
-            <Activity userId={id} date={selectedDate} />
-          </>
+        {isFetching ? (
+          <div className="w-full flex justify-center p-8">
+            <Fallback />
+          </div>
+        ) : (
+          <Suspense fallback={<Fallback />}>
+            <ActivityGraph
+              activity={activity}
+              year={selectedYear}
+              selectedDate={selectedDate}
+              onDateSelect={setSelectedDate}
+            />
+          </Suspense>
         )}
-      </div>
-      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+      </Card>
+      {selectedDate && (
+        <Card>
+          <h2 className="text-2xl font-bold mb-6">
+            Activity for {selectedDate}
+          </h2>
+          <Activity userId={userId} date={selectedDate} />
+        </Card>
+      )}
+    </>
+  );
+}
+
+export default function User() {
+  const { id } = useParams<{ id: string }>();
+  const { data: currentUser } = useUser();
+
+  const { data: user, isLoading: isUserLoading } = useUserById(id!);
+
+  if (isUserLoading) {
+    return <Fallback />;
+  }
+
+  if (!id || !user) {
+    return <div className="p-8 text-center text-red-500">User not found</div>;
+  }
+
+  return (
+    <PageContainer className="max-w-5xl">
+      <Profile user={user} isCurrentUser={currentUser?.id === user.id} />
+      <ActivitySection userId={id} initialAvailableYears={user.availableYears} />
+      <Card>
         <h2 className="text-2xl font-bold mb-6">Comments</h2>
         {currentUser && currentUser.id !== id && <CommentForm userId={id} />}
         <CommentList userId={id} />
-      </div>
-    </div>
+      </Card>
+    </PageContainer>
   );
 }

@@ -23,10 +23,11 @@ export function VoteForm({
   existingScoreValue?: number;
   onVote: () => void;
 }) {
-  const voteMutation = useVote();
-  const updateScoreMutation = useUpdateScore();
   const { setLobby } = use(LobbyContext);
   const { user } = useOutletContext<{ user: Me | null }>();
+
+  const voteMutation = useVote();
+  const updateScoreMutation = useUpdateScore();
 
   const form = useForm({
     defaultValues: { score: existingScoreValue ?? 5 },

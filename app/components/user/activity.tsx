@@ -14,7 +14,7 @@ export function Activity({ userId, date }: { userId: string; date: string }) {
     );
   }
 
-  if (!activity || activity.length === 0) {
+  if (!activity || !activity.length) {
     return <div className="py-4 text-gray-400">No activity on this date.</div>;
   }
 

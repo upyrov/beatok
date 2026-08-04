@@ -97,7 +97,7 @@ export function FileDropzone({
     },
   });
 
-  const showDropzone = maxFiles > 1 || uploads.length === 0;
+  const showDropzone = maxFiles > 1 || !uploads.length;
 
   return (
     <div className="flex flex-col gap-2 w-full">

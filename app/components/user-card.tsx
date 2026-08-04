@@ -4,7 +4,6 @@ import type { User } from "~/api/types/user/user";
 
 export interface UserCardProps {
   user: User;
-  size?: "sm" | "md" | "lg";
   className?: string;
   showRole?: boolean;
   showRating?: boolean;
@@ -12,26 +11,9 @@ export interface UserCardProps {
 
 export function UserCard({
   user,
-  size = "sm",
   className = "",
   showRating = false,
 }: UserCardProps) {
-  const isSm = size === "sm";
-  const isMd = size === "md";
-
-  const imgSizeClass = isSm
-    ? "w-6 h-6 rounded-sm"
-    : isMd
-      ? "w-8 h-8 rounded"
-      : "w-16 h-16 rounded-lg";
-
-  const nameSizeClass = isSm ? "" : isMd ? "text-base" : "text-xl";
-  const ratingSizeClass = isSm ? "text-xs" : "text-sm";
-  const containerSizeClass =
-    isSm || isMd
-      ? "text-sm"
-      : "p-4 text-base bg-white/5 border border-white/10 w-full";
-
   const content = (
     <>
       <div className="relative group/avatar inline-flex">
@@ -39,22 +21,22 @@ export function UserCard({
           <img
             src={user.picture}
             alt={user.name}
-            className={`object-cover border border-white/20 p-0.5 ${imgSizeClass}`}
+            className="object-cover border border-white/20 p-0.5 rounded-sm w-6 h-6 group-[.is-md]:w-8 group-[.is-md]:h-8 group-[.is-lg]:w-16 group-[.is-lg]:h-16"
           />
         ) : (
           <CgProfile
-            className={`text-gray-400 group-hover:transition-colors border border-white/20 p-0.5 ${imgSizeClass}`}
+            className="text-gray-400 group-hover:transition-colors border border-white/20 p-0.5 rounded-sm w-6 h-6 group-[.is-md]:w-8 group-[.is-md]:h-8 group-[.is-lg]:w-16 group-[.is-lg]:h-16"
           />
         )}
       </div>
       <div className="flex flex-col justify-center">
         <span
-          className={`font-semibold text-gray-200 group-hover:transition-colors ${nameSizeClass}`}
+          className="font-semibold text-gray-200 group-hover:transition-colors group-[.is-md]:text-base group-[.is-lg]:text-xl"
         >
           {user.name}
         </span>
         {showRating && (
-          <span className={`text-gray-400 ${ratingSizeClass}`}>
+          <span className="text-gray-400 text-xs group-[.is-md]:text-sm group-[.is-lg]:text-sm">
             Rating: {user.rating}
           </span>
         )}
@@ -62,7 +44,7 @@ export function UserCard({
     </>
   );
 
-  const classes = `inline-flex items-center gap-2 hover:bg-white/5 p-1 rounded transition-colors group ${containerSizeClass} ${className}`;
+  const classes = `inline-flex items-center gap-2 hover:bg-white/5 p-1 rounded transition-colors group text-sm ${className}`;
 
   return (
     <Link to={`/users/${user.id}`} className={classes}>

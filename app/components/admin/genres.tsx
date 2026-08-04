@@ -5,7 +5,7 @@ import { ActionButton } from "~/components/action-button";
 import { FieldError } from "~/components/field-error";
 import { MutationBoundary } from "~/components/mutation-boundary";
 import { QueryBoundary } from "~/components/query-boundary";
-import { GenreItem } from "./genre-item";
+import { Genre } from "./genre";
 
 export function Genres() {
   const genresQuery = useGenres();
@@ -73,9 +73,9 @@ export function Genres() {
           {(genres) => (
             <div className="flex flex-col gap-2">
               {genres.map((genre) => (
-                <GenreItem key={genre.id} genre={genre} />
+                <Genre key={genre.id} genre={genre} />
               ))}
-              {genres.length === 0 && <p>No genres found. Create one above!</p>}
+              {!genres.length && <p>No genres found. Create one above!</p>}
             </div>
           )}
         </QueryBoundary>

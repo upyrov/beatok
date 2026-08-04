@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { CgCheck, CgClose, CgPen, CgTrash } from "react-icons/cg";
 import { useDeleteGenre, useUpdateGenreName } from "~/api/genre";
-import type { Genre } from "~/api/types/genre/genre";
+import type { Genre as IGenre } from "~/api/types/genre/genre";
 
-export function GenreItem({ genre }: { genre: Genre }) {
+export function Genre({ genre }: { genre: IGenre }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState(genre.name);
   const updateMutation = useUpdateGenreName();

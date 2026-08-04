@@ -73,13 +73,13 @@ export function ActivityGraph({
 
   const getColor = useCallback(
     (count: number) => {
-      if (count === 0) return "bg-black/10 dark:bg-white/5";
+      if (count === 0) return "bg-[#ebedf0] dark:bg-[#161b22]";
       const intensity = Math.min(4, Math.ceil((count / maxCount) * 4));
 
-      if (intensity === 1) return "bg-green-300 dark:bg-green-900";
-      if (intensity === 2) return "bg-green-500 dark:bg-green-700";
-      if (intensity === 3) return "bg-green-600 dark:bg-green-500";
-      return "bg-green-700 dark:bg-green-400";
+      if (intensity === 1) return "bg-[#9be9a8] dark:bg-[#0e4429]";
+      if (intensity === 2) return "bg-[#40c463] dark:bg-[#006d32]";
+      if (intensity === 3) return "bg-[#30a14e] dark:bg-[#26a641]";
+      return "bg-[#216e39] dark:bg-[#39d353]";
     },
     [maxCount],
   );
@@ -93,35 +93,29 @@ export function ActivityGraph({
     }).format(date);
   }, []);
 
-  const totalActivities = activity.reduce((acc, curr) => acc + curr.count, 0);
+  // const totalActivities = activity.reduce((acc, curr) => acc + curr.count, 0);
 
   return (
-    <div
-      className="w-full outline-none"
-      tabIndex={-1}
-      onBlur={(e) => {
-        if (!e.currentTarget.contains(e.relatedTarget)) {
-          onDateSelect(undefined);
-        }
-      }}
-    >
+    <div className="w-full">
       {/* <div className="flex justify-between items-center mb-4">
         <h3 className="text-sm font-semibold text-gray-300">
           {totalActivities} in {year ?? "the last 365 days"}
         </h3>
       </div> */}
-      <div className="w-full overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-        <table className="border-separate border-spacing-0.75 min-w-max mx-auto md:mx-0">
+      <div className="w-full overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent flex justify-center">
+        <table className="border-separate border-spacing-0.5 md:border-spacing-0.75 min-w-max mx-auto md:mx-0">
           <thead>
             <tr>
-              <th className="w-8"></th>
+              <th className="hidden sm:table-cell w-6 md:w-8"></th>
               {monthSpans.map((m, i) => (
                 <th
                   key={i}
                   colSpan={m.span}
                   className="text-xs text-gray-500 font-normal text-left pb-1"
                 >
-                  <span className={m.span < 2 ? "invisible" : ""}>
+                  <span
+                    className={m.span < 2 ? "invisible" : "flex justify-center"}
+                  >
                     {m.month}
                   </span>
                 </th>
@@ -131,7 +125,7 @@ export function ActivityGraph({
           <tbody>
             {[0, 1, 2, 3, 4, 5, 6].map((rowIdx) => (
               <tr key={rowIdx}>
-                <td className="text-[10px] text-gray-500 text-right pr-2 leading-3 h-3 align-middle">
+                <td className="hidden sm:table-cell text-[10px] text-gray-500 text-right pr-2 leading-3 h-3 align-middle">
                   {rowIdx === 1
                     ? "Mon"
                     : rowIdx === 3
@@ -146,7 +140,7 @@ export function ActivityGraph({
                   if (!day) {
                     return (
                       <td key={`pad-${weekIdx}`} className="p-0">
-                        <div className="w-3 h-3 rounded-sm" />
+                        <div className="w-2.5 h-2.5 md:w-3 md:h-3 rounded-xs bg-transparent" />
                       </td>
                     );
                   }
@@ -157,8 +151,10 @@ export function ActivityGraph({
                     <td key={day.date} className="p-0 relative">
                       <button
                         title={`${day.count} activities on ${formatDate(day.date)}`}
-                        onClick={() => onDateSelect(day.date)}
-                        className={`w-3 h-3 block rounded-xs transition-all ${getColor(day.count)} ${
+                        onClick={() =>
+                          onDateSelect(isSelected ? undefined : day.date)
+                        }
+                        className={`w-2.5 h-2.5 md:w-3 md:h-3 block rounded-xs ring-1 ring-inset ring-black/5 dark:ring-white/5 transition-all ${getColor(day.count)} ${
                           isSelected
                             ? "ring-1 ring-offset-1 ring-offset-black ring-white scale-110 z-10 relative"
                             : "hover:ring-1 hover:ring-white/50"
@@ -171,6 +167,17 @@ export function ActivityGraph({
             ))}
           </tbody>
         </table>
+      </div>
+      <div className="flex items-center justify-end gap-2 text-xs text-gray-500 mt-2">
+        <span>Less</span>
+        <div className="flex gap-0.75">
+          <div className="w-2.5 h-2.5 rounded-xs ring-1 ring-inset ring-black/5 dark:ring-white/5 bg-[#ebedf0] dark:bg-[#161b22]"></div>
+          <div className="w-2.5 h-2.5 rounded-xs ring-1 ring-inset ring-black/5 dark:ring-white/5 bg-[#9be9a8] dark:bg-[#0e4429]"></div>
+          <div className="w-2.5 h-2.5 rounded-xs ring-1 ring-inset ring-black/5 dark:ring-white/5 bg-[#40c463] dark:bg-[#006d32]"></div>
+          <div className="w-2.5 h-2.5 rounded-xs ring-1 ring-inset ring-black/5 dark:ring-white/5 bg-[#30a14e] dark:bg-[#26a641]"></div>
+          <div className="w-2.5 h-2.5 rounded-xs ring-1 ring-inset ring-black/5 dark:ring-white/5 bg-[#216e39] dark:bg-[#39d353]"></div>
+        </div>
+        <span>More</span>
       </div>
     </div>
   );

@@ -15,10 +15,7 @@ interface ProfileProps {
   isCurrentUser: boolean;
 }
 
-export function Profile({
-  user,
-  isCurrentUser,
-}: ProfileProps) {
+export function Profile({ user, isCurrentUser }: ProfileProps) {
   const getUploadUrlMutation = useUploadAvatarUrl();
   const updateUserMutation = useUpdateUser();
   const queryClient = useQueryClient();
@@ -43,7 +40,7 @@ export function Profile({
     [getUploadUrlMutation, updateUserMutation, queryClient, user.id],
   );
 
-  const nameForm = useForm({
+  const form = useForm({
     defaultValues: {
       name: user.name || "",
     },
@@ -92,11 +89,11 @@ export function Profile({
             onSubmit={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              nameForm.handleSubmit();
+              form.handleSubmit();
             }}
             className="flex items-center gap-2 max-w-sm"
           >
-            <nameForm.Field
+            <form.Field
               name="name"
               validators={{ onChange: type("string > 0") }}
               children={(field) => (
@@ -110,7 +107,7 @@ export function Profile({
                 />
               )}
             />
-            <nameForm.Subscribe
+            <form.Subscribe
               selector={(state) => [state.canSubmit, state.isSubmitting]}
               children={([canSubmit, isSubmitting]) => (
                 <ActionButton

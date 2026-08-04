@@ -1,35 +1,24 @@
-import { useState } from "react";
-import { CgClose, CgPen, CgTrash } from "react-icons/cg";
+import { useCallback } from "react";
 import {
   useCreateSound,
   useDeleteSound,
   useSounds,
-  useUpdateSoundValue,
   useUploadSoundUrl,
 } from "~/api/sound";
-import type { Sound } from "~/api/types/sound/sound";
 import { validateAudioFile } from "~/lib/audio";
 import { uploadFile } from "~/lib/upload";
-import { AudioPlayer } from "../audio-player";
 import { FileDropzone } from "../file-dropzone";
 import { QueryBoundary } from "../query-boundary";
+import { Sound } from "./sound";
 
-function SoundItem({
-  sound,
-  onDelete,
-}: {
-  sound: Sound;
-  onDelete: () => void;
-}) {
-  const [isEditing, setIsEditing] = useState(false);
-  const updateMutation = useUpdateSoundValue();
+export function Sounds({ categoryId }: { categoryId: string }) {
+  const soundsQuery = useSounds(categoryId);
+  const deleteMutation = useDeleteSound();
+  const createMutation = useCreateSound();
   const getUploadUrlMutation = useUploadSoundUrl();
 
-  async function handleUpdate(
-    file: File,
-    onProgress: (progress: number) => void,
-  ) {
-    try {
+  const handleUpload = useCallback(
+    async (file: File, onProgress: (progress: number) => void) => {
       const validation = await validateAudioFile(file);
       if (!validation.valid) throw new Error(validation.error);
 
@@ -40,88 +29,13 @@ function SoundItem({
       });
 
       await uploadFile(file, uploadUrl, onProgress);
-
-      updateMutation.mutate(
-        { id: sound.id, data: { value: fileKey } },
-        { onSuccess: () => setIsEditing(false) },
-      );
-    } catch (error) {
-      console.error(error);
-      alert(error instanceof Error ? error.message : "Upload failed");
-    }
-  }
-
-  return (
-    <div className="flex flex-col gap-2 p-2 border-b border-gray-200">
-      <div className="flex items-center justify-between mb-1">
-        {isEditing ? (
-          <div className="flex flex-col gap-2 flex-1 mr-4">
-            <FileDropzone
-              label="Drop new sound file here to replace"
-              maxFiles={1}
-              onUpload={handleUpdate}
-            />
-            <button
-              onClick={() => setIsEditing(false)}
-              className="text-red-400 hover:text-red-300 self-start text-sm flex items-center gap-1"
-            >
-              <CgClose /> Cancel
-            </button>
-          </div>
-        ) : (
-          <div className="flex items-center gap-2 flex-1">
-            <span className="text-sm truncate max-w-50" title={sound.value}>
-              {sound.value}
-            </span>
-            <button
-              onClick={() => setIsEditing(true)}
-              className="text-gray-400 hover:text-blue-400 transition-colors"
-            >
-              <CgPen size={18} />
-            </button>
-          </div>
-        )}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete();
-          }}
-          className="text-gray-400 hover:text-red-400 transition-colors ml-2"
-        >
-          <CgTrash size={18} />
-        </button>
-      </div>
-      <AudioPlayer src={sound.value} />
-    </div>
+      await createMutation.mutateAsync({
+        value: fileKey,
+        categoryId,
+      });
+    },
+    [],
   );
-}
-
-export function Sounds({ categoryId }: { categoryId: string }) {
-  const soundsQuery = useSounds(categoryId);
-  const deleteMutation = useDeleteSound();
-  const createMutation = useCreateSound();
-  const getUploadUrlMutation = useUploadSoundUrl();
-
-  async function handleUpload(
-    file: File,
-    onProgress: (progress: number) => void,
-  ) {
-    const validation = await validateAudioFile(file);
-    if (!validation.valid) throw new Error(validation.error);
-
-    const fileExtension = file.name.split(".").pop() || "";
-    const { uploadUrl, fileKey } = await getUploadUrlMutation.mutateAsync({
-      extension: fileExtension,
-      contentType: file.type,
-    });
-
-    await uploadFile(file, uploadUrl, onProgress);
-
-    await createMutation.mutateAsync({
-      value: fileKey,
-      categoryId,
-    });
-  }
 
   return (
     <div className="flex flex-col gap-4 flex-1">
@@ -141,7 +55,7 @@ export function Sounds({ categoryId }: { categoryId: string }) {
           {(sounds) => (
             <>
               {sounds.map((sound) => (
-                <SoundItem
+                <Sound
                   key={sound.id}
                   sound={sound}
                   onDelete={() => {
@@ -153,7 +67,7 @@ export function Sounds({ categoryId }: { categoryId: string }) {
                   }}
                 />
               ))}
-              {sounds.length === 0 && <p>No sounds found</p>}
+              {!sounds.length && <p>No sounds found</p>}
             </>
           )}
         </QueryBoundary>

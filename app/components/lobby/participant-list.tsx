@@ -1,6 +1,7 @@
 import { use, useCallback, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router";
 import { useKickParticipant } from "~/api/lobby";
+import { LobbyState } from "~/api/types/enums/lobby-state";
 import type { Participation } from "~/api/types/participation";
 import type { Me } from "~/api/types/user/me";
 import { ActionButton } from "~/components/action-button";
@@ -68,7 +69,7 @@ export function ParticipantList() {
       <ul className="flex flex-col gap-2">
         {lobby?.participants.map((p) => (
           <li key={p.id} className="flex items-center gap-2">
-            <UserCard user={p.user} size="sm" />
+            <UserCard user={p.user} />
             <div className="flex gap-1 text-sm">
               {!p.isConnected && (
                 <span className="text-gray-400">(Disconnected)</span>
@@ -80,16 +81,18 @@ export function ParticipantList() {
                 <span className="text-gray-400">(You)</span>
               )}
             </div>
-            {user?.id === lobby?.ownerId && p.user.id !== user?.id && (
-              <MutationBoundary mutation={kickParticipantMutation}>
-                <ActionButton
-                  onClick={() => handleKick(p.user.id)}
-                  isPending={kickParticipantMutation.isPending}
-                >
-                  Kick
-                </ActionButton>
-              </MutationBoundary>
-            )}
+            {user?.id === lobby?.ownerId &&
+              p.user.id !== user?.id &&
+              lobby.state === LobbyState.Waiting && (
+                <MutationBoundary mutation={kickParticipantMutation}>
+                  <ActionButton
+                    onClick={() => handleKick(p.user.id)}
+                    isPending={kickParticipantMutation.isPending}
+                  >
+                    Kick
+                  </ActionButton>
+                </MutationBoundary>
+              )}
           </li>
         ))}
       </ul>
