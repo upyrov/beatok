@@ -2,7 +2,7 @@ import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
 import { CgGoogle } from "react-icons/cg";
 import { Link, useNavigate } from "react-router";
-import { useSignInWithGoogle, useSignIn } from "~/api/auth";
+import { useSignInWithGoogle, useSignIn, useResetPassword } from "~/api/auth";
 import { ActionButton } from "~/components/action-button";
 import { FieldError } from "~/components/field-error";
 import { MutationBoundary } from "~/components/mutation-boundary";
@@ -11,6 +11,7 @@ export default function Signin() {
   const navigate = useNavigate();
   const signInMutation = useSignIn();
   const signInWithGoogleMutation = useSignInWithGoogle();
+  const resetPasswordMutation = useResetPassword();
 
   const form = useForm({
     defaultValues: {
@@ -108,6 +109,25 @@ export default function Signin() {
       <Link to="/signup" className="text-blue-500 hover:underline mt-4 block">
         Don't have an account?
       </Link>
+      <button
+        type="button"
+        onClick={() => {
+          const email = form.state.values.email;
+          if (email && email.includes("@")) {
+            resetPasswordMutation.mutate(email);
+          } else {
+            navigate("/reset-password");
+          }
+        }}
+        className="text-blue-500 hover:underline mt-2 block text-left"
+      >
+        Forgot password?
+      </button>
+      {resetPasswordMutation.isSuccess && (
+        <p className="text-green-500 mt-2 text-sm">
+          Password reset link sent to {form.state.values.email}!
+        </p>
+      )}
     </>
   );
 }

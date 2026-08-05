@@ -1,17 +1,20 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
+  confirmPasswordReset,
   createUserWithEmailAndPassword,
   EmailAuthProvider,
   GoogleAuthProvider,
   linkWithCredential,
   linkWithPopup,
   sendEmailVerification,
+  sendPasswordResetEmail,
   signInAnonymously,
   signInWithEmailAndPassword,
   signInWithPopup,
+  signOut,
+  applyActionCode,
 } from "firebase/auth";
 import { auth } from "~/lib/firebase";
-import { fetchWithAuth } from "../lib/api-client";
 import { queryKeys } from "./query-keys";
 import type { Signin } from "./types/user/signin";
 import type { Signup } from "./types/user/signup";
@@ -26,23 +29,14 @@ export async function ensureAnonymouslySignedIn() {
   }
 }
 
-async function signIn(data: Signin) {
-  const userCredential = await signInWithEmailAndPassword(
-    auth,
-    data.email,
-    data.password,
-  );
-  return userCredential.user;
-}
-
 export function useSignIn() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: signIn,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.users.me() });
-    },
+    mutationFn: (data: Signin) =>
+      signInWithEmailAndPassword(auth, data.email, data.password),
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: queryKeys.users.me() }),
   });
 }
 
@@ -74,9 +68,8 @@ export function useSignUp() {
 
   return useMutation({
     mutationFn: signUp,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.users.me() });
-    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: queryKeys.users.me() }),
   });
 }
 
@@ -108,23 +101,32 @@ export function useSignInWithGoogle() {
 
   return useMutation({
     mutationFn: signInWithGoogle,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.users.me() });
-    },
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: queryKeys.users.me() }),
   });
-}
-
-async function signOut() {
-  await fetchWithAuth("/auth/sign-out", { method: "POST" });
 }
 
 export function useSignOut() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: signOut,
-    onSuccess: () => {
-      queryClient.setQueryData(queryKeys.users.me(), null);
-    },
+    mutationFn: () => signOut(auth),
+    onSuccess: () => queryClient.setQueryData(queryKeys.users.me(), null),
   });
 }
+
+export const useResetPassword = () =>
+  useMutation({
+    mutationFn: (email: string) => sendPasswordResetEmail(auth, email),
+  });
+
+export const useConfirmPasswordReset = () =>
+  useMutation({
+    mutationFn: ({ code, password }: { code: string; password: string }) =>
+      confirmPasswordReset(auth, code, password),
+  });
+
+export const useVerifyEmail = () =>
+  useMutation({
+    mutationFn: (code: string) => applyActionCode(auth, code),
+  });
