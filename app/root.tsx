@@ -1,4 +1,6 @@
 import { QueryClientProvider } from "@tanstack/react-query";
+import { onAuthStateChanged } from "firebase/auth";
+import { useEffect, useState } from "react";
 import {
   isRouteErrorResponse,
   Links,
@@ -9,9 +11,11 @@ import {
 } from "react-router";
 import { Header } from "~/components/header";
 import type { Route } from "./+types/root";
-import { useUser } from "./api/user";
+import { UserRole } from "./api/types/enums/user-role";
+import type { Me } from "./api/types/user/me";
 import "./app.css";
 import { Fallback } from "./components/fallback";
+import { auth } from "./lib/firebase";
 import { getQueryClient } from "./lib/query-client";
 
 export const links: Route.LinksFunction = () => [
@@ -54,7 +58,25 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 function AppContent() {
-  const { data: user } = useUser();
+  const [user, setUser] = useState<Me | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(
+        user
+          ? {
+              id: user?.uid,
+              isAnonymous: user.isAnonymous,
+              name: user.displayName ?? "Unknown",
+              picture: user.photoURL,
+              rating: 666,
+              role: UserRole.None,
+            }
+          : null,
+      );
+    });
+    return () => unsubscribe();
+  }, []);
 
   return (
     <>

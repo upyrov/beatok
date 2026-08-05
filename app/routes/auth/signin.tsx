@@ -17,9 +17,8 @@ export default function Signin() {
       email: "",
       password: "",
     },
-    onSubmit: async ({ value }) => {
-      signInMutation.mutate(value, { onSuccess: () => navigate("/") });
-    },
+    onSubmit: ({ value }) =>
+      signInMutation.mutate(value, { onSuccess: () => navigate("/") }),
   });
 
   return (

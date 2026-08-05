@@ -5,7 +5,7 @@ import { UserCard } from "~/components/user-card";
 import { ActionButton } from "./action-button";
 import { Button } from "./button";
 
-export function Header({ user }: { user?: Me }) {
+export function Header({ user }: { user: Me | null }) {
   const signOutMutation = useSignOut();
   const params = useParams();
 
@@ -20,7 +20,9 @@ export function Header({ user }: { user?: Me }) {
         </p>
       </div>
       <div className="flex items-center gap-3">
-        {user && params.id !== user.id && <UserCard user={user} className="is-md" />}
+        {user && params.id !== user.id && (
+          <UserCard user={user} className="is-md" />
+        )}
         <Link to="/lobbies/new">
           <Button>Create Lobby</Button>
         </Link>

@@ -1,22 +1,25 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { auth } from "~/lib/firebase";
 import { handleApiError } from "../lib/api-client";
 import { queryKeys } from "./query-keys";
 import type { Signin } from "./types/user/signin";
 import type { Signup } from "./types/user/signup";
 
 async function signIn(data: Signin) {
-  const response = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/auth/sign-in`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-      credentials: "include",
-    },
-  );
-
-  if (!response.ok) {
-    await handleApiError(response);
+  try {
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      data.email,
+      data.password,
+    );
+    const user = userCredential.user;
+    console.info(user);
+  } catch (error) {
+    console.error(error);
   }
 }
 
@@ -33,18 +36,15 @@ export function useSignIn() {
 }
 
 async function signUp(data: Signup) {
-  const response = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/auth/sign-up`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-      credentials: "include",
-    },
-  );
-
-  if (!response.ok) {
-    await handleApiError(response);
+  try {
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      data.email,
+      data.password,
+    );
+    console.info(userCredential.user);
+  } catch (error) {
+    console.error(error);
   }
 }
 
