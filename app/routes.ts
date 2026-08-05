@@ -12,7 +12,6 @@ export default [
   layout("routes/auth/layout.tsx", [
     route("signin", "routes/auth/signin.tsx"),
     route("signup", "routes/auth/signup.tsx"),
-    route("auth/google/callback", "routes/auth/google-callback.tsx"),
   ]),
 
   route("lobbies/new", "routes/lobbies/new.tsx"),

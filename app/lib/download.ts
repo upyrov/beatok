@@ -1,10 +1,11 @@
-import { handleApiError } from "./api-client";
-
 export async function handleDownload(url: string, filename: string) {
   try {
     const response = await fetch(url, { cache: "no-store" });
     if (!response.ok) {
-      await handleApiError(response);
+      const data: { message: string } | undefined = await response
+        .json()
+        .catch(() => {});
+      throw new Error(data?.message ?? "Failed to download file");
     }
 
     const blob = await response.blob();

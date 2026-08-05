@@ -1,10 +1,6 @@
 import type { LobbyFilter } from "./types/lobby-filter";
 
 export const queryKeys = {
-  auth: {
-    all: ["auth"] as const,
-    user: () => [...queryKeys.auth.all, "user"] as const,
-  },
   lobbies: {
     all: ["lobbies"] as const,
     lists: () => [...queryKeys.lobbies.all, "list"] as const,

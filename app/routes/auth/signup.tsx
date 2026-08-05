@@ -2,7 +2,7 @@ import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
 import { CgGoogle } from "react-icons/cg";
 import { Link, useNavigate } from "react-router";
-import { useGoogleAuthUrl, useSignUp } from "~/api/auth";
+import { useSignInWithGoogle, useSignUp } from "~/api/auth";
 import { ActionButton } from "~/components/action-button";
 import { FieldError } from "~/components/field-error";
 import { MutationBoundary } from "~/components/mutation-boundary";
@@ -10,7 +10,7 @@ import { MutationBoundary } from "~/components/mutation-boundary";
 export default function Signup() {
   const navigate = useNavigate();
   const signUpMutation = useSignUp();
-  const googleAuthUrlMutation = useGoogleAuthUrl();
+  const signInWithGoogleMutation = useSignInWithGoogle();
 
   const form = useForm({
     defaultValues: {
@@ -33,7 +33,7 @@ export default function Signup() {
         className="flex flex-col gap-4"
       >
         <MutationBoundary error={signUpMutation.error} />
-        <MutationBoundary error={googleAuthUrlMutation.error} />
+        <MutationBoundary error={signInWithGoogleMutation.error} />
 
         <form.Field
           name="name"
@@ -121,8 +121,8 @@ export default function Signup() {
 
       <ActionButton
         type="button"
-        onClick={() => googleAuthUrlMutation.mutate()}
-        isPending={googleAuthUrlMutation.isPending}
+        onClick={() => signInWithGoogleMutation.mutate(undefined, { onSuccess: () => navigate("/") })}
+        isPending={signInWithGoogleMutation.isPending}
       >
         <CgGoogle /> Continue with Google
       </ActionButton>

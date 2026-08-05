@@ -1,26 +1,37 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   createUserWithEmailAndPassword,
+  EmailAuthProvider,
+  GoogleAuthProvider,
+  linkWithCredential,
+  linkWithPopup,
+  signInAnonymously,
   signInWithEmailAndPassword,
+  signInWithPopup,
 } from "firebase/auth";
 import { auth } from "~/lib/firebase";
-import { handleApiError } from "../lib/api-client";
+import { fetchWithAuth } from "../lib/api-client";
 import { queryKeys } from "./query-keys";
 import type { Signin } from "./types/user/signin";
 import type { Signup } from "./types/user/signup";
 
-async function signIn(data: Signin) {
-  try {
-    const userCredential = await signInWithEmailAndPassword(
-      auth,
-      data.email,
-      data.password,
-    );
-    const user = userCredential.user;
-    console.info(user);
-  } catch (error) {
-    console.error(error);
+export async function ensureAnonymouslySignedIn() {
+  if (!auth.currentUser) {
+    try {
+      await signInAnonymously(auth);
+    } catch (error) {
+      console.error(error);
+    }
   }
+}
+
+async function signIn(data: Signin) {
+  const userCredential = await signInWithEmailAndPassword(
+    auth,
+    data.email,
+    data.password,
+  );
+  return userCredential.user;
 }
 
 export function useSignIn() {
@@ -29,23 +40,27 @@ export function useSignIn() {
   return useMutation({
     mutationFn: signIn,
     onSuccess: () => {
-      queryClient.setQueryData(["auth", "status"], "authenticated");
       queryClient.invalidateQueries({ queryKey: queryKeys.users.me() });
     },
   });
 }
 
 async function signUp(data: Signup) {
-  try {
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
-      data.email,
-      data.password,
+  if (auth.currentUser?.isAnonymous) {
+    const credential = EmailAuthProvider.credential(data.email, data.password);
+    const userCredential = await linkWithCredential(
+      auth.currentUser,
+      credential,
     );
-    console.info(userCredential.user);
-  } catch (error) {
-    console.error(error);
+    return userCredential.user;
   }
+
+  const userCredential = await createUserWithEmailAndPassword(
+    auth,
+    data.email,
+    data.password,
+  );
+  return userCredential.user;
 }
 
 export function useSignUp() {
@@ -54,58 +69,47 @@ export function useSignUp() {
   return useMutation({
     mutationFn: signUp,
     onSuccess: () => {
-      queryClient.setQueryData(["auth", "status"], "authenticated");
       queryClient.invalidateQueries({ queryKey: queryKeys.users.me() });
     },
   });
 }
 
-async function getGoogleAuthUrl() {
-  const response = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/auth/google/url`,
-    {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-    },
-  );
+async function signInWithGoogle() {
+  const provider = new GoogleAuthProvider();
 
-  if (!response.ok) {
-    await handleApiError(response);
+  if (auth.currentUser?.isAnonymous) {
+    try {
+      const userCredential = await linkWithPopup(auth.currentUser, provider);
+      return userCredential.user;
+    } catch (error: any) {
+      if (
+        error.code === "auth/credential-already-in-use" ||
+        error.code === "auth/email-already-in-use"
+      ) {
+        const userCredential = await signInWithPopup(auth, provider);
+        return userCredential.user;
+      }
+      throw error;
+    }
   }
 
-  return response.text();
+  const userCredential = await signInWithPopup(auth, provider);
+  return userCredential.user;
 }
 
-export function useGoogleAuthUrl() {
+export function useSignInWithGoogle() {
+  const queryClient = useQueryClient();
+
   return useMutation({
-    mutationFn: getGoogleAuthUrl,
-    onSuccess: (url) => {
-      window.location.href = url;
+    mutationFn: signInWithGoogle,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.users.me() });
     },
   });
-}
-
-export async function googleCallback(search: string) {
-  const response = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/auth/google/callback${search}`,
-    {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-    },
-  );
-
-  if (!response.ok) {
-    await handleApiError(response);
-  }
 }
 
 async function signOut() {
-  await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/sign-out`, {
-    method: "POST",
-    credentials: "include",
-  });
+  await fetchWithAuth("/auth/sign-out", { method: "POST" });
 }
 
 export function useSignOut() {
@@ -114,24 +118,7 @@ export function useSignOut() {
   return useMutation({
     mutationFn: signOut,
     onSuccess: () => {
-      queryClient.setQueryData(["auth", "status"], "unauthenticated");
       queryClient.setQueryData(queryKeys.users.me(), null);
     },
   });
-}
-
-export async function refresh() {
-  const response = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/auth/refresh`,
-    {
-      method: "POST",
-      credentials: "include",
-    },
-  );
-
-  if (!response.ok) {
-    await handleApiError(response);
-  }
-
-  return null;
 }
