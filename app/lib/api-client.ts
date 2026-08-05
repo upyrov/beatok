@@ -1,3 +1,5 @@
+import { auth } from "./firebase";
+
 export async function fetchWithAuth(
   input: RequestInfo | URL,
   init?: RequestInit,
@@ -9,7 +11,13 @@ export async function fetchWithAuth(
     ? `${import.meta.env.VITE_API_BASE_URL}${urlString}`
     : input;
 
-  const response = await fetch(url, { ...init, credentials: "include" });
+  const headers = new Headers(init?.headers);
+  const token = await auth.currentUser?.getIdToken();
+  if (token) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+
+  const response = await fetch(url, { ...init, headers, credentials: "include" });
 
   if (response.status === 401) {
     throw new Error("Unauthorized");

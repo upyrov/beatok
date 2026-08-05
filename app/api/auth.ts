@@ -5,6 +5,7 @@ import {
   GoogleAuthProvider,
   linkWithCredential,
   linkWithPopup,
+  sendEmailVerification,
   signInAnonymously,
   signInWithEmailAndPassword,
   signInWithPopup,
@@ -46,21 +47,26 @@ export function useSignIn() {
 }
 
 async function signUp(data: Signup) {
+  let user;
+
   if (auth.currentUser?.isAnonymous) {
     const credential = EmailAuthProvider.credential(data.email, data.password);
     const userCredential = await linkWithCredential(
       auth.currentUser,
       credential,
     );
-    return userCredential.user;
+    user = userCredential.user;
+  } else {
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      data.email,
+      data.password,
+    );
+    user = userCredential.user;
   }
 
-  const userCredential = await createUserWithEmailAndPassword(
-    auth,
-    data.email,
-    data.password,
-  );
-  return userCredential.user;
+  await sendEmailVerification(user);
+  return user;
 }
 
 export function useSignUp() {
