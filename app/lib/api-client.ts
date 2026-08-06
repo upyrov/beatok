@@ -12,12 +12,20 @@ export async function fetchWithAuth(
     : input;
 
   const headers = new Headers(init?.headers);
+
+  // Wait for the initial authentication state to resolve
+  await auth.authStateReady();
+
   const token = await auth.currentUser?.getIdToken();
   if (token) {
     headers.set("Authorization", `Bearer ${token}`);
   }
 
-  const response = await fetch(url, { ...init, headers, credentials: "include" });
+  const response = await fetch(url, {
+    ...init,
+    headers,
+    credentials: "include",
+  });
 
   if (response.status === 401) {
     throw new Error("Unauthorized");
