@@ -2,7 +2,7 @@ import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
 import { CgGoogle } from "react-icons/cg";
 import { Link, useNavigate } from "react-router";
-import { useGoogleAuthUrl, useSignIn } from "~/api/auth";
+import { useSignInWithGoogle, useSignIn, useResetPassword } from "~/hooks/use-auth";
 import { ActionButton } from "~/components/action-button";
 import { FieldError } from "~/components/field-error";
 import { MutationBoundary } from "~/components/mutation-boundary";
@@ -10,16 +10,16 @@ import { MutationBoundary } from "~/components/mutation-boundary";
 export default function Signin() {
   const navigate = useNavigate();
   const signInMutation = useSignIn();
-  const googleAuthUrlMutation = useGoogleAuthUrl();
+  const signInWithGoogleMutation = useSignInWithGoogle();
+  const resetPasswordMutation = useResetPassword();
 
   const form = useForm({
     defaultValues: {
       email: "",
       password: "",
     },
-    onSubmit: async ({ value }) => {
-      signInMutation.mutate(value, { onSuccess: () => navigate("/") });
-    },
+    onSubmit: ({ value }) =>
+      signInMutation.mutate(value, { onSuccess: () => navigate("/") }),
   });
 
   return (
@@ -33,7 +33,7 @@ export default function Signin() {
         className="flex flex-col gap-4"
       >
         <MutationBoundary error={signInMutation.error} />
-        <MutationBoundary error={googleAuthUrlMutation.error} />
+        <MutationBoundary error={signInWithGoogleMutation.error} />
 
         <form.Field
           name="email"
@@ -100,8 +100,8 @@ export default function Signin() {
 
       <ActionButton
         type="button"
-        onClick={() => googleAuthUrlMutation.mutate()}
-        isPending={googleAuthUrlMutation.isPending}
+        onClick={() => signInWithGoogleMutation.mutate(undefined, { onSuccess: () => navigate("/") })}
+        isPending={signInWithGoogleMutation.isPending}
       >
         <CgGoogle /> Continue with Google
       </ActionButton>
@@ -109,6 +109,25 @@ export default function Signin() {
       <Link to="/signup" className="text-blue-500 hover:underline mt-4 block">
         Don't have an account?
       </Link>
+      <button
+        type="button"
+        onClick={() => {
+          const email = form.state.values.email;
+          if (email && email.includes("@")) {
+            resetPasswordMutation.mutate(email);
+          } else {
+            navigate("/reset-password");
+          }
+        }}
+        className="text-blue-500 hover:underline mt-2 block text-left"
+      >
+        Forgot password?
+      </button>
+      {resetPasswordMutation.isSuccess && (
+        <p className="text-green-500 mt-2 text-sm">
+          Password reset link sent to {form.state.values.email}!
+        </p>
+      )}
     </>
   );
 }

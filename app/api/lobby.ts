@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchWithAuth } from "../lib/api-client";
+import { ensureAnonymouslySignedIn } from "./auth";
 import { queryKeys } from "./query-keys";
 import type { LobbyFilter } from "./types/lobby-filter";
 import type { CreateLobby } from "./types/lobby/create-lobby";
@@ -8,6 +9,7 @@ import type { CreateScore } from "./types/score/create-score";
 import type { ScoreUpdate } from "./types/score/score-update";
 
 async function createLobby(data: CreateLobby): Promise<string> {
+  await ensureAnonymouslySignedIn();
   const response = await fetchWithAuth("/lobbies", {
     method: "POST",
     headers: { "Content-Type": "application/json" },

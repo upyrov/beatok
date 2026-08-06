@@ -1,137 +1,121 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { handleApiError } from "../lib/api-client";
-import { queryKeys } from "./query-keys";
+import {
+  applyActionCode,
+  createUserWithEmailAndPassword,
+  EmailAuthProvider,
+  confirmPasswordReset as firebaseConfirmPasswordReset,
+  signOut as firebaseSignOut,
+  GoogleAuthProvider,
+  linkWithCredential,
+  linkWithPopup,
+  sendEmailVerification,
+  sendPasswordResetEmail,
+  signInAnonymously,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+} from "firebase/auth";
+import { auth } from "~/lib/firebase";
 import type { Signin } from "./types/user/signin";
 import type { Signup } from "./types/user/signup";
 
-async function signIn(data: Signin) {
-  const response = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/auth/sign-in`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-      credentials: "include",
-    },
-  );
-
-  if (!response.ok) {
-    await handleApiError(response);
+export async function ensureAnonymouslySignedIn() {
+  if (!auth.currentUser) {
+    try {
+      await signInAnonymously(auth);
+    } catch (error) {
+      console.error(error);
+    }
   }
 }
 
-export function useSignIn() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: signIn,
-    onSuccess: () => {
-      queryClient.setQueryData(["auth", "status"], "authenticated");
-      queryClient.invalidateQueries({ queryKey: queryKeys.users.me() });
-    },
-  });
+export function signIn(data: Signin) {
+  return signInWithEmailAndPassword(auth, data.email, data.password);
 }
 
-async function signUp(data: Signup) {
-  const response = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/auth/sign-up`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-      credentials: "include",
-    },
-  );
+export async function signUp(data: Signup) {
+  let user;
 
-  if (!response.ok) {
-    await handleApiError(response);
+  try {
+    if (auth.currentUser) {
+      const credential = EmailAuthProvider.credential(
+        data.email,
+        data.password,
+      );
+      const userCredential = await linkWithCredential(
+        auth.currentUser,
+        credential,
+      );
+      user = userCredential.user;
+    } else {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        data.email,
+        data.password,
+      );
+      user = userCredential.user;
+    }
+  } catch (error: any) {
+    if (error.code === "auth/email-already-in-use") {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        data.email,
+        data.password,
+      );
+      user = userCredential.user;
+    } else {
+      throw error;
+    }
+  }
+
+  if (user && !user.emailVerified) {
+    try {
+      await sendEmailVerification(user);
+    } catch (e) {}
+  }
+  return user;
+}
+
+export async function signInWithGoogle() {
+  const provider = new GoogleAuthProvider();
+
+  try {
+    if (auth.currentUser) {
+      const userCredential = await linkWithPopup(auth.currentUser, provider);
+      return userCredential.user;
+    }
+
+    const userCredential = await signInWithPopup(auth, provider);
+    return userCredential.user;
+  } catch (error: any) {
+    if (
+      error.code === "auth/credential-already-in-use" ||
+      error.code === "auth/email-already-in-use" ||
+      error.code === "auth/account-exists-with-different-credential"
+    ) {
+      const userCredential = await signInWithPopup(auth, provider);
+      return userCredential.user;
+    }
+    throw error;
   }
 }
 
-export function useSignUp() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: signUp,
-    onSuccess: () => {
-      queryClient.setQueryData(["auth", "status"], "authenticated");
-      queryClient.invalidateQueries({ queryKey: queryKeys.users.me() });
-    },
-  });
+export function signOut() {
+  return firebaseSignOut(auth);
 }
 
-async function getGoogleAuthUrl() {
-  const response = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/auth/google/url`,
-    {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-    },
-  );
-
-  if (!response.ok) {
-    await handleApiError(response);
-  }
-
-  return response.text();
+export function resetPassword(email: string) {
+  return sendPasswordResetEmail(auth, email);
 }
 
-export function useGoogleAuthUrl() {
-  return useMutation({
-    mutationFn: getGoogleAuthUrl,
-    onSuccess: (url) => {
-      window.location.href = url;
-    },
-  });
+export function confirmPasswordReset({
+  code,
+  password,
+}: {
+  code: string;
+  password: string;
+}) {
+  return firebaseConfirmPasswordReset(auth, code, password);
 }
 
-export async function googleCallback(search: string) {
-  const response = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/auth/google/callback${search}`,
-    {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-    },
-  );
-
-  if (!response.ok) {
-    await handleApiError(response);
-  }
-}
-
-async function signOut() {
-  await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/sign-out`, {
-    method: "POST",
-    credentials: "include",
-  });
-}
-
-export function useSignOut() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: signOut,
-    onSuccess: () => {
-      queryClient.setQueryData(["auth", "status"], "unauthenticated");
-      queryClient.setQueryData(queryKeys.users.me(), null);
-    },
-  });
-}
-
-export async function refresh() {
-  const response = await fetch(
-    `${import.meta.env.VITE_API_BASE_URL}/auth/refresh`,
-    {
-      method: "POST",
-      credentials: "include",
-    },
-  );
-
-  if (!response.ok) {
-    await handleApiError(response);
-  }
-
-  return null;
+export function verifyEmail(code: string) {
+  return applyActionCode(auth, code);
 }
