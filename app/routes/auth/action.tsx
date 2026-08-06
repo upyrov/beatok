@@ -2,7 +2,7 @@ import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
 import { Link, useNavigate, useSearchParams } from "react-router";
 import { useEffect, useState } from "react";
-import { useConfirmPasswordReset, useVerifyEmail } from "~/api/auth";
+import { useConfirmPasswordReset, useVerifyEmail } from "~/hooks/use-auth";
 import { ActionButton } from "~/components/action-button";
 import { FieldError } from "~/components/field-error";
 import { MutationBoundary } from "~/components/mutation-boundary";

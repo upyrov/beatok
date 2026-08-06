@@ -1,7 +1,7 @@
 import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
 import { Link } from "react-router";
-import { useResetPassword } from "~/api/auth";
+import { useResetPassword } from "~/hooks/use-auth";
 import { ActionButton } from "~/components/action-button";
 import { FieldError } from "~/components/field-error";
 import { MutationBoundary } from "~/components/mutation-boundary";

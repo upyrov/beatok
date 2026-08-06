@@ -1,8 +1,9 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  confirmPasswordReset,
+  applyActionCode,
   createUserWithEmailAndPassword,
   EmailAuthProvider,
+  confirmPasswordReset as firebaseConfirmPasswordReset,
+  signOut as firebaseSignOut,
   GoogleAuthProvider,
   linkWithCredential,
   linkWithPopup,
@@ -11,11 +12,8 @@ import {
   signInAnonymously,
   signInWithEmailAndPassword,
   signInWithPopup,
-  signOut,
-  applyActionCode,
 } from "firebase/auth";
 import { auth } from "~/lib/firebase";
-import { queryKeys } from "./query-keys";
 import type { Signin } from "./types/user/signin";
 import type { Signup } from "./types/user/signup";
 
@@ -29,104 +27,95 @@ export async function ensureAnonymouslySignedIn() {
   }
 }
 
-export function useSignIn() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (data: Signin) =>
-      signInWithEmailAndPassword(auth, data.email, data.password),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: queryKeys.users.me() }),
-  });
+export function signIn(data: Signin) {
+  return signInWithEmailAndPassword(auth, data.email, data.password);
 }
 
-async function signUp(data: Signup) {
+export async function signUp(data: Signup) {
   let user;
 
-  if (auth.currentUser?.isAnonymous) {
-    const credential = EmailAuthProvider.credential(data.email, data.password);
-    const userCredential = await linkWithCredential(
-      auth.currentUser,
-      credential,
-    );
-    user = userCredential.user;
-  } else {
-    const userCredential = await createUserWithEmailAndPassword(
-      auth,
-      data.email,
-      data.password,
-    );
-    user = userCredential.user;
-  }
-
-  await sendEmailVerification(user);
-  return user;
-}
-
-export function useSignUp() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: signUp,
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: queryKeys.users.me() }),
-  });
-}
-
-async function signInWithGoogle() {
-  const provider = new GoogleAuthProvider();
-
-  if (auth.currentUser?.isAnonymous) {
-    try {
-      const userCredential = await linkWithPopup(auth.currentUser, provider);
-      return userCredential.user;
-    } catch (error: any) {
-      if (
-        error.code === "auth/credential-already-in-use" ||
-        error.code === "auth/email-already-in-use"
-      ) {
-        const userCredential = await signInWithPopup(auth, provider);
-        return userCredential.user;
-      }
+  try {
+    if (auth.currentUser) {
+      const credential = EmailAuthProvider.credential(
+        data.email,
+        data.password,
+      );
+      const userCredential = await linkWithCredential(
+        auth.currentUser,
+        credential,
+      );
+      user = userCredential.user;
+    } else {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        data.email,
+        data.password,
+      );
+      user = userCredential.user;
+    }
+  } catch (error: any) {
+    if (error.code === "auth/email-already-in-use") {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        data.email,
+        data.password,
+      );
+      user = userCredential.user;
+    } else {
       throw error;
     }
   }
 
-  const userCredential = await signInWithPopup(auth, provider);
-  return userCredential.user;
+  if (user && !user.emailVerified) {
+    try {
+      await sendEmailVerification(user);
+    } catch (e) {}
+  }
+  return user;
 }
 
-export function useSignInWithGoogle() {
-  const queryClient = useQueryClient();
+export async function signInWithGoogle() {
+  const provider = new GoogleAuthProvider();
 
-  return useMutation({
-    mutationFn: signInWithGoogle,
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: queryKeys.users.me() }),
-  });
+  try {
+    if (auth.currentUser) {
+      const userCredential = await linkWithPopup(auth.currentUser, provider);
+      return userCredential.user;
+    }
+
+    const userCredential = await signInWithPopup(auth, provider);
+    return userCredential.user;
+  } catch (error: any) {
+    if (
+      error.code === "auth/credential-already-in-use" ||
+      error.code === "auth/email-already-in-use" ||
+      error.code === "auth/account-exists-with-different-credential"
+    ) {
+      const userCredential = await signInWithPopup(auth, provider);
+      return userCredential.user;
+    }
+    throw error;
+  }
 }
 
-export function useSignOut() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: () => signOut(auth),
-    onSuccess: () => queryClient.setQueryData(queryKeys.users.me(), null),
-  });
+export function signOut() {
+  return firebaseSignOut(auth);
 }
 
-export const useResetPassword = () =>
-  useMutation({
-    mutationFn: (email: string) => sendPasswordResetEmail(auth, email),
-  });
+export function resetPassword(email: string) {
+  return sendPasswordResetEmail(auth, email);
+}
 
-export const useConfirmPasswordReset = () =>
-  useMutation({
-    mutationFn: ({ code, password }: { code: string; password: string }) =>
-      confirmPasswordReset(auth, code, password),
-  });
+export function confirmPasswordReset({
+  code,
+  password,
+}: {
+  code: string;
+  password: string;
+}) {
+  return firebaseConfirmPasswordReset(auth, code, password);
+}
 
-export const useVerifyEmail = () =>
-  useMutation({
-    mutationFn: (code: string) => applyActionCode(auth, code),
-  });
+export function verifyEmail(code: string) {
+  return applyActionCode(auth, code);
+}

@@ -1,5 +1,5 @@
 import { Link, useParams } from "react-router";
-import { useSignOut } from "~/api/auth";
+import { useSignOut } from "~/hooks/use-auth";
 import type { Me } from "~/api/types/user/me";
 import { UserCard } from "~/components/user-card";
 import { ActionButton } from "./action-button";
