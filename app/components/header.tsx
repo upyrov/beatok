@@ -1,7 +1,6 @@
 import { Link, useParams } from "react-router";
 import type { Me } from "~/api/types/user/me";
 import type { User } from "~/api/types/user/user";
-import logo from "~/assets/logo.svg";
 import { UserCard } from "~/components/user-card";
 import { useSignOut } from "~/hooks/use-auth";
 import { ActionButton } from "./action-button";
@@ -14,8 +13,7 @@ export function Header({ user }: { user: Me | null }) {
   return (
     <header className="flex justify-between items-center p-6 border-b border-white/5">
       <div>
-        <Link to="/" className="flex items-center gap-3">
-          <img src={logo} alt="Logo" className="w-8" />
+        <Link to="/">
           <h1 className="text-2xl font-bold tracking-tight">Beatok</h1>
         </Link>
       </div>
