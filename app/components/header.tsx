@@ -1,5 +1,6 @@
 import { Link, useParams } from "react-router";
 import type { Me } from "~/api/types/user/me";
+import type { User } from "~/api/types/user/user";
 import logo from "~/assets/logo.svg";
 import { UserCard } from "~/components/user-card";
 import { useSignOut } from "~/hooks/use-auth";
@@ -20,7 +21,7 @@ export function Header({ user }: { user: Me | null }) {
       </div>
       <div className="flex items-center gap-3">
         {user && params.id !== user.id && (
-          <UserCard user={user} className="is-md" />
+          <UserCard user={user as User} className="is-md" />
         )}
         <Link to="/lobbies/new">
           <Button>Create Lobby</Button>

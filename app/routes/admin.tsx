@@ -1,13 +1,11 @@
-import { useEffect } from "react";
-import { Link, useNavigate, useOutletContext } from "react-router";
+import { Link, useOutletContext } from "react-router";
 import { genresQueryOptions } from "~/api/genre";
 import { kitsQueryOptions } from "~/api/kit";
-import { UserRole } from "~/api/types/enums/user-role";
 import type { Me } from "~/api/types/user/me";
 import { Genres } from "~/components/admin/genres";
 import { Kits } from "~/components/admin/kits";
-import { PageContainer } from "~/components/page-container";
 import { Card } from "~/components/card";
+import { PageContainer } from "~/components/page-container";
 import { getQueryClient } from "~/lib/query-client";
 import type { Route } from "./+types/admin";
 
@@ -24,13 +22,6 @@ export async function clientLoader() {
 
 export default function Admin() {
   const { user } = useOutletContext<{ user: Me | null }>();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (user && user.role !== UserRole.Administrator) {
-      navigate("/");
-    }
-  }, [user]);
 
   return (
     user && (

@@ -11,7 +11,6 @@ import {
 } from "react-router";
 import { Header } from "~/components/header";
 import type { Route } from "./+types/root";
-import { UserRole } from "./api/types/enums/user-role";
 import type { Me } from "./api/types/user/me";
 import "./app.css";
 import { Fallback } from "./components/fallback";
@@ -87,8 +86,7 @@ function AppContent() {
               isAnonymous: user.isAnonymous,
               name: user.displayName ?? "Unknown",
               picture: user.photoURL,
-              rating: 666,
-              role: UserRole.None,
+              rating: null,
             }
           : null,
       );
