@@ -11,10 +11,7 @@ import { getQueryClient } from "~/lib/query-client";
 import type { Route } from "./+types/home";
 
 export function meta({}: Route.MetaArgs) {
-  return [
-    { title: "Beatok" },
-    { name: "description", content: "Welcome to Beatok!" },
-  ];
+  return [{ title: "Beatok" }, { name: "description", content: "Beat battle" }];
 }
 
 export async function clientLoader() {
@@ -47,6 +44,9 @@ export default function Home() {
 
           return (
             <>
+              <p className="mt-1 text-sm text-gray-400 mb-4">
+                Find your perfect beat making session
+              </p>
               {toRejoin.length > 0 && (
                 <section>
                   <div className="flex items-center justify-between mb-6">

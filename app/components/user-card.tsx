@@ -24,15 +24,11 @@ export function UserCard({
             className="object-cover border border-white/20 p-0.5 rounded-sm w-6 h-6 group-[.is-md]:w-8 group-[.is-md]:h-8 group-[.is-lg]:w-16 group-[.is-lg]:h-16"
           />
         ) : (
-          <CgProfile
-            className="text-gray-400 group-hover:transition-colors border border-white/20 p-0.5 rounded-sm w-6 h-6 group-[.is-md]:w-8 group-[.is-md]:h-8 group-[.is-lg]:w-16 group-[.is-lg]:h-16"
-          />
+          <CgProfile className="text-gray-400 group-hover:transition-colors border border-white/20 p-0.5 rounded-sm w-6 h-6 group-[.is-md]:w-8 group-[.is-md]:h-8 group-[.is-lg]:w-16 group-[.is-lg]:h-16" />
         )}
       </div>
       <div className="flex flex-col justify-center">
-        <span
-          className="font-semibold text-gray-200 group-hover:transition-colors group-[.is-md]:text-base group-[.is-lg]:text-xl"
-        >
+        <span className="font-semibold group-hover:transition-colors group-[.is-md]:text-base group-[.is-lg]:text-xl">
           {user.name}
         </span>
         {showRating && (
