@@ -20,6 +20,7 @@
     "arktype": "^2.2.3",
     "firebase": "^12.17.1",
     "isbot": "^5.1.36",
+    "jszip": "^3.10.1",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-dropzone": "^19.1.1",

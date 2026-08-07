@@ -105,9 +105,9 @@ export function FileDropzone({
       {showDropzone && (
         <div
           {...getRootProps()}
-          className={`flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-xl cursor-pointer transition-colors outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+          className={`flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-xl cursor-pointer transition-colors outline-none focus-visible:ring-2 focus-visible:ring-white ${
             isDragActive
-              ? "border-blue-500 bg-blue-500/10"
+              ? "border-white bg-white/10"
               : "border-white/20 hover:border-white/40 hover:bg-white/5"
           }`}
         >
@@ -133,7 +133,7 @@ export function FileDropzone({
                       ? "text-red-400"
                       : upload.status === "success"
                         ? "text-green-400"
-                        : "text-blue-400"
+                        : "text-white"
                   }`}
                 >
                   {upload.status === "error"
@@ -155,7 +155,7 @@ export function FileDropzone({
                   className="w-full h-2 rounded-full overflow-hidden"
                 >
                   <Progress.Track className="bg-white/10 w-full h-full relative">
-                    <Progress.Indicator className="bg-blue-500 h-full transition-all duration-200 absolute left-0 top-0 w-full origin-left" style={{ transform: `scaleX(${upload.progress / 100})` }} />
+                    <Progress.Indicator className="bg-white h-full transition-transform duration-500 ease-out absolute left-0 top-0 w-full origin-left" style={{ transform: `scaleX(${upload.progress / 100})` }} />
                   </Progress.Track>
                 </Progress.Root>
               )}

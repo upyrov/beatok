@@ -1,4 +1,6 @@
+import JSZip from "jszip";
 import { use, useCallback, useEffect, useMemo } from "react";
+import { CgSoftwareDownload } from "react-icons/cg";
 import { useOutletContext } from "react-router";
 import {
   useCreateSubmission,
@@ -122,6 +124,35 @@ export function Submitting() {
     [],
   );
 
+  const onDownloadZip = useCallback(async () => {
+    if (!lobby) return;
+    const zip = new JSZip();
+
+    const promises = lobby.sounds.map(async (sound) => {
+      try {
+        const response = await fetch(sound.value);
+        const blob = await response.blob();
+        const extension = sound.value.split(".").pop()?.split("?")[0] || "wav";
+        const categoryName = sound.category?.name || "unknown";
+        zip.file(`beatok-${categoryName}-${sound.id}.${extension}`, blob);
+      } catch (err) {
+        console.error("Failed to fetch sound:", err);
+      }
+    });
+
+    await Promise.all(promises);
+
+    const content = await zip.generateAsync({ type: "blob" });
+    const url = URL.createObjectURL(content);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `beatok-lobby-${lobby.id}.zip`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, [lobby]);
+
   return (
     <div className="flex flex-col gap-6">
       <div className="text-2xl font-mono font-bold text-yellow-400 tracking-wider">
@@ -129,22 +160,31 @@ export function Submitting() {
       </div>
 
       <div className="bg-white/5 p-4 rounded border border-white/10">
-        <h3 className="font-bold mb-4">Categories</h3>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {groupedCategories.map((gc) => (
-            <div
-              key={gc.category.id}
-              className="bg-white/10 p-3 rounded flex flex-col gap-2"
+        <div className="flex justify-between items-center mb-4">
+          {groupedCategories.length > 0 && (
+            <Button
+              onClick={onDownloadZip}
+              className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg bg-white hover:bg-gray-200   border-none font-semibold"
             >
+              <CgSoftwareDownload size={18} /> Download All (ZIP)
+            </Button>
+          )}
+        </div>
+        <div className="gap-4">
+          {groupedCategories.map((gc) => (
+            <div key={gc.category.id}>
               <span className="font-semibold text-sm">{gc.category.name}</span>
-              <ul className="text-xs text-gray-300 flex flex-col gap-1">
+              <ul className="text-xs text-gray-300 flex flex-col gap-1 w-full">
                 {gc.sounds.map((s) => (
-                  <li key={s.id} className="flex justify-between items-center">
-                    <span className="truncate pr-2">{s.value}</span>
-                    <div className="flex items-center gap-2">
-                      <AudioPlayer src={s.value} className="flex-1" />
-                      <Button onClick={(e) => onDownload(e, s)}>
-                        Download
+                  <li key={s.id} className="flex items-center w-full">
+                    <div className="flex items-center gap-2 w-full">
+                      <AudioPlayer src={s.value} className="flex-1 min-w-0" />
+                      <Button
+                        onClick={(e) => onDownload(e, s)}
+                        className="shrink-0"
+                        title="Download"
+                      >
+                        <CgSoftwareDownload />
                       </Button>
                     </div>
                   </li>

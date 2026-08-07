@@ -15,11 +15,11 @@ export function AudioPlayer({
   const { wavesurfer, isReady, isPlaying, currentTime } = useWavesurfer({
     container: containerRef,
     url: src,
-    waveColor: "#4b5563",
-    progressColor: "#f97316",
-    height: 80,
+    waveColor: "#a1a1aa",
+    progressColor: "#000000",
+    height: 32,
     cursorWidth: 1,
-    cursorColor: "#ffffff",
+    cursorColor: "#000000",
     normalize: true,
   });
 
@@ -30,6 +30,7 @@ export function AudioPlayer({
 
     const subscriptions = [
       wavesurfer.on("decode", (duration) => setDuration(duration)),
+      wavesurfer.on("ready", () => setDuration(wavesurfer.getDuration())),
     ];
 
     return () => subscriptions.forEach((unsubscribe) => unsubscribe());
@@ -46,30 +47,40 @@ export function AudioPlayer({
 
   return (
     <div
-      className={`flex items-center gap-4 rounded-xl w-full shadow-2xl ${className}`}
+      className={`flex items-center gap-2 rounded-lg w-full bg-gray-200 p-1.5 border border-black/5 ${className}`}
     >
       <BaseButton
         type="button"
         onClick={handleClick}
         disabled={!isReady}
-        className="shrink-0 w-8 h-8 flex items-center justify-center bg-orange-500 hover:bg-orange-400 disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-orange-500/50 text-white shadow-lg"
+        className="shrink-0 w-8 h-8 flex items-center justify-center bg-white hover:bg-gray-100 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed rounded-full transition-colors focus:outline-none text-black shadow-sm"
       >
-        {isPlaying ? <CgPlayPause size={24} /> : <CgPlayButton size={24} />}
+        {isPlaying ? <CgPlayPause size={20} /> : <CgPlayButton size={20} />}
       </BaseButton>
 
-      <div className="flex flex-col flex-1 gap-2 overflow-hidden">
-        <div className="flex justify-between items-center w-full px-1">
-          <span className="text-xs font-mono font-medium text-orange-500/80">
-            {formatTime(currentTime)}
-          </span>
-          <span className="text-xs font-mono font-medium text-gray-500">
-            {formatTime(duration)}
-          </span>
-        </div>
-        <div
-          className="flex-1 bg-gray-950/50 rounded-lg overflow-hidden border border-gray-800/50"
-          ref={containerRef}
-        />
+      <div
+        className="flex-1 h-8 relative rounded min-w-20"
+        ref={containerRef}
+      >
+        {!isReady && (
+          <div className="absolute inset-0 flex items-center justify-center gap-1 z-10 pointer-events-none">
+            {[0.4, 0.8, 0.5, 1, 0.6].map((scale, i) => (
+              <div
+                key={i}
+                className="w-1 bg-black/20 rounded-full animate-pulse"
+                style={{
+                  height: `${scale * 16}px`,
+                  animationDelay: `${i * 0.15}s`,
+                  animationDuration: "0.8s",
+                }}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="shrink-0 text-[10px] font-mono text-gray-500 whitespace-nowrap px-1 text-right">
+        {formatTime(currentTime)} / {formatTime(duration)}
       </div>
     </div>
   );
