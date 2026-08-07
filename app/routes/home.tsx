@@ -66,7 +66,7 @@ export default function Home() {
                 </section>
               )}
 
-              <section>
+              <section className="flex flex-col flex-1">
                 {!!active.length && (
                   <>
                     <div className="flex items-center justify-between mb-6">
@@ -88,13 +88,13 @@ export default function Home() {
                 )}
 
                 {!active.length && (
-                  <div className="flex justify-center items-center flex-col">
-                    <p>No active lobbies found</p>
-                    <p className="mt-1 text-gray-500">Check back later or</p>
+                  <div className="flex justify-center items-center flex-col flex-1 text-center">
+                    <p className="text-xl font-medium">No active lobbies found</p>
+                    <p className="mt-2 text-gray-500">Check back later or</p>
                     <Link
                       to="/lobbies/new"
                       prefetch="intent"
-                      className="flex justify-center p-2"
+                      className="mt-4 flex justify-center"
                     >
                       <Button>Create your own</Button>
                     </Link>

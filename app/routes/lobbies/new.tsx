@@ -195,6 +195,7 @@ export default function NewLobby() {
             const isDisabled = !canSubmit || !name || !genreId;
             return (
               <ActionButton
+                type="submit"
                 disabled={isDisabled}
                 isPending={isSubmitting || createLobbyMutation.isPending}
               >

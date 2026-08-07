@@ -97,7 +97,7 @@ export function Chat() {
         <form.Subscribe
           selector={(state) => [state.canSubmit, state.isSubmitting]}
           children={([canSubmit, isSubmitting]) => (
-            <ActionButton disabled={!canSubmit || isSubmitting}>
+            <ActionButton type="submit" disabled={!canSubmit || isSubmitting}>
               Send
             </ActionButton>
           )}

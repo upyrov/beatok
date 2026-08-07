@@ -124,7 +124,7 @@ export default function Action() {
         <form.Subscribe
           selector={(state) => [state.canSubmit, state.isSubmitting]}
           children={([canSubmit, isSubmitting]) => (
-            <ActionButton
+            <ActionButton type="submit"
               disabled={!canSubmit}
               isPending={isSubmitting || confirmPasswordResetMutation.isPending}
             >

@@ -55,7 +55,7 @@ export function Categories({ kitId }: { kitId: string }) {
                 <form.Subscribe
                   selector={(state) => [state.canSubmit, state.isSubmitting]}
                   children={([canSubmit, isSubmitting]) => (
-                    <ActionButton
+                    <ActionButton type="submit"
                       disabled={!canSubmit}
                       isPending={isSubmitting || createMutation.isPending}
                     >

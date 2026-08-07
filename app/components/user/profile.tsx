@@ -110,7 +110,7 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
             <form.Subscribe
               selector={(state) => [state.canSubmit, state.isSubmitting]}
               children={([canSubmit, isSubmitting]) => (
-                <ActionButton
+                <ActionButton type="submit"
                   disabled={
                     !canSubmit || isSubmitting || updateUserMutation.isPending
                   }

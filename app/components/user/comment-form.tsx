@@ -50,7 +50,7 @@ export function CommentForm({ userId }: { userId: string }) {
         <form.Subscribe
           selector={(state) => [state.canSubmit, state.isSubmitting]}
           children={([canSubmit, isSubmitting]) => (
-            <ActionButton
+            <ActionButton type="submit"
               disabled={!canSubmit || isSubmitting || addComment.isPending}
             >
               Post Comment

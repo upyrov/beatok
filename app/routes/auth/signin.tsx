@@ -83,7 +83,7 @@ export default function Signin() {
         <form.Subscribe
           selector={(state) => [state.canSubmit, state.isSubmitting]}
           children={([canSubmit, isSubmitting]) => (
-            <ActionButton
+            <ActionButton type="submit"
               disabled={!canSubmit}
               isPending={isSubmitting || signInMutation.isPending}
             >
@@ -99,7 +99,7 @@ export default function Signin() {
         <hr className="w-full border-gray-300" />
       </div>
 
-      <ActionButton
+      <ActionButton type="submit"
         type="button"
         onClick={() => signInWithGoogleMutation.mutate(undefined, { onSuccess: () => navigate("/") })}
         isPending={signInWithGoogleMutation.isPending}

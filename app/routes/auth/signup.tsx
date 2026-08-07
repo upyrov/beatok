@@ -104,7 +104,7 @@ export default function Signup() {
         <form.Subscribe
           selector={(state) => [state.canSubmit, state.isSubmitting]}
           children={([canSubmit, isSubmitting]) => (
-            <ActionButton
+            <ActionButton type="submit"
               disabled={!canSubmit}
               isPending={isSubmitting || signUpMutation.isPending}
             >
@@ -120,7 +120,7 @@ export default function Signup() {
         <hr className="w-full border-gray-300" />
       </div>
 
-      <ActionButton
+      <ActionButton type="submit"
         type="button"
         onClick={() => signInWithGoogleMutation.mutate(undefined, { onSuccess: () => navigate("/") })}
         isPending={signInWithGoogleMutation.isPending}
