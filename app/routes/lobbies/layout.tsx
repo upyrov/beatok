@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { Outlet, useOutletContext } from "react-router";
 import type { DetailedLobby } from "~/api/types/lobby/detailed-lobby";
 import { LobbyContext } from "~/contexts";
+import { auth } from "~/lib/firebase";
 
 export default function Layout() {
   const context = useOutletContext();
@@ -19,6 +20,10 @@ export default function Layout() {
     const newConnection = new HubConnectionBuilder()
       .withUrl(`${import.meta.env.VITE_API_BASE_URL}/lobby`, {
         withCredentials: true,
+        accessTokenFactory: async () => {
+          await auth.authStateReady();
+          return auth.currentUser?.getIdToken() ?? "";
+        },
       })
       .configureLogging(LogLevel.Warning)
       .withAutomaticReconnect()
