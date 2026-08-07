@@ -1,5 +1,6 @@
 import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
+import { CgAdd } from "react-icons/cg";
 import { useCreateGenre, useGenres } from "~/api/genre";
 import { ActionButton } from "~/components/action-button";
 import { FieldError } from "~/components/field-error";
@@ -22,7 +23,9 @@ export function Genres() {
   return (
     <div className="flex flex-col gap-6 flex-1">
       <div>
-        <h2>Create New Genre</h2>
+        <h2 className="text-xl font-semibold mb-4 text-white/90">
+          Create New Genre
+        </h2>
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -54,7 +57,7 @@ export function Genres() {
                         disabled={!canSubmit}
                         isPending={isSubmitting || createMutation.isPending}
                       >
-                        Add Genre
+                        <CgAdd />
                       </ActionButton>
                     )}
                   />
@@ -68,7 +71,7 @@ export function Genres() {
       </div>
 
       <div className="flex flex-col gap-4">
-        <h2>All Genres</h2>
+        <h2 className="text-xl font-semibold mb-2 text-white/90">All Genres</h2>
         <QueryBoundary query={genresQuery}>
           {(genres) => (
             <div className="flex flex-col gap-2">

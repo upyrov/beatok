@@ -52,7 +52,7 @@ export function useKits() {
   return useQuery(kitsQueryOptions());
 }
 
-async function updateKitName(params: { id: string; data: KitUpdate }) {
+async function updateKit(params: { id: string; data: KitUpdate }) {
   const response = await fetchWithAuth(`/kits/${params.id}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
@@ -65,11 +65,11 @@ async function updateKitName(params: { id: string; data: KitUpdate }) {
   }
 }
 
-export function useUpdateKitName() {
+export function useUpdateKit() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: updateKitName,
+    mutationFn: updateKit,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.kits.detail(variables.id),
