@@ -4,7 +4,8 @@ import { Link } from "react-router";
 import { useResetPassword } from "~/hooks/use-auth";
 import { ActionButton } from "~/components/action-button";
 import { FieldError } from "~/components/field-error";
-import { MutationBoundary } from "~/components/mutation-boundary";
+import { MutationBoundary } from "~/components/mutation-boundary";import { Input as BaseInput, Form as BaseForm } from "@base-ui/react";
+
 
 export default function ResetPassword() {
   const resetPasswordMutation = useResetPassword();
@@ -33,7 +34,7 @@ export default function ResetPassword() {
           </Link>
         </div>
       ) : (
-        <form
+        <BaseForm
           onSubmit={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -52,7 +53,7 @@ export default function ResetPassword() {
             children={(field) => (
               <label className="flex flex-col gap-1">
                 Email
-                <input
+                <BaseInput
                   name={field.name}
                   type="email"
                   value={field.state.value}
@@ -84,7 +85,7 @@ export default function ResetPassword() {
           >
             Back to sign in
           </Link>
-        </form>
+        </BaseForm>
       )}
     </>
   );

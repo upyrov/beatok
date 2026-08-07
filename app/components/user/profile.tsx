@@ -1,3 +1,4 @@
+import { Form as BaseForm, Input as BaseInput } from "@base-ui/react";
 import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { type } from "arktype";
@@ -31,7 +32,6 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
       await uploadFile(file, uploadUrl, onProgress);
       await updateUserMutation.mutateAsync({ picture: fileKey });
 
-      // Invalidate queries to refresh the user profile picture
       queryClient.invalidateQueries({
         queryKey: queryKeys.users.detail(user.id),
       });
@@ -85,7 +85,7 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
 
       <div className="flex flex-col flex-1 gap-2">
         {isCurrentUser ? (
-          <form
+          <BaseForm
             onSubmit={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -97,7 +97,7 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
               name="name"
               validators={{ onChange: type("string > 0") }}
               children={(field) => (
-                <input
+                <BaseInput
                   name={field.name}
                   value={field.state.value}
                   onBlur={field.handleBlur}
@@ -119,7 +119,7 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
                 </ActionButton>
               )}
             />
-          </form>
+          </BaseForm>
         ) : (
           <h1 className="text-3xl font-bold text-gray-200">{user.name}</h1>
         )}

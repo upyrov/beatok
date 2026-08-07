@@ -7,6 +7,7 @@ import type { Me } from "~/api/types/user/me";
 import { ActionButton } from "~/components/action-button";
 import { MutationBoundary } from "~/components/mutation-boundary";
 import { LobbyContext } from "~/contexts";
+import { Input as BaseInput, Form as BaseForm } from "@base-ui/react";
 
 export function VoteForm({
   submissionId,
@@ -97,7 +98,7 @@ export function VoteForm({
 
   return (
     <div className="flex flex-col gap-2">
-      <form
+      <BaseForm
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -112,7 +113,7 @@ export function VoteForm({
           }}
           children={(field) => (
             <div className="flex items-center gap-3">
-              <input
+              <BaseInput
                 type="range"
                 min="1"
                 max="10"
@@ -143,7 +144,7 @@ export function VoteForm({
             />
           </MutationBoundary>
         </MutationBoundary>
-      </form>
+      </BaseForm>
       {isSuccess && (
         <div className="text-green-400 font-medium text-xs">
           Vote registered!

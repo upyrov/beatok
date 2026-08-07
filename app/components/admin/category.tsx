@@ -8,7 +8,8 @@ import {
   CgTrash,
 } from "react-icons/cg";
 import { useUpdateCategoryName } from "~/api/category";
-import { Sounds } from "./sounds";
+import { Sounds } from "./sounds";import { Button as BaseButton, Input as BaseInput } from "@base-ui/react";
+
 
 export function Category({
   category,
@@ -39,7 +40,7 @@ export function Category({
       <div className="flex items-center justify-between">
         {isEditing ? (
           <div className="flex items-center gap-2 flex-1 mr-4">
-            <input
+            <BaseInput
               className="flex-1 bg-white/5 border border-white/10 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-500"
               value={editName}
               onChange={(e) => setEditName(e.target.value)}
@@ -52,14 +53,14 @@ export function Category({
                 }
               }}
             />
-            <button
+            <BaseButton
               onClick={handleUpdate}
               disabled={!editName.trim()}
               className="text-green-400 hover:text-green-300 transition-colors disabled:opacity-50"
             >
               <CgCheck size={18} />
-            </button>
-            <button
+            </BaseButton>
+            <BaseButton
               onClick={() => {
                 setIsEditing(false);
                 setEditName(category.name);
@@ -67,21 +68,21 @@ export function Category({
               className="text-gray-400 hover:text-gray-300 transition-colors"
             >
               <CgClose size={18} />
-            </button>
+            </BaseButton>
           </div>
         ) : (
           <div className="flex items-center gap-2 flex-1">
             <span>{category.name}</span>
-            <button
+            <BaseButton
               onClick={() => setIsEditing(true)}
               className="text-gray-400 hover:text-blue-400 transition-colors"
             >
               <CgPen size={18} />
-            </button>
+            </BaseButton>
           </div>
         )}
         <div className="flex gap-3 items-center">
-          <button
+          <BaseButton
             onClick={() => setShowSounds(!showSounds)}
             className="text-gray-400 hover:text-gray-300 transition-colors"
           >
@@ -90,8 +91,8 @@ export function Category({
             ) : (
               <CgChevronDown size={18} />
             )}
-          </button>
-          <button
+          </BaseButton>
+          <BaseButton
             onClick={(e) => {
               e.stopPropagation();
               if (
@@ -104,7 +105,7 @@ export function Category({
             className="text-gray-400 hover:text-red-400 transition-colors"
           >
             <CgTrash size={18} />
-          </button>
+          </BaseButton>
         </div>
       </div>
 

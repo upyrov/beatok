@@ -5,7 +5,8 @@ import { Link, useNavigate } from "react-router";
 import { useSignInWithGoogle, useSignUp } from "~/hooks/use-auth";
 import { ActionButton } from "~/components/action-button";
 import { FieldError } from "~/components/field-error";
-import { MutationBoundary } from "~/components/mutation-boundary";
+import { MutationBoundary } from "~/components/mutation-boundary";import { Input as BaseInput, Form as BaseForm } from "@base-ui/react";
+
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ export default function Signup() {
 
   return (
     <>
-      <form
+      <BaseForm
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -43,7 +44,7 @@ export default function Signup() {
           children={(field) => (
             <label className="flex flex-col gap-1">
               Name
-              <input
+              <BaseInput
                 name={field.name}
                 value={field.state.value}
                 onBlur={field.handleBlur}
@@ -64,7 +65,7 @@ export default function Signup() {
           children={(field) => (
             <label className="flex flex-col gap-1">
               Email
-              <input
+              <BaseInput
                 name={field.name}
                 type="email"
                 value={field.state.value}
@@ -86,7 +87,7 @@ export default function Signup() {
           children={(field) => (
             <label className="flex flex-col gap-1">
               Password
-              <input
+              <BaseInput
                 name={field.name}
                 type="password"
                 value={field.state.value}
@@ -111,7 +112,7 @@ export default function Signup() {
             </ActionButton>
           )}
         />
-      </form>
+      </BaseForm>
 
       <div className="my-4 flex items-center justify-between">
         <hr className="w-full border-gray-300" />

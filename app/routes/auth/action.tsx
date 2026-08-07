@@ -5,7 +5,8 @@ import { useEffect, useState } from "react";
 import { useConfirmPasswordReset, useVerifyEmail } from "~/hooks/use-auth";
 import { ActionButton } from "~/components/action-button";
 import { FieldError } from "~/components/field-error";
-import { MutationBoundary } from "~/components/mutation-boundary";
+import { MutationBoundary } from "~/components/mutation-boundary";import { Input as BaseInput, Form as BaseForm } from "@base-ui/react";
+
 
 export default function Action() {
   const [searchParams] = useSearchParams();
@@ -87,7 +88,7 @@ export default function Action() {
 
   return (
     <>
-      <form
+      <BaseForm
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -106,7 +107,7 @@ export default function Action() {
           children={(field) => (
             <label className="flex flex-col gap-1">
               New Password
-              <input
+              <BaseInput
                 name={field.name}
                 type="password"
                 value={field.state.value}
@@ -131,7 +132,7 @@ export default function Action() {
             </ActionButton>
           )}
         />
-      </form>
+      </BaseForm>
     </>
   );
 }

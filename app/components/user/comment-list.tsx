@@ -1,3 +1,4 @@
+import { Button as BaseButton } from "@base-ui/react";
 import { useState } from "react";
 import { useComments } from "~/api/user";
 import { Fallback } from "~/components/fallback";
@@ -43,23 +44,23 @@ export function CommentList({ userId }: { userId: string }) {
 
       {commentsResult && commentsResult.totalCount > 25 && (
         <div className="flex items-center justify-between mt-6 pt-4 border-t border-white/10">
-          <button
+          <BaseButton
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
             className="px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors disabled:opacity-50"
           >
             Previous
-          </button>
+          </BaseButton>
           <span className="text-sm text-gray-400">
             Page {page} of {Math.ceil(commentsResult.totalCount / 25)}
           </span>
-          <button
+          <BaseButton
             onClick={() => setPage((p) => p + 1)}
             disabled={page >= Math.ceil(commentsResult.totalCount / 25)}
             className="px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors disabled:opacity-50"
           >
             Next
-          </button>
+          </BaseButton>
         </div>
       )}
     </div>

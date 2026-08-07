@@ -8,9 +8,35 @@
 
 html,
 body {
-  @apply bg-white dark:bg-gray-950;
+  @apply bg-gray-100 text-gray-900 dark:bg-[#1a1a1a] dark:text-gray-200 transition-colors;
+}
 
-  @media (prefers-color-scheme: dark) {
-    color-scheme: dark;
-  }
+:root {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+@variant dark (&:where(.dark, .dark *));
+
+@utility sys-panel {
+  @apply bg-white border border-gray-200 shadow-md rounded-md
+         dark:bg-linear-to-b dark:from-[#333] dark:to-[#222] dark:border-[#111] dark:shadow-[0_2px_8px_rgba(0,0,0,0.6)];
+}
+
+@utility sys-input {
+  @apply bg-gray-50 text-gray-900 border border-gray-300 shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)] rounded-sm px-2 py-1 outline-none focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:border-blue-500 transition-colors
+         dark:bg-[#111] dark:text-gray-200 dark:border-[#000] dark:shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)];
+}
+
+@utility sys-popup {
+  @apply bg-white border border-gray-200 shadow-lg rounded-md p-1 z-50 text-gray-900
+         dark:bg-[#222] dark:border-[#111] dark:shadow-[0_4px_12px_rgba(0,0,0,0.8)] dark:text-gray-200;
+}
+
+@utility sys-popup-item {
+  @apply cursor-pointer p-2 hover:bg-gray-100 rounded-sm data-[highlighted]:bg-gray-200 data-[highlighted]:text-gray-900 outline-none
+         dark:hover:bg-[#333] dark:data-[highlighted]:bg-[#444] dark:data-[highlighted]:text-white;
 }

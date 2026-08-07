@@ -1,3 +1,4 @@
+import { Select } from "@base-ui/react";
 import { Suspense, useState } from "react";
 import { useParams } from "react-router";
 import {
@@ -20,12 +21,18 @@ import type { Route } from "./+types/user";
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   const queryClient = getQueryClient();
   await Promise.all([
-    queryClient.prefetchQuery(userByIdQueryOptions(params.id)),
-    queryClient.prefetchQuery(commentsQueryOptions(params.id, 1, 25)),
+    queryClient.ensureQueryData(userByIdQueryOptions(params.id)),
+    queryClient.ensureQueryData(commentsQueryOptions(params.id, 1, 25)),
   ]);
 }
 
-function ActivitySection({ userId, initialAvailableYears }: { userId: string, initialAvailableYears?: number[] }) {
+function ActivitySection({
+  userId,
+  initialAvailableYears,
+}: {
+  userId: string;
+  initialAvailableYears?: number[];
+}) {
   const [selectedYear, setSelectedYear] = useState<number | undefined>();
   const [selectedDate, setSelectedDate] = useState<string | undefined>();
 
@@ -37,26 +44,49 @@ function ActivitySection({ userId, initialAvailableYears }: { userId: string, in
     <>
       <Card>
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-gray-200">Activity Graph</h2>
-          <select
-            value={selectedYear ?? "default"}
-            onChange={(e) => {
-              const value = e.target.value;
-              setSelectedYear(
-                value === "default" ? undefined : parseInt(value, 10),
-              );
-            }}
-            className="bg-white/10 rounded-md px-2 py-1 text-sm outline-none cursor-pointer focus:ring-1 focus:ring-primary text-gray-200"
-          >
-            <option value="default" className="bg-neutral-800">
-              Last 365 days
-            </option>
-            {availableYears?.map((y) => (
-              <option key={y} value={y} className="bg-neutral-800">
-                {y}
-              </option>
-            ))}
-          </select>
+          <h2 className="text-2xl font-bold">Activity Graph</h2>
+          {!!availableYears?.length && (
+            <Select.Root
+              value={selectedYear?.toString() ?? "default"}
+              onValueChange={(value) => {
+                setSelectedYear(
+                  value === "default"
+                    ? undefined
+                    : parseInt(value as string, 10),
+                );
+              }}
+            >
+              <Select.Trigger className="sys-input cursor-pointer flex justify-between items-center gap-2">
+                <Select.Value>
+                  {(value) => (value === "default" ? "Last 365 days" : value)}
+                </Select.Value>
+                <Select.Icon />
+              </Select.Trigger>
+              <Select.Portal>
+                <Select.Positioner
+                  side="bottom"
+                  align="start"
+                  alignItemWithTrigger={false}
+                  sideOffset={4}
+                >
+                  <Select.Popup className="sys-popup min-w-(--anchor-width">
+                    <Select.Item value="default" className="sys-popup-item">
+                      <Select.ItemText>Last 365 days</Select.ItemText>
+                    </Select.Item>
+                    {availableYears?.map((y) => (
+                      <Select.Item
+                        key={y}
+                        value={y.toString()}
+                        className="sys-popup-item"
+                      >
+                        <Select.ItemText>{y}</Select.ItemText>
+                      </Select.Item>
+                    ))}
+                  </Select.Popup>
+                </Select.Positioner>
+              </Select.Portal>
+            </Select.Root>
+          )}
         </div>
         {isFetching ? (
           <div className="w-full flex justify-center p-8">
@@ -92,7 +122,7 @@ export default function User() {
   const { data: user, isLoading: isUserLoading } = useUserById(id!);
 
   if (isUserLoading) {
-    return <Fallback />;
+    return <Fallback fullScreen />;
   }
 
   if (!id || !user) {
@@ -102,9 +132,12 @@ export default function User() {
   return (
     <PageContainer className="max-w-5xl">
       <Profile user={user} isCurrentUser={currentUser?.id === user.id} />
-      <ActivitySection userId={id} initialAvailableYears={user.availableYears} />
+      <ActivitySection
+        userId={id}
+        initialAvailableYears={user.availableYears}
+      />
       <Card>
-        <h2 className="text-2xl font-bold mb-6">Comments</h2>
+        <h2 className="text-2xl font-bold">Comments</h2>
         {currentUser && currentUser.id !== id && <CommentForm userId={id} />}
         <CommentList userId={id} />
       </Card>

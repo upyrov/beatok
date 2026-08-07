@@ -5,6 +5,7 @@ import type { User } from "~/api/types/user/user";
 import { UserCard } from "~/components/user-card";
 import { LobbyContext } from "~/contexts";
 import { ActionButton } from "../action-button";
+import { Input as BaseInput, Form as BaseForm } from "@base-ui/react";
 
 export interface Message {
   content: string;
@@ -68,7 +69,7 @@ export function Chat() {
           </div>
         ))}
       </div>
-      <form
+      <BaseForm
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -82,7 +83,7 @@ export function Chat() {
             onChange: type("string > 0"),
           }}
           children={(field) => (
-            <input
+            <BaseInput
               name={field.name}
               type="text"
               value={field.state.value}
@@ -101,7 +102,7 @@ export function Chat() {
             </ActionButton>
           )}
         />
-      </form>
+      </BaseForm>
     </div>
   );
 }

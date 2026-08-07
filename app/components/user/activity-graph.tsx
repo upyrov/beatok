@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from "react";
 import type { ActivityDay } from "~/api/types/user/activity-day";
+import { Button as BaseButton } from "@base-ui/react";
 
 interface ActivityGraphProps {
   activity: ActivityDay[];
@@ -149,7 +150,7 @@ export function ActivityGraph({
 
                   return (
                     <td key={day.date} className="p-0 relative">
-                      <button
+                      <BaseButton
                         title={`${day.count} activities on ${formatDate(day.date)}`}
                         onClick={() =>
                           onDateSelect(isSelected ? undefined : day.date)

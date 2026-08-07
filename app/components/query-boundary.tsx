@@ -1,3 +1,4 @@
+import { Button as BaseButton } from "@base-ui/react";
 import type { UseQueryResult } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 import { useEffect } from "react";
@@ -31,13 +32,13 @@ export function QueryBoundary<T>({ query, children }: QueryBoundaryProps<T>) {
             An unexpected error occurred.
           </p>
         </div>
-        <button
+        <BaseButton
           type="button"
           onClick={() => query.refetch()}
           className="text-xs bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded-lg transition-colors font-medium"
         >
           Try Again
-        </button>
+        </BaseButton>
       </div>
     );
   }
@@ -47,9 +48,9 @@ export function QueryBoundary<T>({ query, children }: QueryBoundaryProps<T>) {
   }
 
   return (
-    <div className="relative">
+    <>
       {query.isFetching && !query.isPending && <Fallback />}
       {children(query.data)}
-    </div>
+    </>
   );
 }

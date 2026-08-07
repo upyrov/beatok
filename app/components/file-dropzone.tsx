@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { Input as BaseInput, Progress } from "@base-ui/react";
 
 export interface UploadState {
   id: string;
@@ -110,7 +111,7 @@ export function FileDropzone({
               : "border-white/20 hover:border-white/40 hover:bg-white/5"
           }`}
         >
-          <input {...getInputProps()} />
+          <BaseInput {...getInputProps()} />
           <p className="font-semibold mb-2 text-gray-400">{label}</p>
         </div>
       )}
@@ -148,11 +149,15 @@ export function FileDropzone({
               </div>
 
               {upload.status !== "success" && upload.status !== "error" && (
-                <progress
+                <Progress.Root
                   value={upload.progress}
-                  max="100"
-                  className="w-full h-2 rounded-full overflow-hidden appearance-none bg-white/10 [&::-webkit-progress-bar]:bg-white/10 [&::-webkit-progress-value]:bg-blue-500 [&::-moz-progress-bar]:bg-blue-500 transition-all duration-200"
-                />
+                  max={100}
+                  className="w-full h-2 rounded-full overflow-hidden"
+                >
+                  <Progress.Track className="bg-white/10 w-full h-full relative">
+                    <Progress.Indicator className="bg-blue-500 h-full transition-all duration-200 absolute left-0 top-0 w-full origin-left" style={{ transform: `scaleX(${upload.progress / 100})` }} />
+                  </Progress.Track>
+                </Progress.Root>
               )}
               {upload.status === "error" && (
                 <p className="text-xs text-red-400">{upload.error}</p>

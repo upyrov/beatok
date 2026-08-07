@@ -2,6 +2,7 @@ import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
 import { useAddComment } from "~/api/user";
 import { ActionButton } from "../action-button";
+import { Form as BaseForm } from "@base-ui/react";
 
 export function CommentForm({ userId }: { userId: string }) {
   const addComment = useAddComment(userId);
@@ -21,7 +22,7 @@ export function CommentForm({ userId }: { userId: string }) {
   });
 
   return (
-    <form
+    <BaseForm
       onSubmit={(e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -57,6 +58,6 @@ export function CommentForm({ userId }: { userId: string }) {
           )}
         />
       </div>
-    </form>
+    </BaseForm>
   );
 }

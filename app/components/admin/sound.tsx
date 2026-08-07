@@ -1,3 +1,4 @@
+import { Button as BaseButton } from "@base-ui/react";
 import { useState } from "react";
 import { CgClose, CgPen, CgTrash } from "react-icons/cg";
 import { useUpdateSoundValue, useUploadSoundUrl } from "~/api/sound";
@@ -46,8 +47,8 @@ export function Sound({
   }
 
   return (
-    <div className="flex flex-col gap-2 p-2 border-b border-gray-200">
-      <div className="flex items-center justify-between mb-1">
+    <div className="flex flex-col gap-2 p-2">
+      <div className="flex items-center justify-end mb-1">
         {isEditing ? (
           <div className="flex flex-col gap-2 flex-1 mr-4">
             <FileDropzone
@@ -55,27 +56,22 @@ export function Sound({
               maxFiles={1}
               onUpload={handleUpdate}
             />
-            <button
+            <BaseButton
               onClick={() => setIsEditing(false)}
               className="text-red-400 hover:text-red-300 self-start text-sm flex items-center gap-1"
             >
               <CgClose /> Cancel
-            </button>
+            </BaseButton>
           </div>
         ) : (
-          <div className="flex items-center gap-2 flex-1">
-            <span className="text-sm truncate max-w-50" title={sound.value}>
-              {sound.value}
-            </span>
-            <button
-              onClick={() => setIsEditing(true)}
-              className="text-gray-400 hover:text-blue-400 transition-colors"
-            >
-              <CgPen size={18} />
-            </button>
-          </div>
+          <BaseButton
+            onClick={() => setIsEditing(true)}
+            className="text-gray-400 hover:text-blue-400 transition-colors"
+          >
+            <CgPen size={18} />
+          </BaseButton>
         )}
-        <button
+        <BaseButton
           onClick={(e) => {
             e.stopPropagation();
             onDelete();
@@ -83,9 +79,9 @@ export function Sound({
           className="text-gray-400 hover:text-red-400 transition-colors ml-2"
         >
           <CgTrash size={18} />
-        </button>
+        </BaseButton>
       </div>
-      <AudioPlayer src={sound.value} />
+      {!isEditing && <AudioPlayer src={sound.value} />}
     </div>
   );
 }

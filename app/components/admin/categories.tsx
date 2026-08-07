@@ -10,7 +10,8 @@ import { ActionButton } from "~/components/action-button";
 import { FieldError } from "~/components/field-error";
 import { MutationBoundary } from "~/components/mutation-boundary";
 import { QueryBoundary } from "~/components/query-boundary";
-import { Category } from "./category";
+import { Category } from "./category";import { Input as BaseInput, Form as BaseForm } from "@base-ui/react";
+
 
 export function Categories({ kitId }: { kitId: string }) {
   const categoriesQuery = useCategories(kitId);
@@ -27,7 +28,7 @@ export function Categories({ kitId }: { kitId: string }) {
 
   return (
     <div className="flex flex-col gap-4 flex-1">
-      <form
+      <BaseForm
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -43,7 +44,7 @@ export function Categories({ kitId }: { kitId: string }) {
           children={(field) => (
             <div className="flex flex-col gap-1">
               <div className="flex gap-2">
-                <input
+                <BaseInput
                   name={field.name}
                   className="flex-1 bg-white/5 border border-white/10 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
                   placeholder="New category name..."
@@ -68,7 +69,7 @@ export function Categories({ kitId }: { kitId: string }) {
           )}
         />
         <MutationBoundary error={createMutation.error} />
-      </form>
+      </BaseForm>
 
       <div className="flex-1">
         <QueryBoundary query={categoriesQuery}>

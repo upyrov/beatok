@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { CgCheck, CgClose, CgPen, CgTrash } from "react-icons/cg";
 import { useDeleteGenre, useUpdateGenreName } from "~/api/genre";
-import type { Genre as IGenre } from "~/api/types/genre/genre";
+import type { Genre as IGenre } from "~/api/types/genre/genre";import { Button as BaseButton, Input as BaseInput } from "@base-ui/react";
+
 
 export function Genre({ genre }: { genre: IGenre }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -24,7 +25,7 @@ export function Genre({ genre }: { genre: IGenre }) {
   if (isEditing) {
     return (
       <div className="flex justify-between items-center gap-2 py-1">
-        <input
+        <BaseInput
           className="flex-1 bg-white/5 border border-white/10 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-500"
           value={editName}
           onChange={(e) => setEditName(e.target.value)}
@@ -38,14 +39,14 @@ export function Genre({ genre }: { genre: IGenre }) {
           autoFocus
         />
         <div className="flex items-center gap-2">
-          <button
+          <BaseButton
             onClick={handleSave}
             disabled={updateMutation.isPending || !editName.trim()}
             className="text-green-400 hover:text-green-300 transition-colors disabled:opacity-50"
           >
             <CgCheck size={18} />
-          </button>
-          <button
+          </BaseButton>
+          <BaseButton
             onClick={() => {
               setIsEditing(false);
               setEditName(genre.name);
@@ -53,7 +54,7 @@ export function Genre({ genre }: { genre: IGenre }) {
             className="text-gray-400 hover:text-gray-300 transition-colors"
           >
             <CgClose size={18} />
-          </button>
+          </BaseButton>
         </div>
       </div>
     );
@@ -63,13 +64,13 @@ export function Genre({ genre }: { genre: IGenre }) {
     <div className="flex justify-between items-center py-1">
       <span>{genre.name}</span>
       <div className="flex items-center gap-3">
-        <button
+        <BaseButton
           onClick={() => setIsEditing(true)}
           className="text-gray-400 hover:text-blue-400 transition-colors"
         >
           <CgPen size={18} />
-        </button>
-        <button
+        </BaseButton>
+        <BaseButton
           onClick={() => {
             if (confirm(`Delete genre "${genre.name}"?`)) {
               deleteMutation.mutate(genre.id);
@@ -78,7 +79,7 @@ export function Genre({ genre }: { genre: IGenre }) {
           className="text-gray-400 hover:text-red-400 transition-colors"
         >
           <CgTrash size={18} />
-        </button>
+        </BaseButton>
       </div>
     </div>
   );
