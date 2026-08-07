@@ -28,7 +28,7 @@ export function ThemeToggle() {
     } else {
       document.documentElement.classList.remove("dark");
     }
-  }, []);
+  }, [theme]);
 
   return (
     <button
