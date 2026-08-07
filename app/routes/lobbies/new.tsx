@@ -141,7 +141,7 @@ export default function NewLobby() {
             children={(field) => (
               <div className="flex flex-col items-center gap-3">
                 <label className="font-medium text-xs text-gray-700 dark:text-gray-300 tracking-wide">
-                  Vol (Limit)
+                  Max Participants
                 </label>
                 <Knob
                   value={field.state.value}
@@ -166,7 +166,7 @@ export default function NewLobby() {
             children={(field) => (
               <div className="flex flex-col items-center gap-3">
                 <label className="font-medium text-xs text-gray-700 dark:text-gray-300 tracking-wide">
-                  Pan (Time)
+                  Submission Time
                 </label>
                 <Knob
                   value={field.state.value}
