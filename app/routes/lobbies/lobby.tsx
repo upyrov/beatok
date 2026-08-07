@@ -90,14 +90,6 @@ export default function Lobby() {
     };
   }, [user, connection, setLobby]);
 
-  if (!user) {
-    return (
-      <main className="container mx-auto p-4 md:p-8 max-w-7xl flex-1 w-full flex gap-8">
-        <span>You need to have cookies enabled to join the lobby</span>
-      </main>
-    );
-  }
-
   const StateView =
     lobby &&
     {
