@@ -2,7 +2,6 @@ import { HubConnectionState } from "@microsoft/signalr";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { use, useCallback, useEffect, useRef } from "react";
 import { useNavigate, useOutletContext, useParams } from "react-router";
-import { ensureAnonymouslySignedIn } from "~/api/auth";
 import { queryKeys } from "~/api/query-keys";
 import { LobbyState } from "~/api/types/enums/lobby-state";
 import type { DetailedLobby } from "~/api/types/lobby/detailed-lobby";
@@ -70,10 +69,6 @@ export default function Lobby() {
       joinMutation.mutate();
     }
   }, [user, connection, id, lobby, joinMutation.mutate]);
-
-  useEffect(() => {
-    ensureAnonymouslySignedIn();
-  }, []);
 
   useEffect(() => {
     if (!user || !connection) return;
