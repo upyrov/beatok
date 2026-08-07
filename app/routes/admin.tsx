@@ -11,7 +11,10 @@ import { getQueryClient } from "~/lib/query-client";
 import type { Route } from "./+types/admin";
 
 export function meta({}: Route.MetaArgs) {
-  return [{ title: "Beatok | Admin" }];
+  return [
+    { title: "Beatok | Admin" },
+    { name: "robots", content: "noindex, nofollow" },
+  ];
 }
 
 export function HydrateFallback() {

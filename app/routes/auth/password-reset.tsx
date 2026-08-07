@@ -6,8 +6,16 @@ import { ActionButton } from "~/components/action-button";
 import { FieldError } from "~/components/field-error";
 import { MutationBoundary } from "~/components/mutation-boundary";
 import { useResetPassword } from "~/hooks/use-auth";
+import type { Route } from "./+types/password-reset";
 
-export default function ResetPassword() {
+export function meta({}: Route.MetaArgs) {
+  return [
+    { title: "Beatok | Password Reset" },
+    { name: "description", content: "Reset your Beatok account password." },
+  ];
+}
+
+export default function PasswordReset() {
   const resetPasswordMutation = useResetPassword();
 
   const form = useForm({

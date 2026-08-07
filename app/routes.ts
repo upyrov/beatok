@@ -12,7 +12,7 @@ export default [
   layout("routes/auth/layout.tsx", [
     route("signin", "routes/auth/signin.tsx"),
     route("signup", "routes/auth/signup.tsx"),
-    route("reset-password", "routes/auth/reset-password.tsx"),
+    route("password-reset", "routes/auth/password-reset.tsx"),
     route("action", "routes/auth/action.tsx"),
   ]),
 

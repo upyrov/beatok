@@ -18,12 +18,28 @@ import { Profile } from "~/components/user/profile";
 import { getQueryClient } from "~/lib/query-client";
 import type { Route } from "./+types/user";
 
-export function clientLoader({ params }: Route.ClientLoaderArgs) {
+export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   const queryClient = getQueryClient();
-  Promise.all([
-    queryClient.prefetchQuery(userByIdQueryOptions(params.id)),
-    queryClient.prefetchQuery(commentsQueryOptions(params.id, 1, 25)),
+  const [user] = await Promise.all([
+    queryClient.ensureQueryData(userByIdQueryOptions(params.id!)),
+    queryClient.prefetchQuery(commentsQueryOptions(params.id!, 1, 25)),
   ]);
+  return { user };
+}
+
+export function meta({ data }: Route.MetaArgs & { data: any }) {
+  const title = data?.user?.name
+    ? `Beatok | ${data.user.name}`
+    : "Beatok | User Profile";
+  const description = `View ${
+    data?.user?.name || "this user"
+  }'s beat battle profile, stats, and activity on Beatok.`;
+  return [
+    { title },
+    { name: "description", content: description },
+    { property: "og:title", content: title },
+    { property: "og:description", content: description },
+  ];
 }
 
 function ActivitySection({

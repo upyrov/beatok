@@ -4,6 +4,18 @@ import {
   Input as BaseInput,
 } from "@base-ui/react";
 import { useForm } from "@tanstack/react-form";
+import type { Route } from "./+types/signin";
+
+export function meta({}: Route.MetaArgs) {
+  return [
+    { title: "Beatok | Signin" },
+    {
+      name: "description",
+      content: "Sign in to your Beatok account to join beat battles.",
+    },
+  ];
+}
+
 import { type } from "arktype";
 import { CgGoogle } from "react-icons/cg";
 import { Link, useNavigate } from "react-router";
@@ -130,7 +142,7 @@ export default function Signin() {
           if (email && email.includes("@")) {
             resetPasswordMutation.mutate(email);
           } else {
-            navigate("/reset-password");
+            navigate("/password-reset");
           }
         }}
         className="text-blue-500 hover:underline mt-2 block text-left"

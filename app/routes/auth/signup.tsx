@@ -7,6 +7,17 @@ import { ActionButton } from "~/components/action-button";
 import { FieldError } from "~/components/field-error";
 import { MutationBoundary } from "~/components/mutation-boundary";
 import { useSignInWithGoogle, useSignUp } from "~/hooks/use-auth";
+import type { Route } from "./+types/signup";
+
+export function meta({}: Route.MetaArgs) {
+  return [
+    { title: "Beatok | Signup" },
+    {
+      name: "description",
+      content: "Create a Beatok account and start competing in beat battles.",
+    },
+  ];
+}
 
 export default function Signup() {
   const navigate = useNavigate();

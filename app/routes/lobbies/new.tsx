@@ -9,6 +9,17 @@ import { FieldError } from "~/components/field-error";
 import { Knob } from "~/components/knob";
 import { MutationBoundary } from "~/components/mutation-boundary";
 import { Skeleton } from "~/components/skeleton";
+import type { Route } from "./+types/new";
+
+export function meta({}: Route.MetaArgs) {
+  return [
+    { title: "Beatok | Create Lobby" },
+    {
+      name: "description",
+      content: "Create a new beat battle lobby on Beatok.",
+    },
+  ];
+}
 
 export default function NewLobby() {
   const navigate = useNavigate();

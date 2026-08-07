@@ -16,6 +16,17 @@ import { Voting } from "~/components/lobby/voting";
 import { Waiting } from "~/components/lobby/waiting";
 import { Skeleton } from "~/components/skeleton";
 import { LobbyContext } from "~/contexts";
+import type { Route } from "./+types/lobby";
+
+export function meta({}: Route.MetaArgs) {
+  return [
+    { title: "Beatok | Lobby" },
+    {
+      name: "description",
+      content: "Join the beat battle and compete or vote for the best beats.",
+    },
+  ];
+}
 
 export default function Lobby() {
   const { connection, lobby, setLobby } = use(LobbyContext);

@@ -10,7 +10,28 @@ import { getQueryClient } from "~/lib/query-client";
 import type { Route } from "./+types/home";
 
 export function meta({}: Route.MetaArgs) {
-  return [{ title: "Beatok" }, { name: "description", content: "Beat battle" }];
+  return [
+    { title: "Beatok | Beat Battle" },
+    {
+      name: "description",
+      content:
+        "Discover and join active beat battle lobbies. Compete with others and rise to the top.",
+    },
+    { property: "og:title", content: "Beatok | Beat Battle" },
+    {
+      property: "og:description",
+      content:
+        "Discover and join active beat battle lobbies. Compete with others and rise to the top.",
+    },
+    {
+      "script:ld+json": {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        name: "Beatok",
+        url: "https://beatok.net",
+      },
+    },
+  ];
 }
 
 export async function clientLoader() {

@@ -17,6 +17,26 @@ import { Skeleton } from "./components/skeleton";
 import { auth } from "./lib/firebase";
 import { getQueryClient } from "./lib/query-client";
 
+export const meta: Route.MetaFunction = () => {
+  return [
+    { title: "Beatok | Beat Battle" },
+    {
+      name: "description",
+      content:
+        "Join the beat battle platform. Compete, vote, and rise to the top.",
+    },
+    { property: "og:title", content: "Beatok | Beat Battle" },
+    {
+      property: "og:description",
+      content:
+        "Join the beat battle platform. Compete, vote, and rise to the top.",
+    },
+    { property: "og:type", content: "website" },
+    { name: "twitter:card", content: "summary_large_image" },
+    { tagName: "link", rel: "canonical", href: "https://beatok.net" },
+  ];
+};
+
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   {
