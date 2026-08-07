@@ -29,10 +29,7 @@ export default function Layout() {
       const connection = new HubConnectionBuilder()
         .withUrl(`${import.meta.env.VITE_API_BASE_URL}/lobby`, {
           withCredentials: true,
-          accessTokenFactory: async () => {
-            await auth.authStateReady();
-            return auth.currentUser?.getIdToken() ?? "";
-          },
+          accessTokenFactory: () => auth.currentUser?.getIdToken() ?? "",
         })
         .configureLogging(LogLevel.Warning)
         .withAutomaticReconnect()
