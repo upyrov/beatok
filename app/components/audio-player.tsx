@@ -58,10 +58,7 @@ export function AudioPlayer({
         {isPlaying ? <CgPlayPause size={20} /> : <CgPlayButton size={20} />}
       </BaseButton>
 
-      <div
-        className="flex-1 h-8 relative rounded min-w-20"
-        ref={containerRef}
-      >
+      <div className="flex-1 h-8 relative rounded min-w-20" ref={containerRef}>
         {!isReady && (
           <div className="absolute inset-0 flex items-center justify-center gap-1 z-10 pointer-events-none">
             {[0.4, 0.8, 0.5, 1, 0.6].map((scale, i) => (

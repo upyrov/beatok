@@ -1,6 +1,6 @@
+import { Input as BaseInput, Progress } from "@base-ui/react";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { Input as BaseInput, Progress } from "@base-ui/react";
 
 export interface UploadState {
   id: string;
@@ -107,8 +107,8 @@ export function FileDropzone({
           {...getRootProps()}
           className={`flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-xl cursor-pointer transition-colors outline-none focus-visible:ring-2 focus-visible:ring-white ${
             isDragActive
-              ? "border-white bg-white/10"
-              : "border-white/20 hover:border-white/40 hover:bg-white/5"
+              ? "border-white bg-black/10 dark:bg-white/10"
+              : "border-black/20 dark:border-white/20 hover:border-white/40 hover:bg-black/5 dark:bg-white/5"
           }`}
         >
           <BaseInput {...getInputProps()} />
@@ -121,7 +121,7 @@ export function FileDropzone({
           {uploads.map((upload) => (
             <div
               key={upload.id}
-              className="bg-white/5 border border-white/10 p-3 rounded-lg flex flex-col gap-2 w-full"
+              className="bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 p-3 rounded-lg flex flex-col gap-2 w-full"
             >
               <div className="flex justify-between items-center text-sm">
                 <span className="font-medium truncate mr-2">
@@ -154,8 +154,11 @@ export function FileDropzone({
                   max={100}
                   className="w-full h-2 rounded-full overflow-hidden"
                 >
-                  <Progress.Track className="bg-white/10 w-full h-full relative">
-                    <Progress.Indicator className="bg-white h-full transition-transform duration-500 ease-out absolute left-0 top-0 w-full origin-left" style={{ transform: `scaleX(${upload.progress / 100})` }} />
+                  <Progress.Track className="bg-black/10 dark:bg-white/10 w-full h-full relative">
+                    <Progress.Indicator
+                      className="bg-white h-full transition-transform duration-500 ease-out absolute left-0 top-0 w-full origin-left"
+                      style={{ transform: `scaleX(${upload.progress / 100})` }}
+                    />
                   </Progress.Track>
                 </Progress.Root>
               )}

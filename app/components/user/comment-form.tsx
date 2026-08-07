@@ -1,8 +1,8 @@
+import { Form as BaseForm } from "@base-ui/react";
 import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
 import { useAddComment } from "~/api/user";
 import { ActionButton } from "../action-button";
-import { Form as BaseForm } from "@base-ui/react";
 
 export function CommentForm({ userId }: { userId: string }) {
   const addComment = useAddComment(userId);
@@ -42,7 +42,7 @@ export function CommentForm({ userId }: { userId: string }) {
             onBlur={field.handleBlur}
             onChange={(e) => field.handleChange(e.target.value)}
             placeholder="Leave a comment..."
-            className="w-full bg-white/10 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary min-h-25"
+            className="w-full bg-black/10 dark:bg-white/10 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary min-h-25"
           />
         )}
       />
@@ -50,7 +50,8 @@ export function CommentForm({ userId }: { userId: string }) {
         <form.Subscribe
           selector={(state) => [state.canSubmit, state.isSubmitting]}
           children={([canSubmit, isSubmitting]) => (
-            <ActionButton type="submit"
+            <ActionButton
+              type="submit"
               disabled={!canSubmit || isSubmitting || addComment.isPending}
             >
               Post Comment

@@ -2,23 +2,19 @@ import { Form as BaseForm, Input as BaseInput, Select } from "@base-ui/react";
 import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
 import { useNavigate } from "react-router";
-import { genresQueryOptions, useGenres } from "~/api/genre";
+import { useGenres } from "~/api/genre";
 import { useCreateLobby } from "~/api/lobby";
 import { ActionButton } from "~/components/action-button";
 import { FieldError } from "~/components/field-error";
 import { Knob } from "~/components/knob";
 import { MutationBoundary } from "~/components/mutation-boundary";
-import { QueryBoundary } from "~/components/query-boundary";
-import { getQueryClient } from "~/lib/query-client";
-
-export async function clientLoader() {
-  await getQueryClient().ensureQueryData(genresQueryOptions());
-}
+import { Skeleton } from "~/components/skeleton";
 
 export default function NewLobby() {
   const navigate = useNavigate();
   const createLobbyMutation = useCreateLobby();
   const genresQuery = useGenres();
+  const genres = genresQuery.data || [];
 
   const form = useForm({
     defaultValues: {
@@ -85,48 +81,48 @@ export default function NewLobby() {
               <label className="font-medium text-gray-700 dark:text-gray-300">
                 Genre
               </label>
-              <QueryBoundary query={genresQuery}>
-                {(genres) => (
-                  <Select.Root
-                    value={field.state.value || undefined}
-                    onValueChange={(value) => field.handleChange(value!)}
+              {genresQuery.isPending ? (
+                <Skeleton className="w-full h-9 rounded-sm" />
+              ) : (
+                <Select.Root
+                  value={field.state.value || null}
+                  onValueChange={(value) => field.handleChange(value!)}
+                >
+                  <Select.Trigger
+                    className="sys-input flex justify-between items-center w-full"
+                    onBlur={field.handleBlur}
                   >
-                    <Select.Trigger
-                      className="sys-input flex justify-between items-center w-full"
-                      onBlur={field.handleBlur}
+                    <Select.Value placeholder="Select a genre">
+                      {(value) =>
+                        value
+                          ? genres.find((g) => g.id === value)?.name
+                          : "Select a genre"
+                      }
+                    </Select.Value>
+                    <Select.Icon />
+                  </Select.Trigger>
+                  <Select.Portal>
+                    <Select.Positioner
+                      side="bottom"
+                      align="start"
+                      alignItemWithTrigger={false}
+                      sideOffset={4}
                     >
-                      <Select.Value placeholder="Select a genre">
-                        {(value) =>
-                          value
-                            ? genres.find((g) => g.id === value)?.name
-                            : "Select a genre"
-                        }
-                      </Select.Value>
-                      <Select.Icon />
-                    </Select.Trigger>
-                    <Select.Portal>
-                      <Select.Positioner
-                        side="bottom"
-                        align="start"
-                        alignItemWithTrigger={false}
-                        sideOffset={4}
-                      >
-                        <Select.Popup className="sys-popup min-w-(--anchor-width)">
-                          {genres.map((genre) => (
-                            <Select.Item
-                              key={genre.id}
-                              value={genre.id}
-                              className="sys-popup-item"
-                            >
-                              <Select.ItemText>{genre.name}</Select.ItemText>
-                            </Select.Item>
-                          ))}
-                        </Select.Popup>
-                      </Select.Positioner>
-                    </Select.Portal>
-                  </Select.Root>
-                )}
-              </QueryBoundary>
+                      <Select.Popup className="sys-popup min-w-(--anchor-width)">
+                        {genres.map((genre) => (
+                          <Select.Item
+                            key={genre.id}
+                            value={genre.id}
+                            className="sys-popup-item"
+                          >
+                            <Select.ItemText>{genre.name}</Select.ItemText>
+                          </Select.Item>
+                        ))}
+                      </Select.Popup>
+                    </Select.Positioner>
+                  </Select.Portal>
+                </Select.Root>
+              )}
               <FieldError errors={field.state.meta.errors} />
             </div>
           )}

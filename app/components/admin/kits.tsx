@@ -11,11 +11,11 @@ import { useCreateKit, useDeleteKit, useKits } from "~/api/kit";
 import { ActionButton } from "~/components/action-button";
 import { FieldError } from "~/components/field-error";
 import { MutationBoundary } from "~/components/mutation-boundary";
-import { QueryBoundary } from "~/components/query-boundary";
 import { Kit } from "./kit";
 
 export function Kits() {
   const kitsQuery = useKits();
+  const kits = kitsQuery.data || [];
   const { data: genres = [] } = useGenres();
   const createMutation = useCreateKit();
   const deleteMutation = useDeleteKit();
@@ -54,7 +54,7 @@ export function Kits() {
               <div className="flex gap-2">
                 <BaseInput
                   name={field.name}
-                  className="flex-1 bg-white/5 border border-white/10 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
+                  className="flex-1 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
                   placeholder="Kit name"
                   value={field.state.value}
                   onBlur={field.handleBlur}
@@ -63,7 +63,8 @@ export function Kits() {
                 <form.Subscribe
                   selector={(state) => [state.canSubmit, state.isSubmitting]}
                   children={([canSubmit, isSubmitting]) => (
-                    <ActionButton type="submit"
+                    <ActionButton
+                      type="submit"
                       disabled={!canSubmit}
                       isPending={isSubmitting || createMutation.isPending}
                     >
@@ -101,7 +102,7 @@ export function Kits() {
                         className={`text-sm px-2 py-1 rounded transition-colors ${
                           isSelected
                             ? "bg-blue-600 text-white"
-                            : "bg-white/10 text-gray-300 hover:bg-white/20"
+                            : "bg-black/10 dark:bg-white/10 text-gray-300 hover:bg-white/20"
                         }`}
                       >
                         {genre.name}
@@ -120,20 +121,16 @@ export function Kits() {
       </BaseForm>
 
       <ul className="flex flex-col gap-4">
-        <QueryBoundary query={kitsQuery}>
-          {(kits) => (
-            <li className="flex flex-col gap-4">
-              {kits.map((kit) => (
-                <Kit
-                  key={kit.id}
-                  kit={kit}
-                  onDelete={() => deleteMutation.mutate(kit.id)}
-                />
-              ))}
-              {!kits.length && <p>No kits found. Create one above!</p>}
-            </li>
-          )}
-        </QueryBoundary>
+        <li className="flex flex-col gap-4">
+          {kits.map((kit) => (
+            <Kit
+              key={kit.id}
+              kit={kit}
+              onDelete={() => deleteMutation.mutate(kit.id)}
+            />
+          ))}
+          {!kits.length && <p>No kits found. Create one above!</p>}
+        </li>
       </ul>
     </div>
   );

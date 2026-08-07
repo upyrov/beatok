@@ -13,7 +13,7 @@ import { Header } from "~/components/header";
 import type { Route } from "./+types/root";
 import type { Me } from "./api/types/user/me";
 import "./app.css";
-import { Fallback } from "./components/fallback";
+import { Skeleton } from "./components/skeleton";
 import { auth } from "./lib/firebase";
 import { getQueryClient } from "./lib/query-client";
 
@@ -32,8 +32,8 @@ export const links: Route.LinksFunction = () => [
 
 export function HydrateFallback() {
   return (
-    <div className="min-h-screen flex">
-      <Fallback className="m-auto" />
+    <div className="min-h-screen flex p-8">
+      <Skeleton className="w-full h-full min-h-[80vh]" />
     </div>
   );
 }

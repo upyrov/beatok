@@ -14,6 +14,7 @@ import { ParticipantList } from "~/components/lobby/participant-list";
 import { Submitting } from "~/components/lobby/submitting";
 import { Voting } from "~/components/lobby/voting";
 import { Waiting } from "~/components/lobby/waiting";
+import { Skeleton } from "~/components/skeleton";
 import { LobbyContext } from "~/contexts";
 
 export default function Lobby() {
@@ -102,7 +103,66 @@ export default function Lobby() {
   return (
     <main className="container mx-auto p-4 max-w-7xl flex-1 w-full flex gap-8">
       {!lobby ? (
-        <Fallback className="m-auto" />
+        <div className="w-full flex gap-8">
+          {/* Column 1: Info and Participants */}
+          <div className="flex flex-col gap-4 flex-1">
+            <div className="flex items-center justify-between">
+              <Skeleton className="w-48 h-8 rounded-lg" />
+              <Skeleton className="w-24 h-10 rounded-lg" />
+            </div>
+            <div className="flex gap-8 mt-2">
+              <div className="flex flex-col gap-2">
+                <Skeleton className="w-16 h-5 rounded" />
+                <Skeleton className="w-24 h-5 rounded" />
+              </div>
+              <div className="flex flex-col gap-2">
+                <Skeleton className="w-16 h-5 rounded" />
+                <Skeleton className="w-12 h-5 rounded" />
+              </div>
+            </div>
+            <div className="flex flex-col gap-8 mt-2">
+              <div className="flex flex-col gap-2">
+                <Skeleton className="w-32 h-5 rounded" />
+                <Skeleton className="w-20 h-5 rounded" />
+              </div>
+            </div>
+            <div className="bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl p-4 mt-2">
+              <Skeleton className="w-32 h-6 rounded mb-4" />
+              <ul className="flex flex-col gap-4">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <li key={i} className="flex items-center gap-2">
+                    <Skeleton className="w-8 h-8 rounded-full" />
+                    <Skeleton className="w-24 h-5 rounded" />
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* Column 2: State View */}
+          <div className="flex-1">
+            <Skeleton className="w-full h-125 rounded-xl" />
+          </div>
+
+          {/* Column 3: Chat */}
+          <div className="flex-1 flex flex-col border border-black/10 dark:border-white/10 rounded-xl bg-black/5 dark:bg-white/5 overflow-hidden h-150 shrink-0">
+            <div className="p-4 border-b border-black/10 dark:border-white/10">
+              <Skeleton className="w-16 h-6 rounded" />
+            </div>
+            <div className="flex-1 p-4 flex flex-col gap-4 justify-end">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="flex items-start gap-2">
+                  <Skeleton className="w-8 h-8 rounded-full shrink-0" />
+                  <Skeleton className="w-full h-12 rounded" />
+                </div>
+              ))}
+            </div>
+            <div className="p-4 border-t border-black/10 dark:border-white/10 flex gap-2">
+              <Skeleton className="flex-1 h-10 rounded" />
+              <Skeleton className="w-16 h-10 rounded" />
+            </div>
+          </div>
+        </div>
       ) : (
         <>
           <div className="flex flex-col gap-4 flex-1">

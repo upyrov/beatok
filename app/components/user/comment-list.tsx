@@ -1,7 +1,7 @@
 import { Button as BaseButton } from "@base-ui/react";
 import { useState } from "react";
 import { useComments } from "~/api/user";
-import { Fallback } from "~/components/fallback";
+import { Skeleton } from "~/components/skeleton";
 import { UserCard } from "~/components/user-card";
 
 export function CommentList({ userId }: { userId: string }) {
@@ -13,8 +13,10 @@ export function CommentList({ userId }: { userId: string }) {
 
   if (isCommentsLoading) {
     return (
-      <div className="py-4">
-        <Fallback />
+      <div className="flex flex-col gap-4 py-4">
+        {[...Array(3)].map((_, i) => (
+          <Skeleton key={i} className="h-24 w-full rounded-lg" />
+        ))}
       </div>
     );
   }
@@ -27,7 +29,7 @@ export function CommentList({ userId }: { userId: string }) {
         commentsResult?.items.map((comment) => (
           <div
             key={comment.id}
-            className="bg-white/5 rounded-lg p-4 flex flex-col gap-2"
+            className="bg-black/5 dark:bg-white/5 rounded-lg p-4 flex flex-col gap-2"
           >
             <div className="flex items-center justify-between">
               <UserCard user={comment.author} />
@@ -43,11 +45,11 @@ export function CommentList({ userId }: { userId: string }) {
       )}
 
       {commentsResult && commentsResult.totalCount > 25 && (
-        <div className="flex items-center justify-between mt-6 pt-4 border-t border-white/10">
+        <div className="flex items-center justify-between mt-6 pt-4 border-t border-black/10 dark:border-white/10">
           <BaseButton
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors disabled:opacity-50"
+            className="px-4 py-2 bg-black/10 dark:bg-white/10 rounded-lg hover:bg-white/20 transition-colors disabled:opacity-50"
           >
             Previous
           </BaseButton>
@@ -57,7 +59,7 @@ export function CommentList({ userId }: { userId: string }) {
           <BaseButton
             onClick={() => setPage((p) => p + 1)}
             disabled={page >= Math.ceil(commentsResult.totalCount / 25)}
-            className="px-4 py-2 bg-white/10 rounded-lg hover:bg-white/20 transition-colors disabled:opacity-50"
+            className="px-4 py-2 bg-black/10 dark:bg-white/10 rounded-lg hover:bg-white/20 transition-colors disabled:opacity-50"
           >
             Next
           </BaseButton>

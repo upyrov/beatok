@@ -1,3 +1,4 @@
+import { Button as BaseButton, Input as BaseInput } from "@base-ui/react";
 import { useState } from "react";
 import {
   CgCheck,
@@ -10,15 +11,14 @@ import {
 import { useGenres } from "~/api/genre";
 import { useUpdateKit } from "~/api/kit";
 import type { Kit as IKit } from "~/api/types/kit/kit";
-import { Categories } from "./categories";import { Button as BaseButton, Input as BaseInput } from "@base-ui/react";
-
+import { Categories } from "./categories";
 
 export function Kit({ kit, onDelete }: { kit: IKit; onDelete: () => void }) {
   const [showCategories, setShowCategories] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState(kit.name);
   const [editGenreIds, setEditGenreIds] = useState<string[]>(
-    kit.genres?.map((g) => g.id) || []
+    kit.genres?.map((g) => g.id) || [],
   );
   const { data: genres = [] } = useGenres();
   const updateMutation = useUpdateKit();
@@ -52,7 +52,7 @@ export function Kit({ kit, onDelete }: { kit: IKit; onDelete: () => void }) {
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2">
                 <BaseInput
-                  className="flex-1 bg-white/5 border border-white/10 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-500"
+                  className="flex-1 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-500"
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
                   autoFocus
@@ -95,13 +95,13 @@ export function Kit({ kit, onDelete }: { kit: IKit; onDelete: () => void }) {
                           setEditGenreIds(
                             isSelected
                               ? editGenreIds.filter((id) => id !== genre.id)
-                              : [...editGenreIds, genre.id]
+                              : [...editGenreIds, genre.id],
                           );
                         }}
                         className={`text-xs px-2 py-1 rounded transition-colors ${
                           isSelected
                             ? "bg-blue-600 text-white"
-                            : "bg-white/10 text-gray-300 hover:bg-white/20"
+                            : "bg-black/10 dark:bg-white/10 text-gray-300 hover:bg-white/20"
                         }`}
                       >
                         {genre.name}

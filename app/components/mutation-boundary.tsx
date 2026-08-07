@@ -24,8 +24,10 @@ export function MutationBoundary({
     return <>{children}</>;
   }
 
-  let errorMessage = activeError?.message || "An unexpected error occurred. Please try again later.";
-  
+  let errorMessage =
+    activeError?.message ||
+    "An unexpected error occurred. Please try again later.";
+
   if (activeError?.code) {
     switch (activeError.code) {
       case "auth/invalid-email":
@@ -68,9 +70,7 @@ export function MutationBoundary({
         >
           <div className="flex flex-col gap-1 pr-6">
             <h4 className="font-semibold text-sm">Error</h4>
-            <p className="text-xs opacity-90 leading-relaxed">
-              {errorMessage}
-            </p>
+            <p className="text-xs opacity-90 leading-relaxed">{errorMessage}</p>
           </div>
         </div>
       )}

@@ -2,12 +2,13 @@ import { Form as BaseForm, Input as BaseInput } from "@base-ui/react";
 import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { type } from "arktype";
-import { useCallback } from "react";
-import { CgProfile } from "react-icons/cg";
+import { useCallback, useState } from "react";
+import { CgProfile, CgSpinner } from "react-icons/cg";
 import { queryKeys } from "~/api/query-keys";
 import type { Profile as IProfile } from "~/api/types/user/profile";
 import { useUpdateUser, useUploadAvatarUrl } from "~/api/user";
 import { FileDropzone } from "~/components/file-dropzone";
+import { Skeleton } from "~/components/skeleton";
 import { uploadFile } from "~/lib/upload";
 import { ActionButton } from "../action-button";
 
@@ -20,6 +21,7 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
   const getUploadUrlMutation = useUploadAvatarUrl();
   const updateUserMutation = useUpdateUser();
   const queryClient = useQueryClient();
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const handleAvatarUpload = useCallback(
     async (file: File, onProgress: (progress: number) => void) => {
@@ -69,16 +71,25 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
   ) : null;
 
   return (
-    <div className="flex items-center gap-6 bg-white/5 border border-white/10 p-6 rounded-xl relative">
-      <div className="relative group/avatar inline-flex shrink-0">
+    <div className="flex items-center gap-6 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 p-6 rounded-xl relative">
+      <div className="relative group/avatar inline-flex shrink-0 w-32 h-32">
         {user.picture ? (
-          <img
-            src={user.picture}
-            alt={user.name}
-            className="object-cover border border-white/20 p-0.5 w-32 h-32 rounded-lg"
-          />
+          <>
+            {!imageLoaded && (
+              <div className="absolute inset-0 flex items-center justify-center z-10">
+                <Skeleton className="absolute inset-0 rounded-lg w-full h-full" />
+                <CgSpinner className="animate-spin text-gray-500 w-8 h-8 relative" />
+              </div>
+            )}
+            <img
+              src={user.picture}
+              alt={user.name}
+              onLoad={() => setImageLoaded(true)}
+              className={`object-cover border border-black/20 dark:border-white/20 p-0.5 w-full h-full rounded-lg ${imageLoaded ? "" : "invisible"}`}
+            />
+          </>
         ) : (
-          <CgProfile className="text-gray-400 border border-white/20 p-0.5 w-32 h-32 rounded-lg" />
+          <CgProfile className="text-gray-400 border border-black/20 dark:border-white/20 p-0.5 w-full h-full rounded-lg" />
         )}
         {dropzoneOverlay}
       </div>
@@ -103,14 +114,15 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
                   placeholder="Your Name"
-                  className="flex-1 bg-white/10 rounded-lg px-3 py-2 text-xl font-semibold focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="flex-1 bg-black/10 dark:bg-white/10 rounded-lg px-3 py-2 text-xl font-semibold focus:outline-none focus:ring-2 focus:ring-primary"
                 />
               )}
             />
             <form.Subscribe
               selector={(state) => [state.canSubmit, state.isSubmitting]}
               children={([canSubmit, isSubmitting]) => (
-                <ActionButton type="submit"
+                <ActionButton
+                  type="submit"
                   disabled={
                     !canSubmit || isSubmitting || updateUserMutation.isPending
                   }

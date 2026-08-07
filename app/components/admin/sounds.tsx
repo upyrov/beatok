@@ -8,11 +8,11 @@ import {
 import { validateAudioFile } from "~/lib/audio";
 import { uploadFile } from "~/lib/upload";
 import { FileDropzone } from "../file-dropzone";
-import { QueryBoundary } from "../query-boundary";
 import { Sound } from "./sound";
 
 export function Sounds({ categoryId }: { categoryId: string }) {
   const soundsQuery = useSounds(categoryId);
+  const sounds = soundsQuery.data || [];
   const deleteMutation = useDeleteSound();
   const createMutation = useCreateSound();
   const getUploadUrlMutation = useUploadSoundUrl();
@@ -51,26 +51,20 @@ export function Sounds({ categoryId }: { categoryId: string }) {
       </div>
 
       <div className="flex-1 space-y-4 mt-2">
-        <QueryBoundary query={soundsQuery}>
-          {(sounds) => (
-            <>
-              {sounds.map((sound) => (
-                <Sound
-                  key={sound.id}
-                  sound={sound}
-                  onDelete={() => {
-                    if (
-                      confirm("Are you sure you want to delete this sound?")
-                    ) {
-                      deleteMutation.mutate(sound.id);
-                    }
-                  }}
-                />
-              ))}
-              {!sounds.length && <p>No sounds found</p>}
-            </>
-          )}
-        </QueryBoundary>
+        <>
+          {sounds.map((sound) => (
+            <Sound
+              key={sound.id}
+              sound={sound}
+              onDelete={() => {
+                if (confirm("Are you sure you want to delete this sound?")) {
+                  deleteMutation.mutate(sound.id);
+                }
+              }}
+            />
+          ))}
+          {!sounds.length && <p>No sounds found</p>}
+        </>
       </div>
     </div>
   );

@@ -4,6 +4,19 @@
   --font-sans:
     "Inter", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
     "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+  --animate-fade-in: fade-in 0.3s ease-out;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }
 
 html,
@@ -28,7 +41,7 @@ html.dark {
 
 @utility sys-input {
   @apply bg-gray-50 text-gray-900 border border-gray-300 shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)] rounded-sm px-2 py-1 outline-none focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:border-blue-500 transition-colors
-         dark:bg-[#111] dark:text-gray-200 dark:border-[#000] dark:shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)];
+         dark:bg-[#111] dark:text-gray-200 dark:border-black dark:shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)];
 }
 
 @utility sys-popup {
@@ -37,6 +50,6 @@ html.dark {
 }
 
 @utility sys-popup-item {
-  @apply cursor-pointer p-2 hover:bg-gray-100 rounded-sm data-[highlighted]:bg-gray-200 data-[highlighted]:text-gray-900 outline-none
-         dark:hover:bg-[#333] dark:data-[highlighted]:bg-[#444] dark:data-[highlighted]:text-white;
+  @apply cursor-pointer p-2 hover:bg-gray-100 rounded-sm data-highlighted:bg-gray-200 data-highlighted:text-gray-900 outline-none
+         dark:hover:bg-[#333] dark:data-highlighted:bg-[#444] dark:data-highlighted:text-white;
 }

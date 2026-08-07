@@ -1,3 +1,4 @@
+import { Button as BaseButton, Input as BaseInput } from "@base-ui/react";
 import { useState } from "react";
 import {
   CgCheck,
@@ -8,8 +9,7 @@ import {
   CgTrash,
 } from "react-icons/cg";
 import { useUpdateCategoryName } from "~/api/category";
-import { Sounds } from "./sounds";import { Button as BaseButton, Input as BaseInput } from "@base-ui/react";
-
+import { Sounds } from "./sounds";
 
 export function Category({
   category,
@@ -41,7 +41,7 @@ export function Category({
         {isEditing ? (
           <div className="flex items-center gap-2 flex-1 mr-4">
             <BaseInput
-              className="flex-1 bg-white/5 border border-white/10 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-500"
+              className="flex-1 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-500"
               value={editName}
               onChange={(e) => setEditName(e.target.value)}
               autoFocus

@@ -80,7 +80,7 @@ export function Waiting() {
   return (
     lobby && (
       <div>
-        <h2 className="text-xl font-bold mb-4">Not Started</h2>
+        <h2 className="text-xl font-bold mb-4">Waiting</h2>
         {isOwner ? (
           lobby.participants.length > 1 ? (
             <MutationBoundary mutation={startLobbyMutation}>

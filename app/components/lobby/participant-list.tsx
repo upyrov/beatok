@@ -64,7 +64,7 @@ export function ParticipantList() {
   );
 
   return (
-    <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+    <div className="bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl p-4">
       <h2 className="text-xl font-bold mb-4">Participants</h2>
       <ul className="flex flex-col gap-2">
         {lobby?.participants.map((p) => (

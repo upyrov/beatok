@@ -6,9 +6,15 @@ export interface FallbackProps {
   fullScreen?: boolean;
 }
 
-export function Fallback({ className = "", size = 48, fullScreen = false }: FallbackProps) {
+export function Fallback({
+  className = "",
+  size = 48,
+  fullScreen = false,
+}: FallbackProps) {
   return (
-    <div className={`flex items-center justify-center w-full ${fullScreen ? "min-h-[50vh]" : ""} ${className}`}>
+    <div
+      className={`flex items-center justify-center w-full ${fullScreen ? "min-h-[50vh]" : ""} ${className}`}
+    >
       <CgMusicNote
         role="status"
         aria-label={"Loading..."}

@@ -1,14 +1,14 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { queryKeys } from "~/api/query-keys";
 import {
+  confirmPasswordReset,
+  resetPassword,
   signIn,
-  signUp,
   signInWithGoogle,
   signOut,
-  resetPassword,
-  confirmPasswordReset,
+  signUp,
   verifyEmail,
 } from "~/api/auth";
+import { queryKeys } from "~/api/query-keys";
 import type { Signin } from "~/api/types/user/signin";
 import type { Signup } from "~/api/types/user/signup";
 

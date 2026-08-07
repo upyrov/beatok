@@ -1,6 +1,6 @@
+import { Button as BaseButton } from "@base-ui/react";
 import { useCallback, useMemo } from "react";
 import type { ActivityDay } from "~/api/types/user/activity-day";
-import { Button as BaseButton } from "@base-ui/react";
 
 interface ActivityGraphProps {
   activity: ActivityDay[];
@@ -155,7 +155,7 @@ export function ActivityGraph({
                         onClick={() =>
                           onDateSelect(isSelected ? undefined : day.date)
                         }
-                        className={`w-2.5 h-2.5 md:w-3 md:h-3 block rounded-xs ring-1 ring-inset ring-black/5 dark:ring-white/5 transition-all ${getColor(day.count)} ${
+                        className={`w-2.5 h-2.5 md:w-3 md:h-3 block rounded-xs ring-1 ring-inset ring-black/5 dark:ring-white/5 transition-transform ${getColor(day.count)} ${
                           isSelected
                             ? "ring-1 ring-offset-1 ring-offset-black ring-white scale-110 z-10 relative"
                             : "hover:ring-1 hover:ring-white/50"

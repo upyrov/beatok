@@ -1,3 +1,4 @@
+import { Form as BaseForm, Input as BaseInput } from "@base-ui/react";
 import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
 import { CgAdd } from "react-icons/cg";
@@ -9,12 +10,11 @@ import {
 import { ActionButton } from "~/components/action-button";
 import { FieldError } from "~/components/field-error";
 import { MutationBoundary } from "~/components/mutation-boundary";
-import { QueryBoundary } from "~/components/query-boundary";
-import { Category } from "./category";import { Input as BaseInput, Form as BaseForm } from "@base-ui/react";
-
+import { Category } from "./category";
 
 export function Categories({ kitId }: { kitId: string }) {
   const categoriesQuery = useCategories(kitId);
+  const categories = categoriesQuery.data || [];
   const createMutation = useCreateCategory();
   const deleteMutation = useDeleteCategory();
 
@@ -46,7 +46,7 @@ export function Categories({ kitId }: { kitId: string }) {
               <div className="flex gap-2">
                 <BaseInput
                   name={field.name}
-                  className="flex-1 bg-white/5 border border-white/10 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
+                  className="flex-1 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
                   placeholder="New category name..."
                   value={field.state.value}
                   onBlur={field.handleBlur}
@@ -55,7 +55,8 @@ export function Categories({ kitId }: { kitId: string }) {
                 <form.Subscribe
                   selector={(state) => [state.canSubmit, state.isSubmitting]}
                   children={([canSubmit, isSubmitting]) => (
-                    <ActionButton type="submit"
+                    <ActionButton
+                      type="submit"
                       disabled={!canSubmit}
                       isPending={isSubmitting || createMutation.isPending}
                     >
@@ -72,20 +73,16 @@ export function Categories({ kitId }: { kitId: string }) {
       </BaseForm>
 
       <div className="flex-1">
-        <QueryBoundary query={categoriesQuery}>
-          {(categories) => (
-            <div className="flex flex-col gap-3">
-              {categories.map((cat) => (
-                <Category
-                  key={cat.id}
-                  category={cat}
-                  onDelete={() => deleteMutation.mutate(cat.id)}
-                />
-              ))}
-              {!categories.length && <p>No categories found</p>}
-            </div>
-          )}
-        </QueryBoundary>
+        <div className="flex flex-col gap-3">
+          {categories.map((cat) => (
+            <Category
+              key={cat.id}
+              category={cat}
+              onDelete={() => deleteMutation.mutate(cat.id)}
+            />
+          ))}
+          {!categories.length && <p>No categories found</p>}
+        </div>
       </div>
     </div>
   );

@@ -16,7 +16,7 @@ export function ActionButton({
     <Button
       {...props}
       disabled={disabled || isPending}
-      className={`relative inline-flex items-center justify-center gap-2 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed ${className}`}
+      className={`relative inline-flex items-center justify-center gap-2 transition duration-200 disabled:opacity-60 disabled:cursor-not-allowed ${className}`}
     >
       {isPending && (
         <div className="absolute inset-0 flex items-center justify-center">

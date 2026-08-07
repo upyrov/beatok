@@ -1,20 +1,19 @@
-import { CgLogIn, CgLogOut } from "react-icons/cg";
-import { Link, useParams } from "react-router";
+import { Menu } from "@base-ui/react";
+import { CgLogIn, CgLogOut, CgUser } from "react-icons/cg";
+import { Link, useNavigate } from "react-router";
 import type { Me } from "~/api/types/user/me";
 import type { User } from "~/api/types/user/user";
 import { UserCard } from "~/components/user-card";
 import { useSignOut } from "~/hooks/use-auth";
-import { ActionButton } from "./action-button";
 import { Button } from "./button";
-
 import { ThemeToggle } from "./theme-toggle";
 
 export function Header({ user }: { user: Me | null }) {
   const signOutMutation = useSignOut();
-  const params = useParams();
+  const navigate = useNavigate();
 
   return (
-    <header className="flex justify-between items-center p-6 border-b border-white/5">
+    <header className="flex justify-between items-center p-6 border-b border-black/5 dark:border-white/5">
       <div>
         <Link to="/">
           <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
@@ -26,22 +25,38 @@ export function Header({ user }: { user: Me | null }) {
         </Link>
       </div>
       <div className="flex items-center gap-3">
-        <ThemeToggle />
         <Link to="/lobbies/new">
           <Button>Create lobby</Button>
         </Link>
-        {user && params.id !== user.id && (
-          <UserCard user={user as User} className="is-md" />
-        )}
         {user ? (
-          <>
-            <ActionButton
-              onClick={() => signOutMutation.mutate()}
-              isPending={signOutMutation.isPending}
-            >
-              <CgLogOut />
-            </ActionButton>
-          </>
+          <Menu.Root>
+            <Menu.Trigger className="focus:outline-none group">
+              <div className="hover:bg-black/5 dark:hover:bg-white/5 rounded-lg px-3 py-1.5 transition cursor-pointer flex items-center">
+                <UserCard
+                  user={user as User}
+                  className="is-md pointer-events-none"
+                />
+              </div>
+            </Menu.Trigger>
+            <Menu.Portal>
+              <Menu.Positioner side="bottom" align="end" sideOffset={8}>
+                <Menu.Popup className="sys-popup min-w-50">
+                  <Menu.Item
+                    className="sys-popup-item w-full flex items-center gap-2 cursor-pointer"
+                    onClick={() => navigate(`/users/${user.id}`)}
+                  >
+                    <CgUser className="text-lg" /> Profile
+                  </Menu.Item>
+                  <Menu.Item
+                    className="sys-popup-item w-full flex items-center gap-2 cursor-pointer text-red-600 dark:text-red-400 focus:bg-red-50 dark:focus:bg-red-500/10 focus:text-red-700 dark:focus:text-red-300"
+                    onClick={() => signOutMutation.mutate()}
+                  >
+                    <CgLogOut className="text-lg" /> Sign out
+                  </Menu.Item>
+                </Menu.Popup>
+              </Menu.Positioner>
+            </Menu.Portal>
+          </Menu.Root>
         ) : (
           <Link to="/signin">
             <Button>
@@ -49,6 +64,7 @@ export function Header({ user }: { user: Me | null }) {
             </Button>
           </Link>
         )}
+        <ThemeToggle />
       </div>
     </header>
   );

@@ -1,12 +1,12 @@
+import { Form as BaseForm, Input as BaseInput } from "@base-ui/react";
 import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
 import { CgGoogle } from "react-icons/cg";
 import { Link, useNavigate } from "react-router";
-import { useSignInWithGoogle, useSignUp } from "~/hooks/use-auth";
 import { ActionButton } from "~/components/action-button";
 import { FieldError } from "~/components/field-error";
-import { MutationBoundary } from "~/components/mutation-boundary";import { Input as BaseInput, Form as BaseForm } from "@base-ui/react";
-
+import { MutationBoundary } from "~/components/mutation-boundary";
+import { useSignInWithGoogle, useSignUp } from "~/hooks/use-auth";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -104,7 +104,8 @@ export default function Signup() {
         <form.Subscribe
           selector={(state) => [state.canSubmit, state.isSubmitting]}
           children={([canSubmit, isSubmitting]) => (
-            <ActionButton type="submit"
+            <ActionButton
+              type="submit"
               disabled={!canSubmit}
               isPending={isSubmitting || signUpMutation.isPending}
             >
@@ -120,9 +121,13 @@ export default function Signup() {
         <hr className="w-full border-gray-300" />
       </div>
 
-      <ActionButton type="submit"
+      <ActionButton
         type="button"
-        onClick={() => signInWithGoogleMutation.mutate(undefined, { onSuccess: () => navigate("/") })}
+        onClick={() =>
+          signInWithGoogleMutation.mutate(undefined, {
+            onSuccess: () => navigate("/"),
+          })
+        }
         isPending={signInWithGoogleMutation.isPending}
       >
         <CgGoogle /> Continue with Google

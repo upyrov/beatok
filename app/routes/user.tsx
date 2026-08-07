@@ -8,8 +8,8 @@ import {
   userByIdQueryOptions,
 } from "~/api/user";
 import { Card } from "~/components/card";
-import { Fallback } from "~/components/fallback";
 import { PageContainer } from "~/components/page-container";
+import { Skeleton } from "~/components/skeleton";
 import { Activity } from "~/components/user/activity";
 import { ActivityGraph } from "~/components/user/activity-graph";
 import { CommentForm } from "~/components/user/comment-form";
@@ -18,11 +18,11 @@ import { Profile } from "~/components/user/profile";
 import { getQueryClient } from "~/lib/query-client";
 import type { Route } from "./+types/user";
 
-export async function clientLoader({ params }: Route.ClientLoaderArgs) {
+export function clientLoader({ params }: Route.ClientLoaderArgs) {
   const queryClient = getQueryClient();
-  await Promise.all([
-    queryClient.ensureQueryData(userByIdQueryOptions(params.id)),
-    queryClient.ensureQueryData(commentsQueryOptions(params.id, 1, 25)),
+  Promise.all([
+    queryClient.prefetchQuery(userByIdQueryOptions(params.id)),
+    queryClient.prefetchQuery(commentsQueryOptions(params.id, 1, 25)),
   ]);
 }
 
@@ -89,11 +89,11 @@ function ActivitySection({
           )}
         </div>
         {isFetching ? (
-          <div className="w-full flex justify-center p-8">
-            <Fallback />
+          <div className="w-full flex justify-center py-8">
+            <Skeleton className="w-full h-64" />
           </div>
         ) : (
-          <Suspense fallback={<Fallback />}>
+          <Suspense fallback={<Skeleton className="w-full h-64 mt-4" />}>
             <ActivityGraph
               activity={activity}
               year={selectedYear}
@@ -115,17 +115,50 @@ function ActivitySection({
   );
 }
 
+export function HydrateFallback() {
+  return (
+    <PageContainer className="max-w-5xl">
+      {/* Profile Skeleton */}
+      <div className="flex items-center gap-6 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 p-6 rounded-xl relative">
+        <div className="relative group/avatar inline-flex shrink-0">
+          <Skeleton className="w-32 h-32 rounded-lg" />
+        </div>
+        <div className="flex flex-col flex-1 gap-4">
+          <Skeleton className="w-64 h-10 rounded-lg" />
+          <Skeleton className="w-32 h-6 rounded-lg" />
+        </div>
+      </div>
+
+      {/* Activity Section Skeleton */}
+      <div className="bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl p-6">
+        <div className="flex justify-between items-center mb-4">
+          <Skeleton className="w-48 h-8 rounded-lg" />
+          <Skeleton className="w-32 h-10 rounded-lg" />
+        </div>
+        <Skeleton className="w-full h-64 mt-4" />
+      </div>
+
+      {/* Comments Skeleton */}
+      <div className="bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl p-6">
+        <Skeleton className="w-40 h-8 rounded-lg mb-4" />
+        <div className="flex flex-col gap-4 mt-6">
+          <Skeleton className="w-full h-24 rounded-lg" />
+          <Skeleton className="w-full h-24 rounded-lg" />
+          <Skeleton className="w-full h-24 rounded-lg" />
+        </div>
+      </div>
+    </PageContainer>
+  );
+}
+
 export default function User() {
   const { id } = useParams<{ id: string }>();
   const { data: currentUser } = useUser();
 
   const { data: user, isLoading: isUserLoading } = useUserById(id!);
 
-  if (isUserLoading) {
-    return <Fallback fullScreen />;
-  }
-
   if (!id || !user) {
+    if (isUserLoading) return <HydrateFallback />;
     return <div className="p-8 text-center text-red-500">User not found</div>;
   }
 

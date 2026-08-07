@@ -1,11 +1,11 @@
+import { Form as BaseForm, Input as BaseInput } from "@base-ui/react";
 import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
 import { Link } from "react-router";
-import { useResetPassword } from "~/hooks/use-auth";
 import { ActionButton } from "~/components/action-button";
 import { FieldError } from "~/components/field-error";
-import { MutationBoundary } from "~/components/mutation-boundary";import { Input as BaseInput, Form as BaseForm } from "@base-ui/react";
-
+import { MutationBoundary } from "~/components/mutation-boundary";
+import { useResetPassword } from "~/hooks/use-auth";
 
 export default function ResetPassword() {
   const resetPasswordMutation = useResetPassword();
@@ -70,7 +70,8 @@ export default function ResetPassword() {
           <form.Subscribe
             selector={(state) => [state.canSubmit, state.isSubmitting]}
             children={([canSubmit, isSubmitting]) => (
-              <ActionButton type="submit"
+              <ActionButton
+                type="submit"
                 disabled={!canSubmit}
                 isPending={isSubmitting || resetPasswordMutation.isPending}
               >

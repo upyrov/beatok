@@ -8,6 +8,7 @@ import {
   useUploadUrl,
 } from "~/api/submission";
 import { LobbyState } from "~/api/types/enums/lobby-state";
+import type { Sound } from "~/api/types/sound/sound";
 import type { Submission as ISubmission } from "~/api/types/submission/submission";
 import type { Me } from "~/api/types/user/me";
 import { ActionButton } from "~/components/action-button";
@@ -17,7 +18,6 @@ import { MutationBoundary } from "~/components/mutation-boundary";
 import { LobbyContext } from "~/contexts";
 import { useCountdown } from "~/hooks/use-countdown";
 import { validateAudioFile } from "~/lib/audio";
-import { handleDownload } from "~/lib/download";
 import { uploadFile } from "~/lib/upload";
 import { Button } from "../button";
 
@@ -116,10 +116,32 @@ export function Submitting() {
     });
   }, [deleteSubmissionMutation, mySubmission, setLobby]);
 
-  const onDownload = useCallback(
-    (e: React.MouseEvent, sound: { id: string; value: string }) => {
+  const handleDownload = useCallback(
+    async (e: React.MouseEvent, sound: Sound) => {
       e.preventDefault();
-      handleDownload(sound.value, `beatok-${sound.id}.wav`);
+      const url = sound.value;
+      const filename = `beatok-${sound.id}.wav`;
+      try {
+        const response = await fetch(url, { cache: "no-store" });
+        if (!response.ok) {
+          const data: { message: string } | undefined = await response
+            .json()
+            .catch(() => {});
+          throw new Error(data?.message ?? "Failed to download file");
+        }
+
+        const blob = await response.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = blobUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(blobUrl);
+      } catch (error) {
+        console.error(error);
+      }
     },
     [],
   );
@@ -159,7 +181,7 @@ export function Submitting() {
         {minutes}:{seconds}
       </div>
 
-      <div className="bg-white/5 p-4 rounded border border-white/10">
+      <div className="bg-black/5 dark:bg-white/5 p-4 rounded border border-black/10 dark:border-white/10">
         <div className="flex justify-between items-center mb-4">
           {groupedCategories.length > 0 && (
             <Button
@@ -180,7 +202,7 @@ export function Submitting() {
                     <div className="flex items-center gap-2 w-full">
                       <AudioPlayer src={s.value} className="flex-1 min-w-0" />
                       <Button
-                        onClick={(e) => onDownload(e, s)}
+                        onClick={(e) => handleDownload(e, s)}
                         className="shrink-0"
                         title="Download"
                       >
@@ -195,7 +217,7 @@ export function Submitting() {
         </div>
       </div>
 
-      <div className="bg-white/5 p-4 rounded border border-white/10">
+      <div className="bg-black/5 dark:bg-white/5 p-4 rounded border border-black/10 dark:border-white/10">
         <h3 className="font-bold mb-2">Submit Your Beat</h3>
         {mySubmission ? (
           <div className="flex flex-col gap-4">

@@ -7,7 +7,7 @@ export function PageContainer({
 }: PageContainerProps) {
   return (
     <main
-      className={`mx-auto p-4 md:p-8 flex flex-col gap-8 flex-1 w-full ${className}`}
+      className={`animate-fade-in mx-auto p-4 md:p-8 flex flex-col gap-8 flex-1 w-full ${className}`}
       {...props}
     >
       {children}

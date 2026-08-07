@@ -1,8 +1,8 @@
+import { Button as BaseButton, Input as BaseInput } from "@base-ui/react";
 import { useState } from "react";
 import { CgCheck, CgClose, CgPen, CgTrash } from "react-icons/cg";
 import { useDeleteGenre, useUpdateGenreName } from "~/api/genre";
-import type { Genre as IGenre } from "~/api/types/genre/genre";import { Button as BaseButton, Input as BaseInput } from "@base-ui/react";
-
+import type { Genre as IGenre } from "~/api/types/genre/genre";
 
 export function Genre({ genre }: { genre: IGenre }) {
   const [isEditing, setIsEditing] = useState(false);
@@ -26,7 +26,7 @@ export function Genre({ genre }: { genre: IGenre }) {
     return (
       <div className="flex justify-between items-center gap-2 py-1">
         <BaseInput
-          className="flex-1 bg-white/5 border border-white/10 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-500"
+          className="flex-1 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-500"
           value={editName}
           onChange={(e) => setEditName(e.target.value)}
           onKeyDown={(e) => {

@@ -7,9 +7,8 @@ import type { Lobby } from "./types/lobby/lobby";
 import type { PageResult } from "./types/page-result";
 import type { Me } from "./types/user/me";
 import type { PictureUpload } from "./types/user/picture-upload";
-import type { User } from "./types/user/user";
-import type { UserUpdate } from "./types/user/user-update";
 import type { Profile } from "./types/user/profile";
+import type { UserUpdate } from "./types/user/user-update";
 
 async function getUser(): Promise<Me> {
   const response = await fetchWithAuth("/users/me");
@@ -167,10 +166,7 @@ export function useUpdateUser() {
   });
 }
 
-async function getActivity(
-  userId: string,
-  date: string,
-): Promise<Lobby[]> {
+async function getActivity(userId: string, date: string): Promise<Lobby[]> {
   const params = new URLSearchParams();
   params.append("date", date);
 

@@ -1,3 +1,4 @@
+import { Form as BaseForm, Input as BaseInput } from "@base-ui/react";
 import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
 import { use, useEffect, useRef, useState } from "react";
@@ -5,7 +6,6 @@ import type { User } from "~/api/types/user/user";
 import { UserCard } from "~/components/user-card";
 import { LobbyContext } from "~/contexts";
 import { ActionButton } from "../action-button";
-import { Input as BaseInput, Form as BaseForm } from "@base-ui/react";
 
 export interface Message {
   content: string;
@@ -57,8 +57,10 @@ export function Chat() {
   });
 
   return (
-    <div className="flex flex-col border border-white/10 rounded-xl bg-white/5 overflow-hidden h-150 shrink-0">
-      <div className="p-4 border-b border-white/10 font-bold">Chat</div>
+    <div className="flex flex-col border border-black/10 dark:border-white/10 rounded-xl bg-black/5 dark:bg-white/5 overflow-hidden h-150 shrink-0">
+      <div className="p-4 border-b border-black/10 dark:border-white/10 font-bold">
+        Chat
+      </div>
       <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-2">
         {messages.map((m, i) => (
           <div key={i} className="text-sm flex items-start gap-2">
@@ -75,7 +77,7 @@ export function Chat() {
           e.stopPropagation();
           form.handleSubmit();
         }}
-        className="p-4 border-t border-white/10 flex gap-2"
+        className="p-4 border-t border-black/10 dark:border-white/10 flex gap-2"
       >
         <form.Field
           name="content"
@@ -90,7 +92,7 @@ export function Chat() {
               onBlur={field.handleBlur}
               onChange={(e) => field.handleChange(e.target.value)}
               placeholder="Say something..."
-              className="flex-1 bg-white/10 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-white/20"
+              className="flex-1 bg-black/10 dark:bg-white/10 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-white/20"
             />
           )}
         />

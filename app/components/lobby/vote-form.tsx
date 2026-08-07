@@ -1,3 +1,4 @@
+import { Form as BaseForm, Input as BaseInput } from "@base-ui/react";
 import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
 import { use } from "react";
@@ -7,7 +8,6 @@ import type { Me } from "~/api/types/user/me";
 import { ActionButton } from "~/components/action-button";
 import { MutationBoundary } from "~/components/mutation-boundary";
 import { LobbyContext } from "~/contexts";
-import { Input as BaseInput, Form as BaseForm } from "@base-ui/react";
 
 export function VoteForm({
   submissionId,
@@ -134,7 +134,8 @@ export function VoteForm({
             <form.Subscribe
               selector={(state) => [state.canSubmit, state.isSubmitting]}
               children={([canSubmit, isSubmitting]) => (
-                <ActionButton type="submit"
+                <ActionButton
+                  type="submit"
                   disabled={!canSubmit}
                   isPending={isSubmitting || isPending}
                 >

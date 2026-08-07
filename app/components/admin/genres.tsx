@@ -6,11 +6,11 @@ import { useCreateGenre, useGenres } from "~/api/genre";
 import { ActionButton } from "~/components/action-button";
 import { FieldError } from "~/components/field-error";
 import { MutationBoundary } from "~/components/mutation-boundary";
-import { QueryBoundary } from "~/components/query-boundary";
 import { Genre } from "./genre";
 
 export function Genres() {
   const genresQuery = useGenres();
+  const genres = genresQuery.data || [];
   const createMutation = useCreateGenre();
 
   const form = useForm({
@@ -41,7 +41,7 @@ export function Genres() {
               <div className="flex gap-2">
                 <BaseInput
                   name={field.name}
-                  className="flex-1 bg-white/5 border border-white/10 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
+                  className="flex-1 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
                   placeholder="Genre name"
                   value={field.state.value}
                   onBlur={field.handleBlur}
@@ -50,7 +50,8 @@ export function Genres() {
                 <form.Subscribe
                   selector={(state) => [state.canSubmit, state.isSubmitting]}
                   children={([canSubmit, isSubmitting]) => (
-                    <ActionButton type="submit"
+                    <ActionButton
+                      type="submit"
                       disabled={!canSubmit}
                       isPending={isSubmitting || createMutation.isPending}
                     >
@@ -67,16 +68,12 @@ export function Genres() {
       </BaseForm>
 
       <ul className="flex flex-col gap-4">
-        <QueryBoundary query={genresQuery}>
-          {(genres) => (
-            <li className="flex flex-col gap-2">
-              {genres.map((genre) => (
-                <Genre key={genre.id} genre={genre} />
-              ))}
-              {!genres.length && <p>No genres found. Create one above!</p>}
-            </li>
-          )}
-        </QueryBoundary>
+        <li className="flex flex-col gap-2">
+          {genres.map((genre) => (
+            <Genre key={genre.id} genre={genre} />
+          ))}
+          {!genres.length && <p>No genres found. Create one above!</p>}
+        </li>
       </ul>
     </div>
   );
