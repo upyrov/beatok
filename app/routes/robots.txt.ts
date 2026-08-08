@@ -3,7 +3,7 @@ import { href } from "react-router";
 import type { Route } from "./+types/robots.txt";
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const isProductionDeployment = process.env.VERCEL_ENV === "production";
+  const isProductionDeployment = process.env.ENV === "production";
   const { origin } = new URL(request.url);
 
   const robotsTxt = generateRobotsTxt([
