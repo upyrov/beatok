@@ -22,4 +22,7 @@ export default [
   ]),
 
   route("users/:id", "routes/user.tsx"),
+
+  route("sitemap.xml", "routes/sitemap.xml.ts"),
+  route("robots.txt", "routes/robots.txt.ts"),
 ] satisfies RouteConfig;

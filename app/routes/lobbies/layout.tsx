@@ -10,6 +10,10 @@ import type { DetailedLobby } from "~/api/types/lobby/detailed-lobby";
 import { LobbyContext } from "~/contexts";
 import { auth } from "~/lib/firebase";
 
+export const handle = {
+  sitemap: () => [],
+};
+
 export default function Layout() {
   const context = useOutletContext();
 
