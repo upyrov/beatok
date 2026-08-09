@@ -10,7 +10,7 @@ import type { PictureUpload } from "./types/user/picture-upload";
 import type { Profile } from "./types/user/profile";
 import type { UserUpdate } from "./types/user/user-update";
 
-async function getUser(): Promise<Me> {
+export async function getUser(): Promise<Me> {
   const response = await fetchWithAuth("/users/me");
 
   if (!response.ok) {

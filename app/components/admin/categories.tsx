@@ -9,6 +9,7 @@ import {
 } from "~/api/category";
 import { ActionButton } from "~/components/action-button";
 import { FieldError } from "~/components/field-error";
+import { Knob } from "~/components/knob";
 import { MutationBoundary } from "~/components/mutation-boundary";
 import { Category } from "./category";
 
@@ -19,9 +20,13 @@ export function Categories({ kitId }: { kitId: string }) {
   const deleteMutation = useDeleteCategory();
 
   const form = useForm({
-    defaultValues: { name: "" },
+    defaultValues: { name: "", randomSoundsCount: 1 },
     onSubmit: async ({ value }) => {
-      await createMutation.mutateAsync({ name: value.name.trim(), kitId });
+      await createMutation.mutateAsync({
+        name: value.name.trim(),
+        kitId,
+        randomSoundsCount: value.randomSoundsCount,
+      });
       form.reset();
     },
   });
@@ -36,39 +41,56 @@ export function Categories({ kitId }: { kitId: string }) {
         }}
         className="flex flex-col gap-1 mb-2"
       >
-        <form.Field
-          name="name"
-          validators={{
-            onChange: type("string > 0"),
-          }}
-          children={(field) => (
-            <div className="flex flex-col gap-1">
-              <div className="flex gap-2">
+        <div className="flex gap-2 items-start">
+          <form.Field
+            name="name"
+            validators={{
+              onChange: type("string > 0"),
+            }}
+            children={(field) => (
+              <div className="flex flex-col gap-1 flex-1">
                 <BaseInput
                   name={field.name}
-                  className="flex-1 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
+                  className="w-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
                   placeholder="New category name..."
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
                 />
-                <form.Subscribe
-                  selector={(state) => [state.canSubmit, state.isSubmitting]}
-                  children={([canSubmit, isSubmitting]) => (
-                    <ActionButton
-                      type="submit"
-                      disabled={!canSubmit}
-                      isPending={isSubmitting || createMutation.isPending}
-                    >
-                      <CgAdd />
-                    </ActionButton>
-                  )}
+                <FieldError errors={field.state.meta.errors} />
+              </div>
+            )}
+          />
+          <form.Field
+            name="randomSoundsCount"
+            children={(field) => (
+              <div
+                title="Random Sounds Count"
+                className="flex items-center justify-center"
+              >
+                <Knob
+                  value={field.state.value}
+                  onChange={field.handleChange}
+                  min={1}
+                  max={10}
+                  size={42}
                 />
               </div>
-              <FieldError errors={field.state.meta.errors} />
-            </div>
-          )}
-        />
+            )}
+          />
+          <form.Subscribe
+            selector={(state) => [state.canSubmit, state.isSubmitting]}
+            children={([canSubmit, isSubmitting]) => (
+              <ActionButton
+                type="submit"
+                disabled={!canSubmit}
+                isPending={isSubmitting || createMutation.isPending}
+              >
+                <CgAdd />
+              </ActionButton>
+            )}
+          />
+        </div>
         <MutationBoundary error={createMutation.error} />
       </BaseForm>
 

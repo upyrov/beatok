@@ -32,7 +32,7 @@ html.dark {
   color-scheme: dark;
 }
 
-@variant dark (&:where(.dark, .dark *));
+@custom-variant dark (&:where(.dark, .dark *));
 
 @utility sys-panel {
   @apply bg-white border border-gray-200 shadow-md rounded-md

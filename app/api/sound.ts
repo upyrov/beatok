@@ -76,7 +76,7 @@ export function useSounds(categoryId: string) {
   });
 }
 
-async function updateSoundValue(params: { id: string; data: SoundUpdate }) {
+async function updateSound(params: { id: string; data: SoundUpdate }) {
   const response = await fetchWithAuth(`/sounds/${params.id}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
@@ -89,11 +89,11 @@ async function updateSoundValue(params: { id: string; data: SoundUpdate }) {
   }
 }
 
-export function useUpdateSoundValue() {
+export function useUpdateSound() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: updateSoundValue,
+    mutationFn: updateSound,
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.sounds.detail(variables.id),

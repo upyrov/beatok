@@ -120,7 +120,8 @@ export function Submitting() {
     async (e: React.MouseEvent, sound: Sound) => {
       e.preventDefault();
       const url = sound.value;
-      const filename = `beatok-${sound.id}.wav`;
+      const extension = url.split(".").pop()?.split("?")[0] || "wav";
+      const filename = sound.name ? `${sound.name}.${extension}` : `beatok-${sound.id}.${extension}`;
       try {
         const response = await fetch(url, { cache: "no-store" });
         if (!response.ok) {
@@ -155,8 +156,8 @@ export function Submitting() {
         const response = await fetch(sound.value);
         const blob = await response.blob();
         const extension = sound.value.split(".").pop()?.split("?")[0] || "wav";
-        const categoryName = sound.category?.name || "unknown";
-        zip.file(`beatok-${categoryName}-${sound.id}.${extension}`, blob);
+        const soundName = sound.name ? sound.name : `beatok-${sound.category?.name || "unknown"}-${sound.id}`;
+        zip.file(`${soundName}.${extension}`, blob);
       } catch (err) {
         console.error("Failed to fetch sound:", err);
       }

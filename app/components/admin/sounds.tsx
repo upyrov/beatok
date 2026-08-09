@@ -30,6 +30,7 @@ export function Sounds({ categoryId }: { categoryId: string }) {
 
       await uploadFile(file, uploadUrl, onProgress);
       await createMutation.mutateAsync({
+        name: file.name.replace(/\.[^/.]+$/, ""),
         value: fileKey,
         categoryId,
       });

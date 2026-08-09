@@ -1,6 +1,6 @@
-import { QueryClientProvider } from "@tanstack/react-query";
+import { QueryClientProvider, useQueryClient } from "@tanstack/react-query";
 import { onAuthStateChanged } from "firebase/auth";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import {
   isRouteErrorResponse,
   Links,
@@ -11,7 +11,7 @@ import {
 } from "react-router";
 import { Header } from "~/components/header";
 import type { Route } from "./+types/root";
-import type { Me } from "./api/types/user/me";
+import { userQueryOptions, useUser } from "./api/user";
 import "./app.css";
 import { Skeleton } from "./components/skeleton";
 import { auth } from "./lib/firebase";
@@ -94,25 +94,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-function AppContent() {
-  const [user, setUser] = useState<Me | null>(null);
+function Content() {
+  const { data: user = null } = useUser();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(
-        user
-          ? {
-              id: user?.uid,
-              isAnonymous: user.isAnonymous,
-              name: user.displayName ?? "Unknown",
-              picture: user.photoURL,
-              rating: null,
-            }
-          : null,
-      );
-    });
+    const unsubscribe = onAuthStateChanged(auth, () =>
+      queryClient.invalidateQueries({ queryKey: userQueryOptions().queryKey }),
+    );
     return () => unsubscribe();
-  }, []);
+  }, [queryClient]);
 
   return (
     <>
@@ -127,7 +118,7 @@ export default function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AppContent />
+      <Content />
     </QueryClientProvider>
   );
 }
