@@ -3,6 +3,7 @@ import { Suspense, useState } from "react";
 import { useParams } from "react-router";
 import {
   commentsQueryOptions,
+  useComments,
   useUser,
   useUserById,
   userByIdQueryOptions,
@@ -172,11 +173,16 @@ export default function User() {
   const { data: currentUser } = useUser();
 
   const { data: user, isLoading: isUserLoading } = useUserById(id!);
+  const { data: commentsResult } = useComments(id!, 1);
 
   if (!id || !user) {
     if (isUserLoading) return <HydrateFallback />;
     return <div className="p-8 text-center text-red-500">User not found</div>;
   }
+
+  const hasComments = (commentsResult?.items?.length ?? 0) > 0;
+  const canComment = !!currentUser && currentUser.id !== id;
+  const showComments = hasComments || canComment;
 
   return (
     <PageContainer className="max-w-5xl">
@@ -185,11 +191,13 @@ export default function User() {
         userId={id}
         initialAvailableYears={user.availableYears}
       />
-      <Card>
-        <h2 className="text-2xl font-bold">Comments</h2>
-        {currentUser && currentUser.id !== id && <CommentForm userId={id} />}
-        <CommentList userId={id} />
-      </Card>
+      {showComments && (
+        <Card>
+          <h2 className="text-2xl font-bold">Comments</h2>
+          {canComment && <CommentForm userId={id} />}
+          <CommentList userId={id} />
+        </Card>
+      )}
     </PageContainer>
   );
 }

@@ -135,8 +135,21 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
         ) : (
           <h1 className="text-3xl font-bold text-gray-200">{user.name}</h1>
         )}
-        <div className="flex items-center gap-4 text-gray-400">
-          <span>Rating: {user.rating}</span>
+        <div className="flex items-center gap-6 mt-2 text-sm text-gray-600 dark:text-gray-400">
+          <div className="flex flex-col">
+            <span className="font-semibold text-gray-900 dark:text-gray-100">Rating</span>
+            <span>{user.rating}</span>
+          </div>
+          <div className="w-px h-8 bg-black/10 dark:bg-white/10" />
+          <div className="flex flex-col">
+            <span className="font-semibold text-gray-900 dark:text-gray-100">Wins</span>
+            <span>{user.wins}</span>
+          </div>
+          <div className="w-px h-8 bg-black/10 dark:bg-white/10" />
+          <div className="flex flex-col">
+            <span className="font-semibold text-gray-900 dark:text-gray-100">Win Rate</span>
+            <span>{user.winRate}%</span>
+          </div>
         </div>
       </div>
     </div>
