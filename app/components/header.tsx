@@ -2,7 +2,6 @@ import { Menu } from "@base-ui/react";
 import { CgLogIn, CgLogOut, CgUser } from "react-icons/cg";
 import { Link, useNavigate } from "react-router";
 import type { Me } from "~/api/types/user/me";
-import type { User } from "~/api/types/user/user";
 import { UserCard } from "~/components/user-card";
 import { useSignOut } from "~/hooks/use-auth";
 import { Button } from "./button";
@@ -32,10 +31,7 @@ export function Header({ user }: { user: Me | null }) {
           <Menu.Root>
             <Menu.Trigger className="focus:outline-none group">
               <div className="hover:bg-black/5 dark:hover:bg-white/5 rounded-lg px-3 py-1.5 transition cursor-pointer flex items-center">
-                <UserCard
-                  user={user as User}
-                  className="is-md pointer-events-none"
-                />
+                <UserCard user={user} className="is-md pointer-events-none" />
               </div>
             </Menu.Trigger>
             <Menu.Portal>

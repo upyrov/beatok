@@ -83,7 +83,7 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
             )}
             <img
               src={user.picture}
-              alt={user.name}
+              alt={user.name ?? "Anonymous"}
               onLoad={() => setImageLoaded(true)}
               className={`object-cover border border-black/20 dark:border-white/20 p-0.5 w-full h-full rounded-lg ${imageLoaded ? "" : "invisible"}`}
             />
@@ -137,17 +137,23 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
         )}
         <div className="flex items-center gap-6 mt-2 text-sm text-gray-600 dark:text-gray-400">
           <div className="flex flex-col">
-            <span className="font-semibold text-gray-900 dark:text-gray-100">Rating</span>
+            <span className="font-semibold text-gray-900 dark:text-gray-100">
+              Rating
+            </span>
             <span>{user.rating}</span>
           </div>
           <div className="w-px h-8 bg-black/10 dark:bg-white/10" />
           <div className="flex flex-col">
-            <span className="font-semibold text-gray-900 dark:text-gray-100">Wins</span>
+            <span className="font-semibold text-gray-900 dark:text-gray-100">
+              Wins
+            </span>
             <span>{user.wins}</span>
           </div>
           <div className="w-px h-8 bg-black/10 dark:bg-white/10" />
           <div className="flex flex-col">
-            <span className="font-semibold text-gray-900 dark:text-gray-100">Win Rate</span>
+            <span className="font-semibold text-gray-900 dark:text-gray-100">
+              Win Rate
+            </span>
             <span>{user.winRate}%</span>
           </div>
         </div>
