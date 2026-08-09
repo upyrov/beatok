@@ -154,7 +154,7 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
             <span className="font-semibold text-gray-900 dark:text-gray-100">
               Win Rate
             </span>
-            <span>{user.winRate}%</span>
+            <span>{Math.round(user.winRate)}%</span>
           </div>
         </div>
       </div>

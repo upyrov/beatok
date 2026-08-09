@@ -4,12 +4,17 @@ import { useKickParticipant } from "~/api/lobby";
 import { LobbyState } from "~/api/types/enums/lobby-state";
 import type { Participation } from "~/api/types/participation";
 import type { Me } from "~/api/types/user/me";
+import type { RatingChange } from "~/api/types/user/rating-change";
 import { ActionButton } from "~/components/action-button";
 import { MutationBoundary } from "~/components/mutation-boundary";
 import { UserCard } from "~/components/user-card";
 import { LobbyContext } from "~/contexts";
 
-export function ParticipantList() {
+export function ParticipantList({
+  ratingChanges = [],
+}: {
+  ratingChanges?: RatingChange[];
+}) {
   const { lobby, setLobby, connection } = use(LobbyContext);
   const { user } = useOutletContext<{ user: Me | null }>();
   const kickParticipantMutation = useKickParticipant();
@@ -68,31 +73,56 @@ export function ParticipantList() {
       <h2 className="text-xl font-bold mb-4">Participants</h2>
       <ul className="flex flex-col gap-2">
         {lobby?.participants.map((p) => (
-          <li key={p.id} className="flex items-center gap-2">
-            <UserCard user={p.user} />
-            <div className="flex gap-1 text-sm">
-              {!p.isConnected && (
-                <span className="text-gray-400">(Disconnected)</span>
-              )}
-              {p.user.id === lobby?.ownerId && (
-                <span className="text-gray-400">(Owner)</span>
-              )}
-              {p.user.id === user?.id && (
-                <span className="text-gray-400">(You)</span>
-              )}
+          <li key={p.id} className="flex items-center gap-2 justify-between">
+            <div className="flex items-center gap-2">
+              <UserCard user={p.user} />
+              <div className="flex gap-1 text-sm">
+                {!p.isConnected && (
+                  <span className="text-gray-400">(Disconnected)</span>
+                )}
+                {p.user.id === lobby?.ownerId && (
+                  <span className="text-gray-400">(Owner)</span>
+                )}
+                {p.user.id === user?.id && (
+                  <span className="text-gray-400">(You)</span>
+                )}
+              </div>
             </div>
-            {user?.id === lobby?.ownerId &&
-              p.user.id !== user?.id &&
-              lobby.state === LobbyState.Waiting && (
-                <MutationBoundary mutation={kickParticipantMutation}>
-                  <ActionButton
-                    onClick={() => handleKick(p.user.id)}
-                    isPending={kickParticipantMutation.isPending}
+
+            <div className="flex items-center gap-2 ml-auto">
+              {(() => {
+                const rc = ratingChanges.find((r) => r.userId === p.user.id);
+                if (!rc) return null;
+
+                const change = Math.round(rc.ratingChange);
+                const isGain = change >= 0;
+                return (
+                  <span
+                    className={
+                      isGain
+                        ? "text-green-500 font-bold"
+                        : "text-red-500 font-bold"
+                    }
                   >
-                    Kick
-                  </ActionButton>
-                </MutationBoundary>
-              )}
+                    {isGain ? "+" : ""}
+                    {change}
+                  </span>
+                );
+              })()}
+
+              {user?.id === lobby?.ownerId &&
+                p.user.id !== user?.id &&
+                lobby.state === LobbyState.Waiting && (
+                  <MutationBoundary mutation={kickParticipantMutation}>
+                    <ActionButton
+                      onClick={() => handleKick(p.user.id)}
+                      isPending={kickParticipantMutation.isPending}
+                    >
+                      Kick
+                    </ActionButton>
+                  </MutationBoundary>
+                )}
+            </div>
           </li>
         ))}
       </ul>

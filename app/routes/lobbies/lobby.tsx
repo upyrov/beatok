@@ -1,11 +1,12 @@
 import { HubConnectionState } from "@microsoft/signalr";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { use, useCallback, useEffect, useRef } from "react";
+import { use, useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useOutletContext, useParams } from "react-router";
 import { queryKeys } from "~/api/query-keys";
 import { LobbyState } from "~/api/types/enums/lobby-state";
 import type { DetailedLobby } from "~/api/types/lobby/detailed-lobby";
 import type { Me } from "~/api/types/user/me";
+import type { RatingChange } from "~/api/types/user/rating-change";
 import { ActionButton } from "~/components/action-button";
 import { Fallback } from "~/components/fallback";
 import { Chat } from "~/components/lobby/chat";
@@ -34,6 +35,8 @@ export default function Lobby() {
 
   const { id } = useParams();
   const queryClient = useQueryClient();
+
+  const [ratingChanges, setRatingChanges] = useState<RatingChange[]>([]);
 
   const joinAttemptId = useRef<string | null>(null);
 
@@ -85,7 +88,11 @@ export default function Lobby() {
   useEffect(() => {
     if (!user || !connection) return;
 
-    function handleEnded(submissionId: string | null) {
+    function handleEnded(
+      submissionId: string | null,
+      ratingChangesData: RatingChange[],
+    ) {
+      setRatingChanges(ratingChangesData);
       setLobby((prev) => {
         if (!prev) return prev;
         return {
@@ -203,7 +210,7 @@ export default function Lobby() {
               <p>{lobby.submissionTime}</p>
             </div>
 
-            <ParticipantList />
+            <ParticipantList ratingChanges={ratingChanges} />
           </div>
 
           <div className="flex-1">{StateView && <StateView />}</div>
