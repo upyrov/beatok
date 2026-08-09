@@ -178,7 +178,7 @@ export function Submitting() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="text-2xl font-mono font-bold text-yellow-400 tracking-wider">
+      <div className="text-2xl font-mono font-bold text-yellow-400 tracking-wider text-center">
         {minutes}:{seconds}
       </div>
 
@@ -218,8 +218,8 @@ export function Submitting() {
         </div>
       </div>
 
-      <div className="bg-black/5 dark:bg-white/5 p-4 rounded border border-black/10 dark:border-white/10">
-        <h3 className="font-bold mb-2">Submit Your Beat</h3>
+      <div className="bg-black/5 dark:bg-white/5 p-4 rounded border border-black/10 dark:border-white/10 flex flex-col items-center">
+        <h3 className="font-bold mb-2 text-center">Submit Your Beat</h3>
         {mySubmission ? (
           <div className="flex flex-col gap-4">
             <AudioPlayer src={mySubmission.value} />

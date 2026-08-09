@@ -79,7 +79,7 @@ export function Waiting() {
 
   return (
     lobby && (
-      <div>
+      <div className="flex flex-col items-center text-center">
         <h2 className="text-xl font-bold mb-4">Waiting</h2>
         {isOwner ? (
           lobby.participants.length > 1 ? (

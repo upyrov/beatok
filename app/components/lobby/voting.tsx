@@ -36,9 +36,9 @@ export function Voting() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-bold">Voting state</h2>
-        <div className="text-2xl font-mono font-bold text-yellow-400 tracking-wider">
+      <div className="flex flex-col items-center gap-2">
+        <h2 className="text-xl font-bold text-center">Voting state</h2>
+        <div className="text-2xl font-mono font-bold text-yellow-400 tracking-wider text-center">
           {minutes}:{seconds}
         </div>
       </div>
