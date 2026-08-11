@@ -134,7 +134,7 @@ export function Submitting() {
         const blobUrl = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = blobUrl;
-        a.download = `${sound.name}.${extension}`;
+        a.download = `${sound.name}-${sound.id}.${extension}`;
         document.body.appendChild(a);
         a.click();
         a.remove();
@@ -155,7 +155,7 @@ export function Submitting() {
         const response = await fetch(sound.value);
         const blob = await response.blob();
         const extension = sound.value.split(".").pop()?.split("?")[0] ?? "wav";
-        zip.file(`${sound.category.name}.${extension}`, blob);
+        zip.file(`${sound.name}-${sound.id}.${extension}`, blob);
       } catch (err) {
         console.error("Failed to fetch sound:", err);
       }
