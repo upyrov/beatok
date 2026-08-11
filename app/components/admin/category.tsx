@@ -8,7 +8,7 @@ import {
   CgPen,
   CgTrash,
 } from "react-icons/cg";
-import { useUpdateCategoryName } from "~/api/category";
+import { useUpdateCategory } from "~/api/category";
 import { Knob } from "~/components/knob";
 import { Sounds } from "./sounds";
 
@@ -25,7 +25,7 @@ export function Category({
   const [editRandomSoundsCount, setEditRandomSoundsCount] = useState(
     category.randomSoundsCount,
   );
-  const updateMutation = useUpdateCategoryName();
+  const updateMutation = useUpdateCategory();
 
   function handleUpdate() {
     if (
@@ -143,7 +143,7 @@ export function Category({
       </div>
 
       {showSounds && (
-        <div>
+        <div className="animate-fade-in">
           <Sounds categoryId={category.id} />
         </div>
       )}

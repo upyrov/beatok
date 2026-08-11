@@ -1,4 +1,4 @@
-import type { Lobby } from "~/api/types/lobby/lobby";
+import type { Lobby } from "~/api/types/lobby";
 
 interface LobbyCardProps {
   lobby: Lobby;

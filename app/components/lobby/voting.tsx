@@ -1,6 +1,6 @@
 import { use, useCallback, useMemo, useState } from "react";
 import { useOutletContext } from "react-router";
-import type { Me } from "~/api/types/user/me";
+import type { Me } from "~/api/types/user";
 import { AudioPlayer } from "~/components/audio-player";
 import { LobbyContext } from "~/contexts";
 import { useCountdown } from "~/hooks/use-countdown";

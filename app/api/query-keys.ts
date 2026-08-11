@@ -1,4 +1,4 @@
-import type { LobbyFilter } from "./types/lobby-filter";
+import type { LobbyFilter } from "./types/lobby";
 
 export const queryKeys = {
   lobbies: {

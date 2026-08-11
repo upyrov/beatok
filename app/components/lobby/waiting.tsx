@@ -1,9 +1,9 @@
 import { use, useCallback, useEffect } from "react";
 import { useOutletContext } from "react-router";
 import { useStartLobby } from "~/api/lobby";
-import { LobbyState } from "~/api/types/enums/lobby-state";
-import type { SoundWithCategory } from "~/api/types/sound/sound-with-category";
-import type { Me } from "~/api/types/user/me";
+import { LobbyState } from "~/api/types/enums";
+import type { SoundWithCategory } from "~/api/types/sound";
+import type { Me } from "~/api/types/user";
 import { ActionButton } from "~/components/action-button";
 import { MutationBoundary } from "~/components/mutation-boundary";
 import { LobbyContext } from "~/contexts";

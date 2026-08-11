@@ -2,7 +2,7 @@ import { Button as BaseButton, Input as BaseInput } from "@base-ui/react";
 import { useState } from "react";
 import { CgCheck, CgClose, CgPen, CgTrash } from "react-icons/cg";
 import { useDeleteGenre, useUpdateGenreName } from "~/api/genre";
-import type { Genre as IGenre } from "~/api/types/genre/genre";
+import type { Genre as IGenre } from "~/api/types/genre";
 
 export function Genre({ genre }: { genre: IGenre }) {
   const [isEditing, setIsEditing] = useState(false);

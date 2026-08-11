@@ -10,7 +10,7 @@ import {
 } from "react-icons/cg";
 import { useGenres } from "~/api/genre";
 import { useUpdateKit } from "~/api/kit";
-import type { Kit as IKit } from "~/api/types/kit/kit";
+import type { Kit as IKit } from "~/api/types/kit";
 import { Categories } from "./categories";
 
 export function Kit({ kit, onDelete }: { kit: IKit; onDelete: () => void }) {
@@ -18,7 +18,7 @@ export function Kit({ kit, onDelete }: { kit: IKit; onDelete: () => void }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState(kit.name);
   const [editGenreIds, setEditGenreIds] = useState<string[]>(
-    kit.genres?.map((g) => g.id) || [],
+    kit.genres?.map((g) => g.id) ?? [],
   );
   const { data: genres = [] } = useGenres();
   const updateMutation = useUpdateKit();
@@ -28,11 +28,11 @@ export function Kit({ kit, onDelete }: { kit: IKit; onDelete: () => void }) {
       !editName.trim() ||
       (editName === kit.name &&
         JSON.stringify([...editGenreIds].sort()) ===
-          JSON.stringify((kit.genres?.map((g) => g.id) || []).sort()))
+          JSON.stringify((kit.genres?.map((g) => g.id) ?? []).sort()))
     ) {
       setIsEditing(false);
       setEditName(kit.name);
-      setEditGenreIds(kit.genres?.map((g) => g.id) || []);
+      setEditGenreIds(kit.genres?.map((g) => g.id) ?? []);
       return;
     }
     updateMutation.mutate(
@@ -61,7 +61,7 @@ export function Kit({ kit, onDelete }: { kit: IKit; onDelete: () => void }) {
                     if (e.key === "Escape") {
                       setIsEditing(false);
                       setEditName(kit.name);
-                      setEditGenreIds(kit.genres?.map((g) => g.id) || []);
+                      setEditGenreIds(kit.genres?.map((g) => g.id) ?? []);
                     }
                   }}
                 />
@@ -76,7 +76,7 @@ export function Kit({ kit, onDelete }: { kit: IKit; onDelete: () => void }) {
                   onClick={() => {
                     setIsEditing(false);
                     setEditName(kit.name);
-                    setEditGenreIds(kit.genres?.map((g) => g.id) || []);
+                    setEditGenreIds(kit.genres?.map((g) => g.id) ?? []);
                   }}
                   className="text-gray-400 hover:text-gray-300 transition-colors"
                 >
@@ -153,7 +153,7 @@ export function Kit({ kit, onDelete }: { kit: IKit; onDelete: () => void }) {
       </div>
 
       {showCategories && (
-        <div>
+        <div className="animate-fade-in">
           <Categories kitId={kit.id} />
         </div>
       )}

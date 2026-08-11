@@ -1,8 +1,10 @@
+import { useMemo } from "react";
 import { Link } from "react-router";
 import { lobbiesQueryOptions, useLobbies } from "~/api/lobby";
-import type { Lobby } from "~/api/types/lobby/lobby";
+import type { Lobby } from "~/api/types/lobby";
 import { Button } from "~/components/button";
 import { Card } from "~/components/card";
+import { GridList } from "~/components/grid-list";
 import { LobbyCard } from "~/components/lobby-card";
 import { PageContainer } from "~/components/page-container";
 import { Skeleton } from "~/components/skeleton";
@@ -39,13 +41,26 @@ export async function clientLoader() {
   await queryClient.prefetchQuery(lobbiesQueryOptions());
 }
 
+function LobbyGridItem({ lobby }: { lobby: Lobby }) {
+  return (
+    <Card className="flex flex-col p-5">
+      <LobbyCard lobby={lobby} />
+      <div className="mt-6">
+        <Link to={`/lobbies/${lobby.id}`} prefetch="intent">
+          <Button>Join</Button>
+        </Link>
+      </div>
+    </Card>
+  );
+}
+
 function HomeSkeleton() {
   return (
     <section className="flex flex-col flex-1">
       <div className="flex items-center justify-between mb-6">
         <Skeleton className="w-32 h-8" />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <GridList>
         {[...Array(8)].map((_, i) => (
           <div
             key={i}
@@ -79,7 +94,7 @@ function HomeSkeleton() {
             </div>
           </div>
         ))}
-      </div>
+      </GridList>
     </section>
   );
 }
@@ -94,83 +109,65 @@ export function HydrateFallback() {
 
 export default function Home() {
   const lobbiesQuery = useLobbies();
-  const lobbies = lobbiesQuery.data || [];
+  const lobbies = lobbiesQuery.data ?? [];
+
+  const { toRejoin, active } = useMemo(() => {
+    return lobbies.reduce<{
+      toRejoin: Lobby[];
+      active: Lobby[];
+    }>(
+      (acc, lobby) => {
+        if (lobby.isJoined) acc.toRejoin.push(lobby);
+        else acc.active.push(lobby);
+        return acc;
+      },
+      { toRejoin: [], active: [] },
+    );
+  }, [lobbies]);
 
   return (
     <PageContainer className="max-w-7xl">
-      {(() => {
-        const { toRejoin, active } = lobbies.reduce<{
-          toRejoin: Lobby[];
-          active: Lobby[];
-        }>(
-          (acc, lobby) => {
-            if (lobby.isJoined) acc.toRejoin.push(lobby);
-            else acc.active.push(lobby);
-            return acc;
-          },
-          { toRejoin: [], active: [] },
-        );
+      {toRejoin.length > 0 && (
+        <section>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="flex items-center gap-2">Lobbies to Rejoin</h2>
+          </div>
+          <GridList>
+            {toRejoin.map((lobby) => (
+              <LobbyGridItem key={lobby.id} lobby={lobby} />
+            ))}
+          </GridList>
+        </section>
+      )}
 
-        return (
+      <section className="flex flex-col flex-1">
+        {!!active.length && (
           <>
-            {toRejoin.length > 0 && (
-              <section>
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="flex items-center gap-2">Lobbies to Rejoin</h2>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {toRejoin.map((lobby) => (
-                    <Card key={lobby.id} className="flex flex-col p-5">
-                      <LobbyCard lobby={lobby} />
-                      <div className="mt-6">
-                        <Link to={`/lobbies/${lobby.id}`} prefetch="intent">
-                          <Button>Join</Button>
-                        </Link>
-                      </div>
-                    </Card>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            <section className="flex flex-col flex-1">
-              {!!active.length && (
-                <>
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="flex items-center gap-2">Lobbies</h2>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {active.map((lobby) => (
-                      <Card key={lobby.id} className="flex flex-col p-5">
-                        <LobbyCard lobby={lobby} />
-                        <div className="mt-6">
-                          <Link to={`/lobbies/${lobby.id}`} prefetch="intent">
-                            <Button>Join</Button>
-                          </Link>
-                        </div>
-                      </Card>
-                    ))}
-                  </div>
-                </>
-              )}
-
-              {!active.length && (
-                <div className="flex justify-center items-center flex-col flex-1 text-center">
-                  <p className="text-xl font-medium">No active lobbies found</p>
-                  <p className="mt-2 text-gray-500">Check back later or</p>
-                  <Link
-                    to="/lobbies/new"
-                    prefetch="intent"
-                    className="mt-4 flex justify-center"
-                  >
-                    <Button>Create your own</Button>
-                  </Link>
-                </div>
-              )}
-            </section>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="flex items-center gap-2">Lobbies</h2>
+            </div>
+            <GridList>
+              {active.map((lobby) => (
+                <LobbyGridItem key={lobby.id} lobby={lobby} />
+              ))}
+            </GridList>
           </>
-        );
-      })()}
+        )}
+
+        {!active.length && (
+          <div className="flex justify-center items-center flex-col flex-1 text-center">
+            <p className="text-xl font-medium">No active lobbies found</p>
+            <p className="mt-2 text-gray-500">Check back later or</p>
+            <Link
+              to="/lobbies/new"
+              prefetch="intent"
+              className="mt-4 flex justify-center"
+            >
+              <Button>Create your own</Button>
+            </Link>
+          </div>
+        )}
+      </section>
     </PageContainer>
   );
 }

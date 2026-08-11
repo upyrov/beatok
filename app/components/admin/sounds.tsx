@@ -12,7 +12,7 @@ import { Sound } from "./sound";
 
 export function Sounds({ categoryId }: { categoryId: string }) {
   const soundsQuery = useSounds(categoryId);
-  const sounds = soundsQuery.data || [];
+  const sounds = soundsQuery.data ?? [];
   const deleteMutation = useDeleteSound();
   const createMutation = useCreateSound();
   const getUploadUrlMutation = useUploadSoundUrl();
@@ -22,7 +22,7 @@ export function Sounds({ categoryId }: { categoryId: string }) {
       const validation = await validateAudioFile(file);
       if (!validation.valid) throw new Error(validation.error);
 
-      const fileExtension = file.name.split(".").pop() || "";
+      const fileExtension = file.name.split(".").pop() ?? "";
       const { uploadUrl, fileKey } = await getUploadUrlMutation.mutateAsync({
         extension: fileExtension,
         contentType: file.type,

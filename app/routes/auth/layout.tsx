@@ -1,8 +1,6 @@
 import { Outlet } from "react-router";
 
-export const handle = {
-  sitemap: () => [],
-};
+export const handle = { sitemap: () => [] };
 
 export default function AuthLayout() {
   return (

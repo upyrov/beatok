@@ -4,7 +4,7 @@ import { type } from "arktype";
 import { use } from "react";
 import { useOutletContext } from "react-router";
 import { useUpdateScore, useVote } from "~/api/lobby";
-import type { Me } from "~/api/types/user/me";
+import type { Me } from "~/api/types/user";
 import { ActionButton } from "~/components/action-button";
 import { MutationBoundary } from "~/components/mutation-boundary";
 import { LobbyContext } from "~/contexts";
@@ -76,7 +76,7 @@ export function VoteForm({
               };
               return {
                 ...p,
-                scores: [...(p.scores || []), newScore],
+                scores: [...(p.scores ?? []), newScore],
               };
             }),
           };
@@ -99,7 +99,7 @@ export function VoteForm({
   return (
     <div className="flex flex-col gap-2">
       <BaseForm
-        onSubmit={(e) => {
+        onSubmit={(e: React.FormEvent) => {
           e.preventDefault();
           e.stopPropagation();
           form.handleSubmit();
@@ -120,7 +120,9 @@ export function VoteForm({
                 step="1"
                 value={field.state.value}
                 onBlur={field.handleBlur}
-                onChange={(e) => field.handleChange(Number(e.target.value))}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  field.handleChange(Number(e.target.value))
+                }
                 className="w-32 accent-blue-500"
               />
               <span className="font-mono font-medium w-4 text-center">

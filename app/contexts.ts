@@ -1,6 +1,6 @@
 import type { HubConnection } from "@microsoft/signalr";
 import { createContext } from "react";
-import type { DetailedLobby } from "./api/types/lobby/detailed-lobby";
+import type { DetailedLobby } from "./api/types/lobby";
 
 export interface ILobbyContext {
   lobby: DetailedLobby | null;

@@ -1,7 +1,7 @@
 import { Menu } from "@base-ui/react";
 import { CgLogIn, CgLogOut, CgUser } from "react-icons/cg";
 import { Link, useNavigate } from "react-router";
-import type { Me } from "~/api/types/user/me";
+import type { Me } from "~/api/types/user";
 import { UserCard } from "~/components/user-card";
 import { useSignOut } from "~/hooks/use-auth";
 import { Button } from "./button";

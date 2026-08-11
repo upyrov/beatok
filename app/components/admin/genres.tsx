@@ -1,80 +1,59 @@
-import { Form as BaseForm, Input as BaseInput } from "@base-ui/react";
-import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
 import { CgAdd } from "react-icons/cg";
 import { useCreateGenre, useGenres } from "~/api/genre";
 import { ActionButton } from "~/components/action-button";
-import { FieldError } from "~/components/field-error";
-import { MutationBoundary } from "~/components/mutation-boundary";
+import { CrudManager } from "~/components/crud-manager";
+import { InputField } from "~/components/input-field";
 import { Genre } from "./genre";
 
 export function Genres() {
   const genresQuery = useGenres();
-  const genres = genresQuery.data || [];
+  const genres = genresQuery.data ?? [];
   const createMutation = useCreateGenre();
 
-  const form = useForm({
-    defaultValues: { name: "" },
-    onSubmit: async ({ value }) => {
-      await createMutation.mutateAsync({ name: value.name.trim() });
-      form.reset();
-    },
-  });
-
   return (
-    <div className="flex flex-col gap-6 flex-1">
-      <BaseForm
-        onSubmit={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          form.handleSubmit();
-        }}
-        className="flex flex-col gap-4"
-      >
+    <CrudManager
+      items={genres}
+      emptyMessage="No genres found. Create one above!"
+      defaultValues={{ name: "" }}
+      onSubmit={async (value) => {
+        await createMutation.mutateAsync({ name: value.name.trim() });
+      }}
+      createMutationError={createMutation.error}
+      renderItem={(genre) => <Genre key={genre.id} genre={genre} />}
+      renderFormFields={(form) => (
         <form.Field
           name="name"
           validators={{
             onChange: type("string > 0"),
           }}
-          children={(field) => (
-            <div className="flex flex-col gap-1">
-              <div className="flex gap-2">
-                <BaseInput
-                  name={field.name}
-                  className="flex-1 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
-                  placeholder="Genre name"
-                  value={field.state.value}
-                  onBlur={field.handleBlur}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                />
-                <form.Subscribe
-                  selector={(state) => [state.canSubmit, state.isSubmitting]}
-                  children={([canSubmit, isSubmitting]) => (
-                    <ActionButton
-                      type="submit"
-                      disabled={!canSubmit}
-                      isPending={isSubmitting || createMutation.isPending}
-                    >
-                      <CgAdd />
-                    </ActionButton>
-                  )}
-                />
-              </div>
-              <FieldError errors={field.state.meta.errors} />
+          children={(field: any) => (
+            <div className="flex gap-2 items-start">
+              <InputField
+                name={field.name}
+                value={field.state.value}
+                onChange={field.handleChange}
+                onBlur={field.handleBlur}
+                errors={field.state.meta.errors}
+                placeholder="Genre name"
+                className="flex-1"
+              />
+              <form.Subscribe
+                selector={(state: any) => [state.canSubmit, state.isSubmitting]}
+                children={([canSubmit, isSubmitting]: [boolean, boolean]) => (
+                  <ActionButton
+                    type="submit"
+                    disabled={!canSubmit}
+                    isPending={isSubmitting || createMutation.isPending}
+                  >
+                    <CgAdd />
+                  </ActionButton>
+                )}
+              />
             </div>
           )}
         />
-        <MutationBoundary error={createMutation.error} />
-      </BaseForm>
-
-      <ul className="flex flex-col gap-4">
-        <li className="flex flex-col gap-2">
-          {genres.map((genre) => (
-            <Genre key={genre.id} genre={genre} />
-          ))}
-          {!genres.length && <p>No genres found. Create one above!</p>}
-        </li>
-      </ul>
-    </div>
+      )}
+    />
   );
 }

@@ -13,7 +13,7 @@ export function CommentForm({ userId }: { userId: string }) {
     },
     onSubmit: async ({ value }) => {
       try {
-        await addComment.mutateAsync({ userId, data: value });
+        await addComment.mutateAsync(value);
         form.reset();
       } catch (error) {
         console.error(error);

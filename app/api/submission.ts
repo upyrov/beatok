@@ -1,119 +1,39 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchWithAuth } from "../lib/api-client";
+import { useMutation } from "@tanstack/react-query";
+import { CrudApi, fetchApi } from ".";
 import { queryKeys } from "./query-keys";
-import type { CreateSubmission } from "./types/submission/create-submission";
-import type { SubmissionUpdate } from "./types/submission/submission-update";
-import type { SubmissionUpload } from "./types/submission/submission-upload";
+import type {
+  CreateSubmission,
+  Submission,
+  SubmissionUpdate,
+  SubmissionUpload,
+} from "./types/submission";
 
-async function getUploadUrl(
-  extension: string,
-  contentType: string,
-): Promise<SubmissionUpload> {
-  const response = await fetchWithAuth(
-    `/submissions/upload?extension=${extension}&contentType=${encodeURIComponent(contentType)}`,
-  );
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message);
-  }
-
-  return response.json();
+export class SubmissionApi extends CrudApi<
+  Submission,
+  CreateSubmission,
+  SubmissionUpdate
+> {
+  useUploadUrl = () => {
+    return useMutation({
+      mutationFn: async ({
+        extension,
+        contentType,
+      }: {
+        extension: string;
+        contentType: string;
+      }): Promise<SubmissionUpload> => {
+        const params = new URLSearchParams({ extension, contentType });
+        return fetchApi<SubmissionUpload>(
+          `/submissions/upload?${params.toString()}`,
+        );
+      },
+    });
+  };
 }
 
-export function useUploadUrl() {
-  return useMutation({
-    mutationFn: ({
-      extension,
-      contentType,
-    }: {
-      extension: string;
-      contentType: string;
-    }) => getUploadUrl(extension, contentType),
-  });
-}
-
-async function createSubmission(data: CreateSubmission) {
-  const response = await fetchWithAuth("/submissions", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message);
-  }
-}
-
-export function useCreateSubmission() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: createSubmission,
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.submissions.lists(),
-      });
-    },
-  });
-}
-
-async function updateSubmissionValue(params: {
-  id: string;
-  data: SubmissionUpdate;
-}) {
-  const response = await fetchWithAuth(`/submissions/${params.id}`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(params.data),
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message);
-  }
-}
-
-export function useUpdateSubmissionValue() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: updateSubmissionValue,
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.submissions.detail(variables.id),
-      });
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.submissions.lists(),
-      });
-    },
-  });
-}
-
-async function deleteSubmission(id: string) {
-  const response = await fetchWithAuth(`/submissions/${id}`, {
-    method: "DELETE",
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message);
-  }
-}
-
-export function useDeleteSubmission() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: deleteSubmission,
-    onSuccess: (_, id) => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.submissions.detail(id),
-      });
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.submissions.lists(),
-      });
-    },
-  });
-}
+export const {
+  useCreate: useCreateSubmission,
+  useUpdate: useUpdateSubmissionValue,
+  useDelete: useDeleteSubmission,
+  useUploadUrl,
+} = new SubmissionApi("/submissions", queryKeys.submissions);

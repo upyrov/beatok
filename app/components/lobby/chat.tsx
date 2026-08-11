@@ -2,7 +2,7 @@ import { Form as BaseForm, Input as BaseInput } from "@base-ui/react";
 import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
 import { use, useEffect, useRef, useState } from "react";
-import type { User } from "~/api/types/user/user";
+import type { User } from "~/api/types/user";
 import { UserCard } from "~/components/user-card";
 import { LobbyContext } from "~/contexts";
 import { ActionButton } from "../action-button";
@@ -16,9 +16,9 @@ export function Chat() {
   const { lobby, connection } = use(LobbyContext);
   const [messages, setMessages] = useState<Message[]>([]);
 
-  const participantsRef = useRef(lobby?.participants || []);
+  const participantsRef = useRef(lobby?.participants ?? []);
   useEffect(() => {
-    participantsRef.current = lobby?.participants || [];
+    participantsRef.current = lobby?.participants ?? [];
   }, [lobby?.participants]);
 
   useEffect(() => {
@@ -72,7 +72,7 @@ export function Chat() {
         ))}
       </div>
       <BaseForm
-        onSubmit={(e) => {
+        onSubmit={(e: React.FormEvent) => {
           e.preventDefault();
           e.stopPropagation();
           form.handleSubmit();
@@ -90,7 +90,9 @@ export function Chat() {
               type="text"
               value={field.state.value}
               onBlur={field.handleBlur}
-              onChange={(e) => field.handleChange(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                field.handleChange(e.target.value)
+              }
               placeholder="Say something..."
               className="flex-1 bg-black/10 dark:bg-white/10 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-white/20"
             />

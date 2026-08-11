@@ -3,13 +3,12 @@ import { useWavesurfer } from "@wavesurfer/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CgPlayButton, CgPlayPause } from "react-icons/cg";
 
-export function AudioPlayer({
-  src,
-  className = "",
-}: {
+interface AudioPlayerProps {
   src: string;
   className?: string;
-}) {
+}
+
+export function AudioPlayer({ src, className = "" }: AudioPlayerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { wavesurfer, isReady, isPlaying, currentTime } = useWavesurfer({
@@ -47,7 +46,7 @@ export function AudioPlayer({
 
   return (
     <div
-      className={`flex items-center gap-2 rounded-lg w-full bg-gray-200 p-1.5 border border-black/5 ${className}`}
+      className={`animate-fade-in flex items-center gap-2 rounded-lg w-full bg-gray-200 p-1.5 border border-black/5 ${className}`}
     >
       <BaseButton
         type="button"

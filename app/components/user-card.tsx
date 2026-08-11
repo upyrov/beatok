@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { CgProfile, CgSpinner } from "react-icons/cg";
 import { Link } from "react-router";
-import type { Me } from "~/api/types/user/me";
-import type { User } from "~/api/types/user/user";
+import type { Me, User } from "~/api/types/user";
 import { Skeleton } from "~/components/skeleton";
 
 export interface UserCardProps {

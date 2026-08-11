@@ -1,6 +1,6 @@
 import { Button as BaseButton } from "@base-ui/react";
 import { useCallback, useMemo } from "react";
-import type { ActivityDay } from "~/api/types/user/activity-day";
+import type { ActivityDay } from "~/api/types/user";
 
 interface ActivityGraphProps {
   activity: ActivityDay[];

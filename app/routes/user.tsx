@@ -55,7 +55,7 @@ function ActivitySection({
 
   const { data: user, isFetching } = useUserById(userId, selectedYear);
   const availableYears = user?.availableYears || initialAvailableYears;
-  const activity = user?.activity || [];
+  const activity = user?.activity ?? [];
 
   return (
     <>
@@ -121,7 +121,7 @@ function ActivitySection({
         )}
       </Card>
       {selectedDate && (
-        <Card>
+        <Card key={selectedDate} className="animate-fade-in">
           <h2 className="text-2xl font-bold mb-6">
             Activity for {selectedDate}
           </h2>

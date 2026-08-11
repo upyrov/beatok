@@ -2,7 +2,7 @@ import { Button as BaseButton, Input as BaseInput } from "@base-ui/react";
 import { useState } from "react";
 import { CgCheck, CgClose, CgPen, CgTrash } from "react-icons/cg";
 import { useUpdateSound, useUploadSoundUrl } from "~/api/sound";
-import type { Sound } from "~/api/types/sound/sound";
+import type { Sound } from "~/api/types/sound";
 import { validateAudioFile } from "~/lib/audio";
 import { uploadFile } from "~/lib/upload";
 import { AudioPlayer } from "../audio-player";
@@ -29,7 +29,7 @@ export function Sound({
       const validation = await validateAudioFile(file);
       if (!validation.valid) throw new Error(validation.error);
 
-      const fileExtension = file.name.split(".").pop() || "";
+      const fileExtension = file.name.split(".").pop() ?? "";
       const { uploadUrl, fileKey } = await getUploadUrlMutation.mutateAsync({
         extension: fileExtension,
         contentType: file.type,
@@ -55,7 +55,7 @@ export function Sound({
     }
     updateMutation.mutate(
       { id: sound.id, data: { name: editName, value: sound.value } },
-      { onSuccess: () => setIsEditing(false) }
+      { onSuccess: () => setIsEditing(false) },
     );
   }
 

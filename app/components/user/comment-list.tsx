@@ -29,7 +29,7 @@ export function CommentList({ userId }: { userId: string }) {
         commentsResult?.items.map((comment) => (
           <div
             key={comment.id}
-            className="bg-black/5 dark:bg-white/5 rounded-lg p-4 flex flex-col gap-2"
+            className="animate-fade-in bg-black/5 dark:bg-white/5 rounded-lg p-4 flex flex-col gap-2"
           >
             <div className="flex items-center justify-between">
               <UserCard user={comment.author} />

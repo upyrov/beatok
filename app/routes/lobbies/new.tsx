@@ -25,7 +25,7 @@ export default function NewLobby() {
   const navigate = useNavigate();
   const createLobbyMutation = useCreateLobby();
   const genresQuery = useGenres();
-  const genres = genresQuery.data || [];
+  const genres = genresQuery.data ?? [];
 
   const form = useForm({
     defaultValues: {

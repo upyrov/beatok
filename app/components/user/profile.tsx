@@ -5,7 +5,7 @@ import { type } from "arktype";
 import { useCallback, useState } from "react";
 import { CgProfile, CgSpinner } from "react-icons/cg";
 import { queryKeys } from "~/api/query-keys";
-import type { Profile as IProfile } from "~/api/types/user/profile";
+import type { Profile as IProfile } from "~/api/types/user";
 import { useUpdateUser, useUploadAvatarUrl } from "~/api/user";
 import { FileDropzone } from "~/components/file-dropzone";
 import { Skeleton } from "~/components/skeleton";

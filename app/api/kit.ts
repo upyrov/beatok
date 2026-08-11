@@ -1,103 +1,11 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { CrudApi } from ".";
 import { queryKeys } from "./query-keys";
-import type { CreateKit } from "./types/kit/create-kit";
-import type { Kit } from "./types/kit/kit";
-import type { KitUpdate } from "./types/kit/kit-update";
+import type { CreateKit, Kit, KitUpdate } from "./types/kit";
 
-import { fetchWithAuth } from "../lib/api-client";
-
-async function createKit(data: CreateKit) {
-  const response = await fetchWithAuth("/kits", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message);
-  }
-}
-
-export function useCreateKit() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: createKit,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.kits.lists() });
-    },
-  });
-}
-
-async function getKits(): Promise<Kit[]> {
-  const response = await fetchWithAuth("/kits");
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message);
-  }
-
-  return response.json();
-}
-
-export function kitsQueryOptions() {
-  return {
-    queryKey: queryKeys.kits.list(),
-    queryFn: getKits,
-  };
-}
-
-export function useKits() {
-  return useQuery(kitsQueryOptions());
-}
-
-async function updateKit(params: { id: string; data: KitUpdate }) {
-  const response = await fetchWithAuth(`/kits/${params.id}`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(params.data),
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message);
-  }
-}
-
-export function useUpdateKit() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: updateKit,
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.kits.detail(variables.id),
-      });
-      queryClient.invalidateQueries({ queryKey: queryKeys.kits.lists() });
-    },
-  });
-}
-
-async function deleteKit(id: string) {
-  const response = await fetchWithAuth(`/kits/${id}`, {
-    method: "DELETE",
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message);
-  }
-}
-
-export function useDeleteKit() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: deleteKit,
-    onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.kits.detail(id) });
-      queryClient.invalidateQueries({ queryKey: queryKeys.kits.lists() });
-    },
-  });
-}
+export const {
+  listQueryOptions: kitsQueryOptions,
+  useList: useKits,
+  useCreate: useCreateKit,
+  useUpdate: useUpdateKit,
+  useDelete: useDeleteKit,
+} = new CrudApi<Kit, CreateKit, KitUpdate>("/kits", queryKeys.kits);

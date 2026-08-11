@@ -29,7 +29,7 @@ export function Activity({ userId, date }: { userId: string; date: string }) {
           <Link
             key={lobby.id}
             to={`/lobbies/${lobby.id}`}
-            className="bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-black/10 dark:bg-white/10 transition-colors border border-black/10 dark:border-white/10 p-4 rounded-xl block"
+            className="bg-black/5 hover:bg-black/10 dark:hover:bg-black/10 dark:bg-white/10 transition-colors border border-black/10 dark:border-white/10 p-4 rounded-xl block"
           >
             <LobbyCard lobby={lobby} />
           </Link>

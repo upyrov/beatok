@@ -5,14 +5,12 @@ import {
 } from "@microsoft/signalr";
 import { useEffect, useState } from "react";
 import { Outlet, useOutletContext } from "react-router";
-import { ensureAnonymouslySignedIn } from "~/api/auth";
-import type { DetailedLobby } from "~/api/types/lobby/detailed-lobby";
+import type { DetailedLobby } from "~/api/types/lobby";
 import { LobbyContext } from "~/contexts";
+import { ensureAnonymouslySignedIn } from "~/hooks/use-auth";
 import { auth } from "~/lib/firebase";
 
-export const handle = {
-  sitemap: () => [],
-};
+export const handle = { sitemap: () => [] };
 
 export default function Layout() {
   const context = useOutletContext();

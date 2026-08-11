@@ -1,78 +1,45 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchWithAuth } from "../lib/api-client";
+import { fetchApi } from ".";
 import { queryKeys } from "./query-keys";
-import type { Comment } from "./types/comment/comment";
-import type { CreateComment } from "./types/comment/create-comment";
-import type { Lobby } from "./types/lobby/lobby";
+import type { Comment, CreateComment } from "./types/comment";
+import type { Lobby } from "./types/lobby";
 import type { PageResult } from "./types/page-result";
-import type { Me } from "./types/user/me";
-import type { PictureUpload } from "./types/user/picture-upload";
-import type { Profile } from "./types/user/profile";
-import type { UserUpdate } from "./types/user/user-update";
+import type { Me, PictureUpload, Profile, UserUpdate } from "./types/user";
 
-export async function getUser(): Promise<Me> {
-  const response = await fetchWithAuth("/users/me");
+export const getUser = (): Promise<Me> => fetchApi<Me>("/users/me");
 
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message);
-  }
+export const userQueryOptions = () => ({
+  queryKey: queryKeys.users.me(),
+  queryFn: getUser,
+});
 
-  return response.json();
+export const useUser = () => useQuery(userQueryOptions());
+
+export function getUserById(id: string, year?: number): Promise<Profile> {
+  const query = year
+    ? `?${new URLSearchParams({ year: year.toString() }).toString()}`
+    : "";
+  return fetchApi<Profile>(`/users/${id}${query}`);
 }
 
-export function userQueryOptions() {
-  return {
-    queryKey: queryKeys.users.me(),
-    queryFn: getUser,
-  };
-}
+export const userByIdQueryOptions = (id: string, year?: number) => ({
+  queryKey: [...queryKeys.users.detail(id), year].filter(Boolean),
+  queryFn: () => getUserById(id, year),
+});
 
-export function useUser() {
-  return useQuery(userQueryOptions());
-}
-
-async function getUserById(id: string, year?: number): Promise<Profile> {
-  const query = year ? `?year=${year}` : "";
-  const response = await fetchWithAuth(`/users/${id}${query}`);
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message);
-  }
-
-  return response.json();
-}
-
-export function userByIdQueryOptions(id: string, year?: number) {
-  return {
-    queryKey: [...queryKeys.users.detail(id), year].filter(Boolean),
-    queryFn: () => getUserById(id, year),
-  };
-}
-
-export function useUserById(id: string, year?: number) {
-  return useQuery(userByIdQueryOptions(id, year));
-}
-
-async function addComment(params: { userId: string; data: CreateComment }) {
-  const response = await fetchWithAuth(`/users/${params.userId}/comments`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(params.data),
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message);
-  }
-}
+export const useUserById = (id: string, year?: number) =>
+  useQuery(userByIdQueryOptions(id, year));
 
 export function useAddComment(userId: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: addComment,
+    mutationFn: (data: CreateComment) =>
+      fetchApi<void>(`/users/${userId}/comments`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      }),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.users.detail(userId),
@@ -81,7 +48,7 @@ export function useAddComment(userId: string) {
   });
 }
 
-async function getComments(
+export function getComments(
   userId: string,
   page = 1,
   pageSize = 25,
@@ -91,73 +58,44 @@ async function getComments(
   params.append("pageSize", pageSize.toString());
 
   const queryString = params.toString() ? `?${params.toString()}` : "";
-
-  const response = await fetchWithAuth(
+  return fetchApi<PageResult<Comment>>(
     `/users/${userId}/comments${queryString}`,
   );
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message);
-  }
-
-  return response.json();
 }
 
-export function commentsQueryOptions(userId: string, page = 1, pageSize = 25) {
-  return {
-    queryKey: queryKeys.users.comments(userId, page, pageSize),
-    queryFn: () => getComments(userId, page, pageSize),
-  };
-}
+export const commentsQueryOptions = (
+  userId: string,
+  page = 1,
+  pageSize = 25,
+) => ({
+  queryKey: queryKeys.users.comments(userId, page, pageSize),
+  queryFn: () => getComments(userId, page, pageSize),
+});
 
-export function useComments(userId: string, page = 1, pageSize = 25) {
-  return useQuery(commentsQueryOptions(userId, page, pageSize));
-}
-
-async function getUploadUrl(
-  extension: string,
-  contentType: string,
-): Promise<PictureUpload> {
-  const params = new URLSearchParams();
-  params.append("extension", extension);
-  params.append("contentType", contentType);
-
-  const response = await fetchWithAuth(`/users/upload?${params.toString()}`);
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message);
-  }
-
-  return response.json();
-}
+export const useComments = (userId: string, page = 1, pageSize = 25) =>
+  useQuery(commentsQueryOptions(userId, page, pageSize));
 
 export function useUploadAvatarUrl() {
   return useMutation({
-    mutationFn: (data: { extension: string; contentType: string }) =>
-      getUploadUrl(data.extension, data.contentType),
+    mutationFn: (data: { extension: string; contentType: string }) => {
+      const params = new URLSearchParams();
+      params.append("extension", data.extension);
+      params.append("contentType", data.contentType);
+      return fetchApi<PictureUpload>(`/users/upload?${params.toString()}`);
+    },
   });
-}
-
-async function updateUser(data: UserUpdate): Promise<void> {
-  const response = await fetchWithAuth("/users", {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message);
-  }
 }
 
 export function useUpdateUser() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: updateUser,
+    mutationFn: (data: UserUpdate) =>
+      fetchApi<void>("/users", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      }),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.users.me(),
@@ -166,29 +104,16 @@ export function useUpdateUser() {
   });
 }
 
-async function getActivity(userId: string, date: string): Promise<Lobby[]> {
+export function getActivity(userId: string, date: string): Promise<Lobby[]> {
   const params = new URLSearchParams();
   params.append("date", date);
-
-  const response = await fetchWithAuth(
-    `/users/${userId}/activity?${params.toString()}`,
-  );
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message);
-  }
-
-  return response.json();
+  return fetchApi<Lobby[]>(`/users/${userId}/activity?${params.toString()}`);
 }
 
-export function activityQueryOptions(userId: string, date: string) {
-  return {
-    queryKey: queryKeys.users.activity(userId, date),
-    queryFn: () => getActivity(userId, date),
-  };
-}
+export const activityQueryOptions = (userId: string, date: string) => ({
+  queryKey: queryKeys.users.activity(userId, date),
+  queryFn: () => getActivity(userId, date),
+});
 
-export function useActivity(id: string, date: string) {
-  return useQuery(activityQueryOptions(id, date));
-}
+export const useActivity = (id: string, date: string) =>
+  useQuery(activityQueryOptions(id, date));

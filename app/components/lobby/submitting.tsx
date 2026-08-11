@@ -7,10 +7,10 @@ import {
   useDeleteSubmission,
   useUploadUrl,
 } from "~/api/submission";
-import { LobbyState } from "~/api/types/enums/lobby-state";
-import type { Sound } from "~/api/types/sound/sound";
-import type { Submission as ISubmission } from "~/api/types/submission/submission";
-import type { Me } from "~/api/types/user/me";
+import { LobbyState } from "~/api/types/enums";
+import type { Sound } from "~/api/types/sound";
+import type { Submission as ISubmission } from "~/api/types/submission";
+import type { Me } from "~/api/types/user";
 import { ActionButton } from "~/components/action-button";
 import { AudioPlayer } from "~/components/audio-player";
 import { FileDropzone } from "~/components/file-dropzone";
@@ -81,7 +81,7 @@ export function Submitting() {
       const validation = await validateAudioFile(file);
       if (!validation.valid) throw new Error(validation.error);
 
-      const fileExtension = file.name.split(".").pop() || "";
+      const fileExtension = file.name.split(".").pop() ?? "";
       const { uploadUrl, fileKey } = await getUploadUrlMutation.mutateAsync({
         extension: fileExtension,
         contentType: file.type,
@@ -120,8 +120,7 @@ export function Submitting() {
     async (e: React.MouseEvent, sound: Sound) => {
       e.preventDefault();
       const url = sound.value;
-      const extension = url.split(".").pop()?.split("?")[0] || "wav";
-      const filename = sound.name ? `${sound.name}.${extension}` : `beatok-${sound.id}.${extension}`;
+      const extension = url.split(".").pop()?.split("?")[0] ?? "wav";
       try {
         const response = await fetch(url, { cache: "no-store" });
         if (!response.ok) {
@@ -135,7 +134,7 @@ export function Submitting() {
         const blobUrl = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = blobUrl;
-        a.download = filename;
+        a.download = `${sound.name}.${extension}`;
         document.body.appendChild(a);
         a.click();
         a.remove();
@@ -155,9 +154,8 @@ export function Submitting() {
       try {
         const response = await fetch(sound.value);
         const blob = await response.blob();
-        const extension = sound.value.split(".").pop()?.split("?")[0] || "wav";
-        const soundName = sound.name ? sound.name : `beatok-${sound.category?.name || "unknown"}-${sound.id}`;
-        zip.file(`${soundName}.${extension}`, blob);
+        const extension = sound.value.split(".").pop()?.split("?")[0] ?? "wav";
+        zip.file(`${sound.category.name}.${extension}`, blob);
       } catch (err) {
         console.error("Failed to fetch sound:", err);
       }
@@ -203,7 +201,7 @@ export function Submitting() {
                     <div className="flex items-center gap-2 w-full">
                       <AudioPlayer src={s.value} className="flex-1 min-w-0" />
                       <Button
-                        onClick={(e) => handleDownload(e, s)}
+                        onClick={(e: React.MouseEvent) => handleDownload(e, s)}
                         className="shrink-0"
                         title="Download"
                       >

@@ -1,10 +1,9 @@
 import { use, useCallback, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router";
 import { useKickParticipant } from "~/api/lobby";
-import { LobbyState } from "~/api/types/enums/lobby-state";
+import { LobbyState } from "~/api/types/enums";
 import type { Participation } from "~/api/types/participation";
-import type { Me } from "~/api/types/user/me";
-import type { RatingChange } from "~/api/types/user/rating-change";
+import type { Me, RatingChange } from "~/api/types/user";
 import { ActionButton } from "~/components/action-button";
 import { MutationBoundary } from "~/components/mutation-boundary";
 import { UserCard } from "~/components/user-card";

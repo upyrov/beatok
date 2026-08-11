@@ -1,86 +1,49 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchWithAuth } from "../lib/api-client";
-import { ensureAnonymouslySignedIn } from "./auth";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { CrudApi, fetchApi } from ".";
+import { ensureAnonymouslySignedIn } from "../hooks/use-auth";
 import { queryKeys } from "./query-keys";
-import type { LobbyFilter } from "./types/lobby-filter";
-import type { CreateLobby } from "./types/lobby/create-lobby";
-import type { Lobby } from "./types/lobby/lobby";
-import type { CreateScore } from "./types/score/create-score";
-import type { ScoreUpdate } from "./types/score/score-update";
+import type { CreateLobby, Lobby, LobbyFilter } from "./types/lobby";
+import type { CreateScore, ScoreUpdate } from "./types/score";
 
-async function createLobby(data: CreateLobby): Promise<string> {
-  await ensureAnonymouslySignedIn();
-  const response = await fetchWithAuth("/lobbies", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message);
-  }
-
-  return response.json();
-}
+export const { listQueryOptions: lobbiesQueryOptions, useList: useLobbies } =
+  new CrudApi<Lobby, CreateLobby, unknown, [LobbyFilter?]>(
+    "/lobbies",
+    queryKeys.lobbies as any,
+    (filter?: LobbyFilter) => {
+      const params = new URLSearchParams();
+      if (filter) {
+        Object.entries(filter).forEach(([key, value]) => {
+          if (value) params.append(key, String(value));
+        });
+      }
+      const qs = params.toString();
+      return qs ? `/lobbies?${qs}` : "/lobbies";
+    },
+  );
 
 export function useCreateLobby() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: createLobby,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: queryKeys.lobbies.lists() });
+    mutationFn: async (data: CreateLobby) => {
+      await ensureAnonymouslySignedIn();
+      return fetchApi<string>("/lobbies", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
     },
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: queryKeys.lobbies.lists() }),
   });
-}
-
-export async function getLobbies(filter?: LobbyFilter): Promise<Lobby[]> {
-  const params = new URLSearchParams();
-  if (filter) {
-    Object.entries(filter).forEach(([key, value]) => {
-      if (value) {
-        params.append(key, String(value));
-      }
-    });
-  }
-  const response = await fetchWithAuth(`/lobbies?${params.toString()}`);
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message);
-  }
-
-  return response.json();
-}
-
-export function lobbiesQueryOptions(filter?: LobbyFilter) {
-  return {
-    queryKey: queryKeys.lobbies.list(filter || {}),
-    queryFn: () => getLobbies(filter),
-  };
-}
-
-export function useLobbies(filter?: LobbyFilter) {
-  return useQuery(lobbiesQueryOptions(filter));
-}
-
-async function startLobby(id: string) {
-  const response = await fetchWithAuth(`/lobbies/${id}/start`, {
-    method: "PATCH",
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message);
-  }
 }
 
 export function useStartLobby() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: startLobby,
+    mutationFn: (id: string) =>
+      fetchApi<void>(`/lobbies/${id}/start`, { method: "PATCH" }),
     onSuccess: (_, id) => {
       queryClient.invalidateQueries({ queryKey: queryKeys.lobbies.detail(id) });
       queryClient.invalidateQueries({ queryKey: queryKeys.lobbies.lists() });
@@ -88,93 +51,55 @@ export function useStartLobby() {
   });
 }
 
-async function vote(params: {
-  id: string;
-  data: CreateScore;
-}): Promise<string> {
-  const response = await fetchWithAuth(`/lobbies/${params.id}/scores`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(params.data),
-  });
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message);
-  }
-
-  return response.json();
-}
-
 export function useVote() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: vote,
+    mutationFn: (params: { id: string; data: CreateScore }) =>
+      fetchApi<string>(`/lobbies/${params.id}/scores`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(params.data),
+      }),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.lobbies.detail(variables.id),
       });
     },
   });
-}
-
-async function updateScore(params: {
-  id: string;
-  scoreId: string;
-  data: ScoreUpdate;
-}) {
-  const response = await fetchWithAuth(
-    `/lobbies/${params.id}/scores/${params.scoreId}`,
-    {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(params.data),
-    },
-  );
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message);
-  }
 }
 
 export function useUpdateScore() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: updateScore,
-    onSuccess: (_, variables) => {
+    mutationFn: (params: { id: string; scoreId: string; data: ScoreUpdate }) =>
+      fetchApi<void>(`/lobbies/${params.id}/scores/${params.scoreId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(params.data),
+      }),
+    onSuccess: (_, variables) =>
       queryClient.invalidateQueries({
         queryKey: queryKeys.lobbies.detail(variables.id),
-      });
-    },
+      }),
   });
-}
-
-async function kickParticipant(params: { id: string; targetUserId: string }) {
-  const response = await fetchWithAuth(
-    `/lobbies/${params.id}/participants/${params.targetUserId}`,
-    {
-      method: "DELETE",
-    },
-  );
-
-  if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message);
-  }
 }
 
 export function useKickParticipant() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: kickParticipant,
-    onSuccess: (_, variables) => {
+    mutationFn: (params: { id: string; targetUserId: string }) =>
+      fetchApi<void>(
+        `/lobbies/${params.id}/participants/${params.targetUserId}`,
+        {
+          method: "DELETE",
+        },
+      ),
+    onSuccess: (_, variables) =>
       queryClient.invalidateQueries({
         queryKey: queryKeys.lobbies.detail(variables.id),
-      });
-    },
+      }),
   });
 }
