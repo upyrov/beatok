@@ -1,6 +1,9 @@
 import { MutationCache, QueryCache, QueryClient } from "@tanstack/react-query";
 
-const globalErrorHandler = (error: Error) => {
+const globalErrorHandler = (error: Error, ...args: any[]) => {
+  const queryOrMutation = args[args.length - 1];
+  if (!queryOrMutation?.meta?.hasErrorMessage) return;
+
   if (typeof window !== "undefined") {
     window.dispatchEvent(
       new CustomEvent("globalerror", { detail: error.message }),

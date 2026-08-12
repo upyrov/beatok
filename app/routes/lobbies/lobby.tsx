@@ -120,9 +120,9 @@ export default function Lobby() {
     }[lobby.state];
 
   return (
-    <main className="container mx-auto p-4 max-w-7xl flex-1 w-full flex gap-8">
+    <main className="container mx-auto p-4 max-w-7xl flex-1 w-full flex flex-col lg:flex-row gap-8">
       {!lobby ? (
-        <div className="w-full flex gap-8">
+        <div className="w-full flex flex-col lg:flex-row gap-8">
           {/* Column 1: Info and Participants */}
           <div className="flex flex-col gap-4 flex-1">
             <div className="flex items-center justify-between">

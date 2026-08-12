@@ -15,6 +15,9 @@ export const userQueryOptions = () => ({
   staleTime: Infinity,
   refetchOnMount: false,
   refetchOnWindowFocus: false,
+  meta: {
+    hasErrorMessage: false,
+  },
 });
 
 export const useUser = () => useQuery(userQueryOptions());
