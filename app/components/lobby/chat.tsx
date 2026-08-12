@@ -15,6 +15,7 @@ export interface Message {
 export function Chat() {
   const { lobby, connection } = use(LobbyContext);
   const [messages, setMessages] = useState<Message[]>([]);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const participantsRef = useRef(lobby?.participants ?? []);
   useEffect(() => {
@@ -41,6 +42,12 @@ export function Chat() {
     };
   }, [connection]);
 
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages]);
+
   const form = useForm({
     defaultValues: {
       content: "",
@@ -61,7 +68,10 @@ export function Chat() {
       <div className="p-4 border-b border-black/10 dark:border-white/10 font-bold">
         Chat
       </div>
-      <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-2">
+      <div
+        ref={scrollRef}
+        className="flex-1 overflow-y-auto p-4 flex flex-col gap-2"
+      >
         {messages.map((m, i) => (
           <div key={i} className="text-sm flex items-start gap-2">
             <UserCard user={m.sender} className="shrink-0" />
