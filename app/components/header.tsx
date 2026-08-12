@@ -12,20 +12,23 @@ export function Header({ user }: { user: Me | null }) {
   const navigate = useNavigate();
 
   return (
-    <header className="flex justify-between items-center p-6 border-b border-black/5 dark:border-white/5">
+    <header className="flex justify-between items-center h-header px-6 border-b border-black/5 dark:border-white/5 bg-white/50 dark:bg-black/20 backdrop-blur-md sticky top-0 z-40">
       <div>
-        <Link to="/">
+        <Link to="/" className="flex items-center gap-3">
           <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
             Beatok
           </h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Beat battle
+          <span className="text-gray-300 dark:text-gray-600 text-2xl font-light leading-none pb-1">
+            |
+          </span>
+          <p className="text-lg text-gray-500 dark:text-gray-400 font-medium">
+            Beat Battle
           </p>
         </Link>
       </div>
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-4">
         <Link to="/lobbies/new">
-          <Button>Create lobby</Button>
+          <Button>Create Lobby</Button>
         </Link>
         {user ? (
           <Menu.Root>
@@ -35,11 +38,16 @@ export function Header({ user }: { user: Me | null }) {
               </div>
             </Menu.Trigger>
             <Menu.Portal>
-              <Menu.Positioner side="bottom" align="end" sideOffset={8}>
+              <Menu.Positioner
+                side="bottom"
+                align="end"
+                sideOffset={8}
+                className="z-50"
+              >
                 <Menu.Popup className="sys-popup min-w-50">
                   <Menu.Item
                     className="sys-popup-item w-full flex items-center gap-2 cursor-pointer"
-                    onClick={() => navigate(`/users/${user.id}`)}
+                    render={<Link to={`/users/${user.id}`} />}
                   >
                     <CgUser className="text-lg" /> Profile
                   </Menu.Item>

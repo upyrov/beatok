@@ -28,7 +28,11 @@ export function ActionButton({
           />
         </div>
       )}
-      <span className={pending ? "opacity-0" : ""}>{children}</span>
+      <span
+        className={`inline-flex items-center justify-center gap-2 ${pending ? "opacity-0" : ""}`}
+      >
+        {children}
+      </span>
     </Button>
   );
 }

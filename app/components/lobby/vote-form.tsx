@@ -1,4 +1,4 @@
-import { Form as BaseForm, Input as BaseInput } from "@base-ui/react";
+import { Form as BaseForm } from "@base-ui/react";
 import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
 import { use } from "react";
@@ -6,6 +6,7 @@ import { useOutletContext } from "react-router";
 import { useUpdateScore, useVote } from "~/api/lobby";
 import type { Me } from "~/api/types/user";
 import { ActionButton } from "~/components/action-button";
+import { Knob } from "~/components/knob";
 import { MutationBoundary } from "~/components/mutation-boundary";
 import { LobbyContext } from "~/contexts";
 
@@ -113,19 +114,21 @@ export function VoteForm({
           }}
           children={(field) => (
             <div className="flex items-center gap-3">
-              <BaseInput
-                type="range"
-                min="1"
-                max="10"
-                step="1"
+              <Knob
                 value={field.state.value}
-                onBlur={field.handleBlur}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  field.handleChange(Number(e.target.value))
+                onChange={field.handleChange}
+                min={1}
+                max={10}
+                size={60}
+                color={
+                  field.state.value >= 8
+                    ? "#4ade80"
+                    : field.state.value >= 4
+                      ? "#fb923c"
+                      : "#f87171"
                 }
-                className="w-32 accent-blue-500"
               />
-              <span className="font-mono font-medium w-4 text-center">
+              <span className="font-mono font-bold text-xl w-6 text-center">
                 {field.state.value}
               </span>
             </div>

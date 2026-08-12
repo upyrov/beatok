@@ -8,6 +8,8 @@ import {
 export default [
   index("routes/home.tsx"),
   route("admin", "routes/admin.tsx"),
+  route("privacy-policy", "routes/privacy-policy.tsx"),
+  route("terms-of-service", "routes/terms-of-service.tsx"),
 
   layout("routes/auth/layout.tsx", [
     route("signin", "routes/auth/signin.tsx"),
@@ -16,6 +18,7 @@ export default [
     route("action", "routes/auth/action.tsx"),
   ]),
 
+  route("lobbies", "routes/lobbies.tsx"),
   route("lobbies/new", "routes/lobbies/new.tsx"),
   layout("routes/lobbies/layout.tsx", [
     route("lobbies/:id", "routes/lobbies/lobby.tsx"),

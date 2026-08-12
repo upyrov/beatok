@@ -9,6 +9,7 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
+import { Footer } from "~/components/footer";
 import { Header } from "~/components/header";
 import type { Route } from "./+types/root";
 import { userQueryOptions, useUser } from "./api/user";
@@ -108,7 +109,10 @@ function Content() {
   return (
     <>
       <Header user={user} />
-      <Outlet context={{ user }} />
+      <main className="flex flex-col min-h-[calc(100svh-var(--spacing-header))]">
+        <Outlet context={{ user }} />
+      </main>
+      <Footer />
     </>
   );
 }

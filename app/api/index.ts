@@ -46,11 +46,7 @@ export async function fetchApi<T>(
 type ResolveItem<T> = T extends readonly [infer Item, ...unknown[]] ? Item : T;
 type ResolveArgs<T> = T extends readonly [unknown, ...infer Args] ? Args : [];
 
-export class CrudApi<
-  TConfig,
-  TCreate = unknown,
-  TUpdate = unknown,
-> {
+export class CrudApi<TConfig, TCreate = unknown, TUpdate = unknown> {
   constructor(
     protected basePath: string,
     protected queryKeys: {
@@ -69,7 +65,8 @@ export class CrudApi<
       ),
   });
 
-  useList = (...args: ResolveArgs<TConfig>) => useQuery(this.listQueryOptions(...args));
+  useList = (...args: ResolveArgs<TConfig>) =>
+    useQuery(this.listQueryOptions(...args));
 
   useCreate = () => {
     const queryClient = useQueryClient();

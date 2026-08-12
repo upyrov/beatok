@@ -155,7 +155,9 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
             />
           </BaseForm>
         ) : (
-          <h1 className="text-3xl font-bold text-gray-200">{user.name}</h1>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-200">
+            {user.name}
+          </h1>
         )}
         <div className="flex items-center gap-6 mt-2 text-sm text-gray-600 dark:text-gray-400">
           <div className="flex flex-col">

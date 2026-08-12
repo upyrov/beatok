@@ -1,6 +1,7 @@
 export function playNotificationSound(type: "warning" | "alert") {
   try {
-    const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+    const AudioContext =
+      window.AudioContext || (window as any).webkitAudioContext;
     if (!AudioContext) return;
     const ctx = new AudioContext();
     const osc = ctx.createOscillator();
@@ -24,12 +25,12 @@ export function playNotificationSound(type: "warning" | "alert") {
       osc.frequency.setValueAtTime(440, ctx.currentTime);
       osc.frequency.setValueAtTime(554.37, ctx.currentTime + 0.15); // C#
       osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.3); // E
-      
+
       gain.gain.setValueAtTime(0, ctx.currentTime);
       gain.gain.linearRampToValueAtTime(0.5, ctx.currentTime + 0.05);
       gain.gain.setValueAtTime(0.5, ctx.currentTime + 0.4);
       gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1.5);
-      
+
       osc.start();
       osc.stop(ctx.currentTime + 1.5);
     }
@@ -44,7 +45,10 @@ export function requestNotificationPermission() {
   }
 }
 
-export function sendBrowserNotification(title: string, options?: NotificationOptions) {
+export function sendBrowserNotification(
+  title: string,
+  options?: NotificationOptions,
+) {
   if (!("Notification" in window)) return;
   if (!document.hidden) return; // Don't send push notification if the user is currently viewing the page
 

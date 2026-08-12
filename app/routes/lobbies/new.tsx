@@ -37,11 +37,14 @@ export default function NewLobby() {
     onSubmit: async ({ value }) => {
       if (createLobbyMutation.isPending) return;
       try {
+        const hours = Math.floor(value.submissionTime / 60);
+        const minutes = value.submissionTime % 60;
+
         const createdLobbyId = await createLobbyMutation.mutateAsync({
           name: value.name,
           genreId: value.genreId,
           participantLimit: Number(value.participantLimit),
-          submissionTime: `00:${String(value.submissionTime).padStart(2, "0")}:00`,
+          submissionTime: `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:00`,
         });
         navigate(`/lobbies/${createdLobbyId}`);
       } catch (error) {
@@ -169,7 +172,7 @@ export default function NewLobby() {
           <form.Field
             name="submissionTime"
             validators={{
-              onChange: type("3 <= number <= 30"),
+              onChange: type("3 <= number <= 120"),
             }}
             children={(field) => (
               <div className="flex flex-col items-center gap-3">
@@ -180,7 +183,7 @@ export default function NewLobby() {
                   value={field.state.value}
                   onChange={(val) => field.handleChange(val)}
                   min={3}
-                  max={30}
+                  max={120}
                   color="#fb923c"
                 />
                 <span className="text-sm font-medium text-gray-900 dark:text-gray-200">

@@ -37,7 +37,7 @@ export function CommentList({ userId }: { userId: string }) {
                 {new Date(comment.createdAt).toLocaleString()}
               </span>
             </div>
-            <p className="text-gray-200 whitespace-pre-wrap mt-2">
+            <p className="text-gray-800 dark:text-gray-200 whitespace-pre-wrap mt-2">
               {comment.content}
             </p>
           </div>

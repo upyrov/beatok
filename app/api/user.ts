@@ -11,6 +11,10 @@ export const getUser = (): Promise<Me> => fetchApi<Me>("/users/me");
 export const userQueryOptions = () => ({
   queryKey: queryKeys.users.me(),
   queryFn: getUser,
+  retry: (_: number, error: Error) => error.message !== "Unauthorized",
+  staleTime: Infinity,
+  refetchOnMount: false,
+  refetchOnWindowFocus: false,
 });
 
 export const useUser = () => useQuery(userQueryOptions());

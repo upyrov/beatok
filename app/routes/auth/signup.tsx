@@ -39,7 +39,10 @@ export default function Signup() {
   });
 
   return (
-    <>
+    <div className="sys-panel p-8 w-full max-w-sm flex flex-col animate-fade-in">
+      <h1 className="text-2xl font-bold mb-6 text-center text-gray-900 dark:text-white">
+        Sign Up
+      </h1>
       <BaseForm
         onSubmit={(e) => {
           e.preventDefault();
@@ -57,7 +60,7 @@ export default function Signup() {
             onChange: type("string > 0"),
           }}
           children={(field) => (
-            <label className="flex flex-col gap-1">
+            <label className="flex flex-col gap-1 font-medium text-sm text-gray-700 dark:text-gray-300">
               Name
               <BaseInput
                 name={field.name}
@@ -65,7 +68,7 @@ export default function Signup() {
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
                 placeholder="John Doe"
-                className="border p-2 rounded"
+                className="sys-input w-full mt-1 font-normal"
               />
               <FieldError errors={field.state.meta.errors} />
             </label>
@@ -78,7 +81,7 @@ export default function Signup() {
             onChange: type("string.email"),
           }}
           children={(field) => (
-            <label className="flex flex-col gap-1">
+            <label className="flex flex-col gap-1 font-medium text-sm text-gray-700 dark:text-gray-300">
               Email
               <BaseInput
                 name={field.name}
@@ -87,7 +90,7 @@ export default function Signup() {
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
                 placeholder="email@beatok.xyz"
-                className="border p-2 rounded"
+                className="sys-input w-full mt-1 font-normal"
               />
               <FieldError errors={field.state.meta.errors} />
             </label>
@@ -100,7 +103,7 @@ export default function Signup() {
             onChange: type("string >= 6"),
           }}
           children={(field) => (
-            <label className="flex flex-col gap-1">
+            <label className="flex flex-col gap-1 font-medium text-sm text-gray-700 dark:text-gray-300">
               Password
               <BaseInput
                 name={field.name}
@@ -109,7 +112,7 @@ export default function Signup() {
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
                 placeholder="Secret123!"
-                className="border p-2 rounded"
+                className="sys-input w-full mt-1 font-normal"
               />
               <FieldError errors={field.state.meta.errors} />
             </label>
@@ -130,10 +133,12 @@ export default function Signup() {
         />
       </BaseForm>
 
-      <div className="my-4 flex items-center justify-between">
-        <hr className="w-full border-gray-300" />
-        <span className="p-2 text-gray-400">or</span>
-        <hr className="w-full border-gray-300" />
+      <div className="my-6 flex items-center justify-between opacity-60">
+        <hr className="w-full border-gray-300 dark:border-gray-600" />
+        <span className="p-2 text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400">
+          or
+        </span>
+        <hr className="w-full border-gray-300 dark:border-gray-600" />
       </div>
 
       <ActionButton
@@ -145,12 +150,17 @@ export default function Signup() {
         }
         pending={signInWithGoogleMutation.isPending}
       >
-        <CgGoogle /> Continue with Google
+        <CgGoogle className="mr-2" size={18} /> Continue with Google
       </ActionButton>
 
-      <Link to="/signin" className="text-blue-500 hover:underline mt-4 block">
-        Already have an account?
-      </Link>
-    </>
+      <div className="mt-6 flex justify-center text-sm">
+        <Link
+          to="/signin"
+          className="text-blue-600 dark:text-blue-400 hover:underline"
+        >
+          Already have an account? Sign in
+        </Link>
+      </div>
+    </div>
   );
 }

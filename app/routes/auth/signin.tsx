@@ -49,7 +49,10 @@ export default function Signin() {
   });
 
   return (
-    <>
+    <div className="sys-panel p-8 w-full max-w-sm flex flex-col animate-fade-in">
+      <h1 className="text-2xl font-bold mb-6 text-center text-gray-900 dark:text-white">
+        Sign In
+      </h1>
       <BaseForm
         onSubmit={(e) => {
           e.preventDefault();
@@ -67,7 +70,7 @@ export default function Signin() {
             onChange: type("string.email"),
           }}
           children={(field) => (
-            <label className="flex flex-col gap-1">
+            <label className="flex flex-col gap-1 font-medium text-sm text-gray-700 dark:text-gray-300">
               Email
               <BaseInput
                 name={field.name}
@@ -76,7 +79,7 @@ export default function Signin() {
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
                 placeholder="email@beatok.xyz"
-                className="border p-2 rounded"
+                className="sys-input w-full mt-1 font-normal"
               />
               <FieldError errors={field.state.meta.errors} />
             </label>
@@ -89,7 +92,7 @@ export default function Signin() {
             onChange: type("string > 0"),
           }}
           children={(field) => (
-            <label className="flex flex-col gap-1">
+            <label className="flex flex-col gap-1 font-medium text-sm text-gray-700 dark:text-gray-300">
               Password
               <BaseInput
                 name={field.name}
@@ -98,7 +101,7 @@ export default function Signin() {
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
                 placeholder="Secret123!"
-                className="border p-2 rounded"
+                className="sys-input w-full mt-1 font-normal"
               />
               <FieldError errors={field.state.meta.errors} />
             </label>
@@ -119,10 +122,12 @@ export default function Signin() {
         />
       </BaseForm>
 
-      <div className="my-4 flex items-center justify-between">
-        <hr className="w-full border-gray-300" />
-        <span className="p-2 text-gray-400">or</span>
-        <hr className="w-full border-gray-300" />
+      <div className="my-6 flex items-center justify-between opacity-60">
+        <hr className="w-full border-gray-300 dark:border-gray-600" />
+        <span className="p-2 text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400">
+          or
+        </span>
+        <hr className="w-full border-gray-300 dark:border-gray-600" />
       </div>
 
       <ActionButton
@@ -134,31 +139,36 @@ export default function Signin() {
         }
         pending={signInWithGoogleMutation.isPending}
       >
-        <CgGoogle /> Continue with Google
+        <CgGoogle className="mr-2" size={18} /> Continue with Google
       </ActionButton>
 
-      <Link to="/signup" className="text-blue-500 hover:underline mt-4 block">
-        Don't have an account?
-      </Link>
-      <BaseButton
-        type="button"
-        onClick={() => {
-          const email = form.state.values.email;
-          if (email && email.includes("@")) {
-            resetPasswordMutation.mutate(email);
-          } else {
-            navigate("/password-reset");
-          }
-        }}
-        className="text-blue-500 hover:underline mt-2 block text-left"
-      >
-        Forgot password?
-      </BaseButton>
-      {resetPasswordMutation.isSuccess && (
-        <p className="text-green-500 mt-2 text-sm">
-          Password reset link sent to {form.state.values.email}!
-        </p>
-      )}
-    </>
+      <div className="mt-6 flex flex-col gap-2 items-center text-sm">
+        <Link
+          to="/signup"
+          className="text-blue-600 dark:text-blue-400 hover:underline"
+        >
+          Don't have an account? Sign up
+        </Link>
+        <BaseButton
+          type="button"
+          onClick={() => {
+            const email = form.state.values.email;
+            if (email && email.includes("@")) {
+              resetPasswordMutation.mutate(email);
+            } else {
+              navigate("/password-reset");
+            }
+          }}
+          className="text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors"
+        >
+          Forgot password?
+        </BaseButton>
+        {resetPasswordMutation.isSuccess && (
+          <p className="text-green-500 mt-2 text-xs text-center">
+            Password reset link sent to {form.state.values.email}!
+          </p>
+        )}
+      </div>
+    </div>
   );
 }

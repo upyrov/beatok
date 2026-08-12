@@ -75,9 +75,7 @@ export function Chat() {
         {messages.map((m, i) => (
           <div key={i} className="text-sm flex items-start gap-2">
             <UserCard user={m.sender} className="shrink-0" />
-            <span className="wrap-break-word mt-1">
-              {m.content}
-            </span>
+            <span className="wrap-break-word mt-1">{m.content}</span>
           </div>
         ))}
       </div>

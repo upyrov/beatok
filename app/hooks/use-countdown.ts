@@ -23,9 +23,12 @@ export function useCountdown(
   useEffect(() => {
     if (timeLeft <= 0) return;
     const interval = setInterval(() => {
-      const newTimeLeft = Math.max(0, Math.floor((endTime - Date.now()) / 1000));
+      const newTimeLeft = Math.max(
+        0,
+        Math.floor((endTime - Date.now()) / 1000),
+      );
       setTimeLeft(newTimeLeft);
-      
+
       if (newTimeLeft === 60) onMilestone?.(60);
       if (newTimeLeft === 10) onMilestone?.(10);
       if (newTimeLeft === 0 && timeLeft > 0) onMilestone?.(0);
