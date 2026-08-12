@@ -12,6 +12,18 @@ export function Voting() {
   const { minutes, seconds } = useCountdown(
     lobby?.votingTime ?? "00:00:00",
     lobby?.votingStartedAt,
+    (timeLeft) => {
+      import("~/lib/notification").then(
+        ({ playNotificationSound, sendBrowserNotification }) => {
+          if (timeLeft === 10) {
+            playNotificationSound("warning");
+          } else if (timeLeft === 0) {
+            playNotificationSound("alert");
+            sendBrowserNotification("Voting has ended!");
+          }
+        },
+      );
+    },
   );
 
   const [votedSubmissionId, setVotedSubmissionId] = useState<string | null>(

@@ -1,6 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 
-export function useCountdown(timeLimit: string, startedAt?: string) {
+export function useCountdown(
+  timeLimit: string,
+  startedAt?: string,
+  onMilestone?: (timeLeft: number) => void,
+) {
   const { startTime, endTime } = useMemo(() => {
     const parsedSeconds = timeLimit
       ? timeLimit.split(":").reduce((acc, time) => 60 * acc + Number(time), 0)
@@ -19,10 +23,15 @@ export function useCountdown(timeLimit: string, startedAt?: string) {
   useEffect(() => {
     if (timeLeft <= 0) return;
     const interval = setInterval(() => {
-      setTimeLeft(Math.max(0, Math.floor((endTime - Date.now()) / 1000)));
+      const newTimeLeft = Math.max(0, Math.floor((endTime - Date.now()) / 1000));
+      setTimeLeft(newTimeLeft);
+      
+      if (newTimeLeft === 60) onMilestone?.(60);
+      if (newTimeLeft === 10) onMilestone?.(10);
+      if (newTimeLeft === 0 && timeLeft > 0) onMilestone?.(0);
     }, 1000);
     return () => clearInterval(interval);
-  }, [endTime, timeLeft]);
+  }, [endTime, timeLeft, onMilestone]);
 
   const minutes = Math.floor(timeLeft / 60)
     .toString()

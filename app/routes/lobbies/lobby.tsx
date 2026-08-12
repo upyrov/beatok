@@ -81,6 +81,10 @@ export default function Lobby() {
     if (user && connection && id && !lobby && joinAttemptId.current !== id) {
       joinAttemptId.current = id;
       joinMutation.mutate();
+
+      import("~/lib/notification").then((m) =>
+        m.requestNotificationPermission(),
+      );
     }
   }, [user, connection, id, lobby, joinMutation.mutate]);
 

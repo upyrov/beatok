@@ -35,6 +35,18 @@ export function Submitting() {
   const { minutes, seconds } = useCountdown(
     lobby?.submissionTime ?? "00:00:00",
     lobby?.submissionStartedAt,
+    (timeLeft) => {
+      import("~/lib/notification").then(
+        ({ playNotificationSound, sendBrowserNotification }) => {
+          if (timeLeft === 10) {
+            playNotificationSound("warning");
+          } else if (!timeLeft) {
+            playNotificationSound("alert");
+            sendBrowserNotification("Time's up! Return to Beatok to vote!");
+          }
+        },
+      );
+    },
   );
 
   const groupedCategories = useMemo(() => {
