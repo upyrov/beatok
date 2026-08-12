@@ -108,7 +108,7 @@ export function FileDropzone({
           className={`flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-xl cursor-pointer transition-colors outline-none focus-visible:ring-2 focus-visible:ring-white ${
             isDragActive
               ? "border-white bg-black/10 dark:bg-white/10"
-              : "border-black/20 dark:border-white/20 hover:border-white/40 hover:bg-black/5 dark:bg-white/5"
+              : "border-black/20 dark:border-white/20 hover:border-white/40 hover:bg-muted"
           }`}
         >
           <BaseInput {...getInputProps()} />
@@ -121,7 +121,7 @@ export function FileDropzone({
           {uploads.map((upload) => (
             <div
               key={upload.id}
-              className="bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 p-3 rounded-lg flex flex-col gap-2 w-full"
+              className="bg-muted border border-muted-border p-3 rounded-lg flex flex-col gap-2 w-full"
             >
               <div className="flex justify-between items-center text-sm">
                 <span className="font-medium truncate mr-2">

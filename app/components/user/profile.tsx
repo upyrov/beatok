@@ -1,4 +1,4 @@
-import { Form as BaseForm, Input as BaseInput } from "@base-ui/react";
+import { Form as BaseForm, Input as BaseInput, Button } from "@base-ui/react";
 import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { type } from "arktype";
@@ -8,7 +8,6 @@ import { queryKeys } from "~/api/query-keys";
 import type { Profile as IProfile } from "~/api/types/user";
 import { useUpdateUser, useUploadAvatarUrl } from "~/api/user";
 import { FileDropzone } from "~/components/file-dropzone";
-import { Skeleton } from "~/components/skeleton";
 import { uploadFile } from "~/lib/upload";
 import { ActionButton } from "../action-button";
 
@@ -80,14 +79,14 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
   ) : null;
 
   return (
-    <div className="flex items-center gap-6 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 p-6 rounded-xl relative">
+    <div className="flex items-center gap-6 bg-muted border border-muted-border p-6 rounded-xl relative">
       <div className="flex flex-col items-center gap-2">
         <div className="relative group/avatar inline-flex shrink-0 w-32 h-32">
           {user.picture ? (
             <>
               {!imageLoaded && (
                 <div className="absolute inset-0 flex items-center justify-center z-10">
-                  <Skeleton className="absolute inset-0 rounded-lg w-full h-full" />
+                  <div className="system-skeleton absolute inset-0 rounded-lg w-full h-full" />
                   <CgSpinner className="animate-spin text-gray-500 w-8 h-8 relative" />
                 </div>
               )}
@@ -103,7 +102,7 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
           )}
           {dropzoneOverlay}
           {isCurrentUser && user.picture && (
-            <button
+            <Button
               type="button"
               onClick={handleRemoveAvatar}
               disabled={updateUserMutation.isPending}
@@ -111,7 +110,7 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
               title="Remove profile picture"
             >
               <CgTrash size={16} />
-            </button>
+            </Button>
           )}
         </div>
       </div>

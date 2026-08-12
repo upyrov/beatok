@@ -40,6 +40,7 @@ export default function PasswordReset() {
             password reset instructions.
           </p>
           <Link
+            viewTransition
             to="/signin"
             className="text-blue-500 hover:underline mt-4 block"
           >
@@ -94,6 +95,7 @@ export default function PasswordReset() {
           />
 
           <Link
+            viewTransition
             to="/signin"
             className="text-blue-500 hover:underline mt-4 block"
           >

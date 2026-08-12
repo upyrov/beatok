@@ -2,7 +2,6 @@ import { useState } from "react";
 import { CgProfile, CgSpinner } from "react-icons/cg";
 import { Link } from "react-router";
 import type { Me, User } from "~/api/types/user";
-import { Skeleton } from "~/components/skeleton";
 
 export interface UserCardProps {
   user: Me | User;
@@ -30,7 +29,7 @@ export function UserCard({
           <>
             {!imageLoaded && (
               <div className="absolute inset-0 flex items-center justify-center z-10">
-                <Skeleton className="absolute inset-0 rounded-sm w-full h-full" />
+                <div className="system-skeleton absolute inset-0 rounded-sm w-full h-full" />
                 <CgSpinner className="animate-spin text-gray-500 w-1/2 h-1/2 relative" />
               </div>
             )}
@@ -62,8 +61,9 @@ export function UserCard({
 
   return (
     <Link
+      viewTransition
       to={`/users/${user.id}`}
-      className={`inline-flex items-center gap-2 hover:bg-black/5 dark:bg-white/5 p-1 rounded transition-colors group text-sm ${className}`}
+      className={`inline-flex items-center gap-2 hover:bg-muted p-1 rounded transition-colors group text-sm ${className}`}
     >
       {content}
     </Link>

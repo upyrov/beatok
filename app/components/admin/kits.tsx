@@ -1,3 +1,4 @@
+import { Button } from "@base-ui/react";
 import { type } from "arktype";
 import { CgAdd } from "react-icons/cg";
 import { useGenres } from "~/api/genre";
@@ -80,7 +81,7 @@ export function Kits() {
                     {genres.map((genre) => {
                       const isSelected = field.state.value.includes(genre.id);
                       return (
-                        <button
+                        <Button
                           key={genre.id}
                           type="button"
                           onClick={() => {
@@ -98,7 +99,7 @@ export function Kits() {
                           }`}
                         >
                           {genre.name}
-                        </button>
+                        </Button>
                       );
                     })}
                   </div>

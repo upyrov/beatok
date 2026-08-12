@@ -14,7 +14,6 @@ import { Header } from "~/components/header";
 import type { Route } from "./+types/root";
 import { userQueryOptions, useUser } from "./api/user";
 import "./app.css";
-import { Skeleton } from "./components/skeleton";
 import { auth } from "./lib/firebase";
 import { getQueryClient } from "./lib/query-client";
 
@@ -54,7 +53,7 @@ export const links: Route.LinksFunction = () => [
 export function HydrateFallback() {
   return (
     <div className="min-h-screen flex p-8">
-      <Skeleton className="w-full h-full min-h-[80vh]" />
+      <div className="system-skeleton w-full h-full min-h-[80vh]" />
     </div>
   );
 }
@@ -109,7 +108,7 @@ function Content() {
   return (
     <>
       <Header user={user} />
-      <main className="flex flex-col min-h-[calc(100svh-var(--spacing-header))]">
+      <main className="flex flex-col min-h-[calc(100svh-var(--header-height))]">
         <Outlet context={{ user }} />
       </main>
       <Footer />

@@ -1,10 +1,9 @@
-import { Menu } from "@base-ui/react";
+import { Button, Menu } from "@base-ui/react";
 import { CgLogIn, CgLogOut, CgUser } from "react-icons/cg";
 import { Link, useNavigate } from "react-router";
 import type { Me } from "~/api/types/user";
 import { UserCard } from "~/components/user-card";
 import { useSignOut } from "~/hooks/use-auth";
-import { Button } from "./button";
 import { ThemeToggle } from "./theme-toggle";
 
 export function Header({ user }: { user: Me | null }) {
@@ -14,7 +13,7 @@ export function Header({ user }: { user: Me | null }) {
   return (
     <header className="flex justify-between items-center h-header px-6 border-b border-black/5 dark:border-white/5 bg-white/50 dark:bg-black/20 backdrop-blur-md sticky top-0 z-40">
       <div>
-        <Link to="/" className="flex items-center gap-3">
+        <Link viewTransition to="/" className="flex items-center gap-3">
           <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
             Beatok
           </h1>
@@ -27,8 +26,8 @@ export function Header({ user }: { user: Me | null }) {
         </Link>
       </div>
       <div className="flex items-center gap-4">
-        <Link to="/lobbies/new">
-          <Button>Create Lobby</Button>
+        <Link viewTransition to="/lobbies/new">
+          <Button className="system-button">Create Lobby</Button>
         </Link>
         {user ? (
           <Menu.Root>
@@ -44,15 +43,15 @@ export function Header({ user }: { user: Me | null }) {
                 sideOffset={8}
                 className="z-50"
               >
-                <Menu.Popup className="sys-popup min-w-50">
+                <Menu.Popup className="system-popup min-w-50">
                   <Menu.Item
-                    className="sys-popup-item w-full flex items-center gap-2 cursor-pointer"
-                    render={<Link to={`/users/${user.id}`} />}
+                    className="system-popup-item w-full flex items-center gap-2 cursor-pointer"
+                    render={<Link viewTransition to={`/users/${user.id}`} />}
                   >
                     <CgUser className="text-lg" /> Profile
                   </Menu.Item>
                   <Menu.Item
-                    className="sys-popup-item w-full flex items-center gap-2 cursor-pointer text-red-600 dark:text-red-400 focus:bg-red-50 dark:focus:bg-red-500/10 focus:text-red-700 dark:focus:text-red-300"
+                    className="system-popup-item w-full flex items-center gap-2 cursor-pointer text-red-600 dark:text-red-400 focus:bg-red-50 dark:focus:bg-red-500/10 focus:text-red-700 dark:focus:text-red-300"
                     onClick={() => signOutMutation.mutate()}
                   >
                     <CgLogOut className="text-lg" /> Sign out
@@ -62,8 +61,8 @@ export function Header({ user }: { user: Me | null }) {
             </Menu.Portal>
           </Menu.Root>
         ) : (
-          <Link to="/signin">
-            <Button>
+          <Link viewTransition to="/signin">
+            <Button className="system-button">
               <CgLogIn />
             </Button>
           </Link>

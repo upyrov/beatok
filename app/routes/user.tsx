@@ -8,9 +8,7 @@ import {
   useUserById,
   userByIdQueryOptions,
 } from "~/api/user";
-import { Card } from "~/components/card";
 import { PageContainer } from "~/components/page-container";
-import { Skeleton } from "~/components/skeleton";
 import { Activity } from "~/components/user/activity";
 import { ActivityGraph } from "~/components/user/activity-graph";
 import { CommentForm } from "~/components/user/comment-form";
@@ -59,7 +57,7 @@ function ActivitySection({
 
   return (
     <>
-      <Card>
+      <div className="system-card">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold">Activity Graph</h2>
           {!!availableYears?.length && (
@@ -73,7 +71,7 @@ function ActivitySection({
                 );
               }}
             >
-              <Select.Trigger className="sys-input cursor-pointer flex justify-between items-center gap-2">
+              <Select.Trigger className="system-input cursor-pointer flex justify-between items-center gap-2">
                 <Select.Value>
                   {(value) => (value === "default" ? "Last 365 days" : value)}
                 </Select.Value>
@@ -86,15 +84,15 @@ function ActivitySection({
                   alignItemWithTrigger={false}
                   sideOffset={4}
                 >
-                  <Select.Popup className="sys-popup min-w-(--anchor-width">
-                    <Select.Item value="default" className="sys-popup-item">
+                  <Select.Popup className="system-popup min-w-(--anchor-width">
+                    <Select.Item value="default" className="system-popup-item">
                       <Select.ItemText>Last 365 days</Select.ItemText>
                     </Select.Item>
                     {availableYears?.map((y) => (
                       <Select.Item
                         key={y}
                         value={y.toString()}
-                        className="sys-popup-item"
+                        className="system-popup-item"
                       >
                         <Select.ItemText>{y}</Select.ItemText>
                       </Select.Item>
@@ -107,10 +105,12 @@ function ActivitySection({
         </div>
         {isFetching ? (
           <div className="w-full flex justify-center py-8">
-            <Skeleton className="w-full h-64" />
+            <div className="system-skeleton w-full h-64" />
           </div>
         ) : (
-          <Suspense fallback={<Skeleton className="w-full h-64 mt-4" />}>
+          <Suspense
+            fallback={<div className="system-skeleton w-full h-64 mt-4" />}
+          >
             <ActivityGraph
               activity={activity}
               year={selectedYear}
@@ -119,14 +119,17 @@ function ActivitySection({
             />
           </Suspense>
         )}
-      </Card>
+      </div>
       {selectedDate && (
-        <Card key={selectedDate} className="animate-fade-in">
+        <div
+          key={selectedDate}
+          className="system-card transition duration-300 starting:opacity-0 starting:translate-y-1"
+        >
           <h2 className="text-2xl font-bold mb-6">
             Activity for {selectedDate}
           </h2>
           <Activity userId={userId} date={selectedDate} />
-        </Card>
+        </div>
       )}
     </>
   );
@@ -136,32 +139,32 @@ export function HydrateFallback() {
   return (
     <PageContainer className="max-w-5xl">
       {/* Profile Skeleton */}
-      <div className="flex items-center gap-6 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 p-6 rounded-xl relative">
+      <div className="flex items-center gap-6 bg-muted border border-muted-border p-6 rounded-xl relative">
         <div className="relative group/avatar inline-flex shrink-0">
-          <Skeleton className="w-32 h-32 rounded-lg" />
+          <div className="system-skeleton w-32 h-32 rounded-lg" />
         </div>
         <div className="flex flex-col flex-1 gap-4">
-          <Skeleton className="w-64 h-10 rounded-lg" />
-          <Skeleton className="w-32 h-6 rounded-lg" />
+          <div className="system-skeleton w-64 h-10 rounded-lg" />
+          <div className="system-skeleton w-32 h-6 rounded-lg" />
         </div>
       </div>
 
       {/* Activity Section Skeleton */}
-      <div className="bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl p-6">
+      <div className="bg-muted border border-muted-border rounded-xl p-6">
         <div className="flex justify-between items-center mb-4">
-          <Skeleton className="w-48 h-8 rounded-lg" />
-          <Skeleton className="w-32 h-10 rounded-lg" />
+          <div className="system-skeleton w-48 h-8 rounded-lg" />
+          <div className="system-skeleton w-32 h-10 rounded-lg" />
         </div>
-        <Skeleton className="w-full h-64 mt-4" />
+        <div className="system-skeleton w-full h-64 mt-4" />
       </div>
 
       {/* Comments Skeleton */}
-      <div className="bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl p-6">
-        <Skeleton className="w-40 h-8 rounded-lg mb-4" />
+      <div className="bg-muted border border-muted-border rounded-xl p-6">
+        <div className="system-skeleton w-40 h-8 rounded-lg mb-4" />
         <div className="flex flex-col gap-4 mt-6">
-          <Skeleton className="w-full h-24 rounded-lg" />
-          <Skeleton className="w-full h-24 rounded-lg" />
-          <Skeleton className="w-full h-24 rounded-lg" />
+          <div className="system-skeleton w-full h-24 rounded-lg" />
+          <div className="system-skeleton w-full h-24 rounded-lg" />
+          <div className="system-skeleton w-full h-24 rounded-lg" />
         </div>
       </div>
     </PageContainer>
@@ -192,11 +195,11 @@ export default function User() {
         initialAvailableYears={user.availableYears}
       />
       {showComments && (
-        <Card>
+        <div className="system-card">
           <h2 className="text-2xl font-bold">Comments</h2>
           {canComment && <CommentForm userId={id} />}
           <CommentList userId={id} />
-        </Card>
+        </div>
       )}
     </PageContainer>
   );

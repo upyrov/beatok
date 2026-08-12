@@ -1,4 +1,4 @@
-import { Button as BaseButton } from "@base-ui/react";
+import { Button } from "@base-ui/react";
 import { useWavesurfer } from "@wavesurfer/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CgPlayButton, CgPlayPause } from "react-icons/cg";
@@ -46,16 +46,16 @@ export function AudioPlayer({ src, className = "" }: AudioPlayerProps) {
 
   return (
     <div
-      className={`animate-fade-in flex items-center gap-2 rounded-lg w-full bg-gray-200 p-1.5 border border-black/5 ${className}`}
+      className={`transition duration-300 starting:opacity-0 starting:translate-y-1 flex items-center gap-2 rounded-lg w-full bg-gray-200 p-1.5 border border-black/5 ${className}`}
     >
-      <BaseButton
+      <Button
         type="button"
         onClick={handleClick}
         disabled={!isReady}
         className="shrink-0 w-8 h-8 flex items-center justify-center bg-white hover:bg-gray-100 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed rounded-full transition-colors focus:outline-none text-black shadow-sm"
       >
         {isPlaying ? <CgPlayPause size={20} /> : <CgPlayButton size={20} />}
-      </BaseButton>
+      </Button>
 
       <div className="flex-1 h-8 relative rounded min-w-20" ref={containerRef}>
         {!isReady && (

@@ -1,9 +1,9 @@
+import { Button } from "@base-ui/react";
 import { useState } from "react";
 import { CgSpinner } from "react-icons/cg";
 import { Link, redirect } from "react-router";
 import { lobbiesQueryOptions, useLobbies } from "~/api/lobby";
 import { userQueryOptions } from "~/api/user";
-import { Button } from "~/components/button";
 import { Knob } from "~/components/knob";
 import { PageContainer } from "~/components/page-container";
 import { getQueryClient } from "~/lib/query-client";
@@ -49,7 +49,7 @@ export async function clientLoader() {
 
 export function HydrateFallback() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center animate-fade-in">
+    <div className="flex flex-col flex-1 items-center justify-center transition duration-300 starting:opacity-0 starting:translate-y-1">
       <CgSpinner className="animate-spin text-gray-400" size={48} />
     </div>
   );
@@ -65,23 +65,23 @@ export default function LandingPage() {
   return (
     <div className="flex flex-col flex-1">
       <section className="flex flex-col items-center justify-center pt-32 pb-24 px-4 text-center">
-        <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 bg-linear-to-br from-gray-900 to-gray-500 dark:from-white dark:to-gray-400 bg-clip-text text-transparent animate-fade-in">
+        <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 bg-linear-to-br from-gray-900 to-gray-500 dark:from-white dark:to-gray-400 bg-clip-text text-transparent transition duration-300 starting:opacity-0 starting:translate-y-1">
           Beat Battle
         </h1>
-        <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-400 max-w-2xl mb-10 animate-fade-in [animation-delay:100ms] [animation-fill-mode:both]">
+        <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-400 max-w-2xl mb-10 transition duration-300 starting:opacity-0 starting:translate-y-1 delay-100">
           Prove your production skills against the world. Join a lobby, craft
           your masterpiece with random sounds, and climb the global rankings.
         </p>
-        <div className="flex gap-4 animate-fade-in [animation-delay:200ms] [animation-fill-mode:both]">
-          <Link to="/lobbies">
-            <Button className="px-12 py-5 text-xl font-bold bg-blue-600 hover:bg-blue-500 border-none shadow-[0_0_1.25rem_rgba(37,99,235,0.5)]">
+        <div className="flex gap-4 transition duration-300 starting:opacity-0 starting:translate-y-1 delay-200">
+          <Link viewTransition to="/lobbies">
+            <Button className="system-button px-12 py-5 text-xl font-bold bg-blue-600 hover:bg-blue-500 border-none shadow-[0_0_1.25rem_rgba(37,99,235,0.5)]">
               Start
             </Button>
           </Link>
         </div>
       </section>
 
-      <section className="bg-black/5 dark:bg-white/5 py-24 px-4 border-y border-black/10 dark:border-white/10">
+      <section className="bg-muted py-24 px-4 border-y border-muted-border">
         <PageContainer className="max-w-6xl">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             <div className="flex flex-col items-center text-center">
@@ -125,11 +125,12 @@ export default function LandingPage() {
       </section>
 
       {activeLobbies.length > 0 && (
-        <section className="bg-black/5 dark:bg-white/5 py-24 px-4 border-y border-black/10 dark:border-white/10 flex-1">
+        <section className="bg-muted py-24 px-4 border-y border-muted-border flex-1">
           <PageContainer className="max-w-6xl">
             <div className="flex items-center justify-between mb-10">
               <h2 className="text-3xl font-bold">Live Battles</h2>
               <Link
+                viewTransition
                 to="/dashboard"
                 className="text-blue-500 font-medium hover:underline"
               >
@@ -140,7 +141,7 @@ export default function LandingPage() {
               {activeLobbies.map((lobby) => (
                 <div
                   key={lobby.id}
-                  className="sys-panel p-6 rounded-xl flex flex-col gap-4 opacity-80 hover:opacity-100 transition-all duration-300"
+                  className="system-panel p-6 rounded-xl flex flex-col gap-4 opacity-80 hover:opacity-100 transition duration-300"
                 >
                   <div>
                     <span className="text-sm text-gray-500">
@@ -179,11 +180,11 @@ export default function LandingPage() {
               a spin right now!
             </p>
           </div>
-          <div className="sys-panel p-12 flex flex-col items-center justify-center gap-6 rounded-2xl">
+          <div className="system-panel p-12 flex flex-col items-center justify-center gap-6 rounded-2xl">
             <Knob
               value={vote}
               onChange={setDemoVote}
-              min={1}
+              min={0}
               max={10}
               size={120}
               color={vote >= 8 ? "#4ade80" : vote >= 4 ? "#fb923c" : "#f87171"}

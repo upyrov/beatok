@@ -56,10 +56,7 @@ export function Voting() {
       </div>
       <ul className="space-y-4">
         {submissions?.map((s) => (
-          <li
-            key={s.id}
-            className="bg-black/5 dark:bg-white/5 p-4 rounded flex flex-col gap-4"
-          >
+          <li key={s.id} className="bg-muted p-4 rounded flex flex-col gap-4">
             <div className="font-semibold text-lg">
               Submission by{" "}
               {
@@ -68,7 +65,7 @@ export function Voting() {
               }
             </div>
             <AudioPlayer src={s.value} className="w-full" />
-            <div className="border-t border-black/10 dark:border-white/10 pt-4 mt-2">
+            <div className="border-t border-muted-border pt-4 mt-2">
               <p className="text-sm text-gray-400 mb-2">
                 Rate this submission:
               </p>

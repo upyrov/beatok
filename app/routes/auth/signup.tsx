@@ -39,7 +39,7 @@ export default function Signup() {
   });
 
   return (
-    <div className="sys-panel p-8 w-full max-w-sm flex flex-col animate-fade-in">
+    <div className="system-panel p-8 w-full max-w-sm flex flex-col transition duration-300 starting:opacity-0 starting:translate-y-1">
       <h1 className="text-2xl font-bold mb-6 text-center text-gray-900 dark:text-white">
         Sign Up
       </h1>
@@ -68,7 +68,7 @@ export default function Signup() {
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
                 placeholder="John Doe"
-                className="sys-input w-full mt-1 font-normal"
+                className="system-input w-full mt-1 font-normal"
               />
               <FieldError errors={field.state.meta.errors} />
             </label>
@@ -90,7 +90,7 @@ export default function Signup() {
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
                 placeholder="email@beatok.xyz"
-                className="sys-input w-full mt-1 font-normal"
+                className="system-input w-full mt-1 font-normal"
               />
               <FieldError errors={field.state.meta.errors} />
             </label>
@@ -112,7 +112,7 @@ export default function Signup() {
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
                 placeholder="Secret123!"
-                className="sys-input w-full mt-1 font-normal"
+                className="system-input w-full mt-1 font-normal"
               />
               <FieldError errors={field.state.meta.errors} />
             </label>
@@ -127,7 +127,7 @@ export default function Signup() {
               disabled={!canSubmit}
               pending={isSubmitting || signUpMutation.isPending}
             >
-              Sign up
+              Sign Up
             </ActionButton>
           )}
         />
@@ -155,6 +155,7 @@ export default function Signup() {
 
       <div className="mt-6 flex justify-center text-sm">
         <Link
+          viewTransition
           to="/signin"
           className="text-blue-600 dark:text-blue-400 hover:underline"
         >

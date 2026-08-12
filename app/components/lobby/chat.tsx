@@ -64,10 +64,8 @@ export function Chat() {
   });
 
   return (
-    <div className="flex flex-col border border-black/10 dark:border-white/10 rounded-xl bg-black/5 dark:bg-white/5 overflow-hidden h-150 shrink-0">
-      <div className="p-4 border-b border-black/10 dark:border-white/10 font-bold">
-        Chat
-      </div>
+    <div className="flex flex-col border border-muted-border rounded-xl bg-muted overflow-hidden h-150 shrink-0">
+      <div className="p-4 border-b border-muted-border font-bold">Chat</div>
       <div
         ref={scrollRef}
         className="flex-1 overflow-y-auto p-4 flex flex-col gap-2"
@@ -85,7 +83,7 @@ export function Chat() {
           e.stopPropagation();
           form.handleSubmit();
         }}
-        className="p-4 border-t border-black/10 dark:border-white/10 flex gap-2"
+        className="p-4 border-t border-muted-border flex gap-2"
       >
         <form.Field
           name="content"

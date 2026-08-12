@@ -24,7 +24,7 @@ export function InputField<TValue>({
     <div className={`flex flex-col gap-1 ${className}`}>
       <BaseInput
         name={name}
-        className="w-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded px-3 py-2 focus:outline-none focus:border-blue-500"
+        className="system-input w-full px-3 py-2"
         placeholder={placeholder}
         value={value as string}
         onBlur={onBlur}

@@ -8,7 +8,6 @@ import { ActionButton } from "~/components/action-button";
 import { FieldError } from "~/components/field-error";
 import { Knob } from "~/components/knob";
 import { MutationBoundary } from "~/components/mutation-boundary";
-import { Skeleton } from "~/components/skeleton";
 import type { Route } from "./+types/new";
 
 export function meta({}: Route.MetaArgs) {
@@ -75,7 +74,7 @@ export default function NewLobby() {
               </label>
               <BaseInput
                 type="text"
-                className="sys-input w-full"
+                className="system-input w-full"
                 placeholder="My Lobby"
                 value={field.state.value}
                 onBlur={field.handleBlur}
@@ -97,14 +96,14 @@ export default function NewLobby() {
                 Genre
               </label>
               {genresQuery.isPending ? (
-                <Skeleton className="w-full h-9 rounded-sm" />
+                <div className="system-skeleton w-full h-9 rounded-sm" />
               ) : (
                 <Select.Root
                   value={field.state.value || null}
                   onValueChange={(value) => field.handleChange(value!)}
                 >
                   <Select.Trigger
-                    className="sys-input flex justify-between items-center w-full"
+                    className="system-input flex justify-between items-center w-full"
                     onBlur={field.handleBlur}
                   >
                     <Select.Value placeholder="Select a genre">
@@ -123,12 +122,12 @@ export default function NewLobby() {
                       alignItemWithTrigger={false}
                       sideOffset={4}
                     >
-                      <Select.Popup className="sys-popup min-w-(--anchor-width)">
+                      <Select.Popup className="system-popup min-w-(--anchor-width)">
                         {genres.map((genre) => (
                           <Select.Item
                             key={genre.id}
                             value={genre.id}
-                            className="sys-popup-item"
+                            className="system-popup-item"
                           >
                             <Select.ItemText>{genre.name}</Select.ItemText>
                           </Select.Item>
@@ -143,7 +142,7 @@ export default function NewLobby() {
           )}
         />
 
-        <div className="sys-panel flex gap-12 justify-center items-center p-6 mt-4">
+        <div className="system-panel flex gap-12 justify-center items-center p-6 mt-4">
           <form.Field
             name="participantLimit"
             validators={{

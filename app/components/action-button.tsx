@@ -1,8 +1,10 @@
+import { Button } from "@base-ui/react";
+import type { ReactNode } from "react";
 import { CgSpinner } from "react-icons/cg";
-import { Button, type ButtonProps } from "./button";
 
-export interface ActionButtonProps extends ButtonProps {
+export interface ActionButtonProps extends React.ComponentProps<typeof Button> {
   pending?: boolean;
+  children?: ReactNode;
 }
 
 export function ActionButton({
@@ -16,7 +18,7 @@ export function ActionButton({
     <Button
       {...props}
       disabled={disabled || pending}
-      className={`relative inline-flex items-center justify-center gap-2 transition duration-200 disabled:opacity-60 disabled:cursor-not-allowed ${className}`}
+      className={`system-button ${className}`}
     >
       {pending && (
         <div className="absolute inset-0 flex items-center justify-center">

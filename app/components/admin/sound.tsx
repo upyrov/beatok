@@ -1,4 +1,4 @@
-import { Button as BaseButton, Input as BaseInput } from "@base-ui/react";
+import { Input as BaseInput, Button } from "@base-ui/react";
 import { useState } from "react";
 import { CgCheck, CgClose, CgPen, CgTrash } from "react-icons/cg";
 import { useUpdateSound, useUploadSoundUrl } from "~/api/sound";
@@ -67,7 +67,7 @@ export function Sound({
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2">
                 <BaseInput
-                  className="flex-1 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-500"
+                  className="flex-1 system-input text-sm"
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
                   autoFocus
@@ -79,14 +79,14 @@ export function Sound({
                     }
                   }}
                 />
-                <BaseButton
+                <Button
                   onClick={handleNameUpdate}
                   disabled={!editName.trim()}
                   className="text-green-400 hover:text-green-300 transition-colors disabled:opacity-50"
                 >
                   <CgCheck size={18} />
-                </BaseButton>
-                <BaseButton
+                </Button>
+                <Button
                   onClick={() => {
                     setIsEditing(false);
                     setEditName(sound.name);
@@ -94,7 +94,7 @@ export function Sound({
                   className="text-gray-400 hover:text-gray-300 transition-colors"
                 >
                   <CgClose size={18} />
-                </BaseButton>
+                </Button>
               </div>
               <FileDropzone
                 label="Drop new sound file here to replace"
@@ -105,24 +105,24 @@ export function Sound({
           ) : (
             <div className="flex items-center gap-2 flex-1">
               <span className="font-medium text-sm">{sound.name}</span>
-              <BaseButton
+              <Button
                 onClick={() => setIsEditing(true)}
                 className="text-gray-400 hover:text-blue-400 transition-colors"
               >
                 <CgPen size={18} />
-              </BaseButton>
+              </Button>
             </div>
           )}
         </div>
-        <BaseButton
-          onClick={(e) => {
+        <Button
+          onClick={(e: React.MouseEvent) => {
             e.stopPropagation();
             onDelete();
           }}
           className="text-gray-400 hover:text-red-400 transition-colors self-start mt-1"
         >
           <CgTrash size={18} />
-        </BaseButton>
+        </Button>
       </div>
       {!isEditing && <AudioPlayer src={sound.value} />}
     </div>

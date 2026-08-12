@@ -117,7 +117,7 @@ export function VoteForm({
               <Knob
                 value={field.state.value}
                 onChange={field.handleChange}
-                min={1}
+                min={0}
                 max={10}
                 size={60}
                 color={

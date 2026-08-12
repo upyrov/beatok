@@ -50,7 +50,11 @@ export default function Action() {
       <div className="flex flex-col gap-4 text-center">
         <h2 className="text-xl font-bold text-red-500">Invalid Request</h2>
         <p>The link is invalid or has expired.</p>
-        <Link to="/signin" className="text-blue-500 hover:underline mt-4 block">
+        <Link
+          viewTransition
+          to="/signin"
+          className="text-blue-500 hover:underline mt-4 block"
+        >
           Go back to sign in
         </Link>
       </div>
@@ -73,6 +77,7 @@ export default function Action() {
             </h2>
             <p>Your email address has been successfully verified.</p>
             <Link
+              viewTransition
               to="/signin"
               className="text-blue-500 hover:underline mt-4 block"
             >
@@ -87,6 +92,7 @@ export default function Action() {
             </h2>
             <p>The verification link is invalid or has expired.</p>
             <Link
+              viewTransition
               to="/signin"
               className="text-blue-500 hover:underline mt-4 block"
             >

@@ -1,4 +1,4 @@
-import { Button as BaseButton, Input as BaseInput } from "@base-ui/react";
+import { Input as BaseInput, Button } from "@base-ui/react";
 import { useState } from "react";
 import { CgCheck, CgClose, CgPen, CgTrash } from "react-icons/cg";
 import { useDeleteGenre, useUpdateGenreName } from "~/api/genre";
@@ -26,7 +26,7 @@ export function Genre({ genre }: { genre: IGenre }) {
     return (
       <div className="flex justify-between items-center gap-2 py-1">
         <BaseInput
-          className="flex-1 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-500"
+          className="flex-1 system-input text-sm"
           value={editName}
           onChange={(e) => setEditName(e.target.value)}
           onKeyDown={(e) => {
@@ -39,14 +39,14 @@ export function Genre({ genre }: { genre: IGenre }) {
           autoFocus
         />
         <div className="flex items-center gap-2">
-          <BaseButton
+          <Button
             onClick={handleSave}
             disabled={updateMutation.isPending || !editName.trim()}
             className="text-green-400 hover:text-green-300 transition-colors disabled:opacity-50"
           >
             <CgCheck size={18} />
-          </BaseButton>
-          <BaseButton
+          </Button>
+          <Button
             onClick={() => {
               setIsEditing(false);
               setEditName(genre.name);
@@ -54,7 +54,7 @@ export function Genre({ genre }: { genre: IGenre }) {
             className="text-gray-400 hover:text-gray-300 transition-colors"
           >
             <CgClose size={18} />
-          </BaseButton>
+          </Button>
         </div>
       </div>
     );
@@ -64,13 +64,13 @@ export function Genre({ genre }: { genre: IGenre }) {
     <div className="flex justify-between items-center py-1">
       <span>{genre.name}</span>
       <div className="flex items-center gap-3">
-        <BaseButton
+        <Button
           onClick={() => setIsEditing(true)}
           className="text-gray-400 hover:text-blue-400 transition-colors"
         >
           <CgPen size={18} />
-        </BaseButton>
-        <BaseButton
+        </Button>
+        <Button
           onClick={() => {
             if (confirm(`Delete genre "${genre.name}"?`)) {
               deleteMutation.mutate(genre.id);
@@ -79,7 +79,7 @@ export function Genre({ genre }: { genre: IGenre }) {
           className="text-gray-400 hover:text-red-400 transition-colors"
         >
           <CgTrash size={18} />
-        </BaseButton>
+        </Button>
       </div>
     </div>
   );

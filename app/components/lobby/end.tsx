@@ -11,7 +11,7 @@ export function End() {
     <div className="flex flex-col items-center text-center">
       <h2 className="text-xl font-bold mb-4">Lobby Ended</h2>
       {winningSubmission ? (
-        <div className="bg-black/5 dark:bg-white/5 p-4 rounded flex flex-col gap-4 border border-yellow-500/30">
+        <div className="bg-muted p-4 rounded flex flex-col gap-4 border border-yellow-500/30">
           <h3 className="text-lg font-bold text-yellow-500">Winner!</h3>
           <p>
             User{" "}

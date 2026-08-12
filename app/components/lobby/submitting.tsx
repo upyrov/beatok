@@ -1,3 +1,4 @@
+import { Button } from "@base-ui/react";
 import JSZip from "jszip";
 import { use, useCallback, useEffect, useMemo } from "react";
 import { CgSoftwareDownload } from "react-icons/cg";
@@ -19,7 +20,6 @@ import { LobbyContext } from "~/contexts";
 import { useCountdown } from "~/hooks/use-countdown";
 import { validateAudioFile } from "~/lib/audio";
 import { uploadFile } from "~/lib/upload";
-import { Button } from "../button";
 
 export function Submitting() {
   const { lobby, setLobby, connection } = use(LobbyContext);
@@ -192,12 +192,12 @@ export function Submitting() {
         {minutes}:{seconds}
       </div>
 
-      <div className="bg-black/5 dark:bg-white/5 p-4 rounded border border-black/10 dark:border-white/10">
+      <div className="bg-muted p-4 rounded border border-muted-border">
         <div className="flex justify-between items-center mb-4">
           {groupedCategories.length > 0 && (
             <Button
               onClick={onDownloadZip}
-              className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg bg-white hover:bg-gray-200   border-none font-semibold"
+              className="system-button flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg bg-white hover:bg-gray-200   border-none font-semibold"
             >
               <CgSoftwareDownload size={18} /> Download All (ZIP)
             </Button>
@@ -213,8 +213,8 @@ export function Submitting() {
                     <div className="flex items-center gap-2 w-full">
                       <AudioPlayer src={s.value} className="flex-1 min-w-0" />
                       <Button
+                        className="system-button shrink-0"
                         onClick={(e: React.MouseEvent) => handleDownload(e, s)}
-                        className="shrink-0"
                         title="Download"
                       >
                         <CgSoftwareDownload />
@@ -228,7 +228,7 @@ export function Submitting() {
         </div>
       </div>
 
-      <div className="bg-black/5 dark:bg-white/5 p-4 rounded border border-black/10 dark:border-white/10 flex flex-col items-center">
+      <div className="bg-muted p-4 rounded border border-muted-border flex flex-col items-center">
         <h3 className="font-bold mb-2 text-center">Submit Your Beat</h3>
         {mySubmission ? (
           <div className="flex flex-col gap-4">

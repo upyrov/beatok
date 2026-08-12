@@ -1,13 +1,10 @@
+import { Button } from "@base-ui/react";
 import { useMemo } from "react";
 import { Link } from "react-router";
 import { lobbiesQueryOptions, useLobbies } from "~/api/lobby";
 import type { Lobby } from "~/api/types/lobby";
-import { Button } from "~/components/button";
-import { Card } from "~/components/card";
-import { GridList } from "~/components/grid-list";
 import { LobbyCard } from "~/components/lobby-card";
 import { PageContainer } from "~/components/page-container";
-import { Skeleton } from "~/components/skeleton";
 import { getQueryClient } from "~/lib/query-client";
 import type { Route } from "./+types/home";
 
@@ -29,14 +26,14 @@ export async function clientLoader() {
 
 function LobbyGridItem({ lobby }: { lobby: Lobby }) {
   return (
-    <Card className="flex flex-col p-5">
+    <div className="system-card flex flex-col p-5">
       <LobbyCard lobby={lobby} />
       <div className="mt-6">
-        <Link to={`/lobbies/${lobby.id}`} prefetch="intent">
-          <Button>Join</Button>
+        <Link viewTransition to={`/lobbies/${lobby.id}`} prefetch="intent">
+          <Button className="system-button">Join</Button>
         </Link>
       </div>
-    </Card>
+    </div>
   );
 }
 
@@ -44,43 +41,43 @@ function HomeSkeleton() {
   return (
     <section className="flex flex-col flex-1">
       <div className="flex items-center justify-between mb-6">
-        <Skeleton className="w-32 h-8" />
+        <div className="system-skeleton w-32 h-8" />
       </div>
-      <GridList>
+      <div className="system-grid-list">
         {[...Array(8)].map((_, i) => (
           <div
             key={i}
-            className="flex flex-col p-5 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded-xl"
+            className="flex flex-col p-5 bg-muted border border-muted-border rounded-xl"
           >
             <div className="flex flex-col gap-4">
               <div>
-                <Skeleton className="w-24 h-4 mb-2" />
+                <div className="system-skeleton w-24 h-4 mb-2" />
                 <div className="flex justify-between items-start">
-                  <Skeleton className="w-32 h-6" />
-                  <Skeleton className="w-16 h-5" />
+                  <div className="system-skeleton w-32 h-6" />
+                  <div className="system-skeleton w-16 h-5" />
                 </div>
               </div>
               <div className="grow flex flex-col gap-2 mt-4">
                 <div className="flex justify-between">
-                  <Skeleton className="w-16 h-4" />
-                  <Skeleton className="w-24 h-4" />
+                  <div className="system-skeleton w-16 h-4" />
+                  <div className="system-skeleton w-24 h-4" />
                 </div>
                 <div className="flex justify-between">
-                  <Skeleton className="w-24 h-4" />
-                  <Skeleton className="w-16 h-4" />
+                  <div className="system-skeleton w-24 h-4" />
+                  <div className="system-skeleton w-16 h-4" />
                 </div>
                 <div className="flex justify-between">
-                  <Skeleton className="w-16 h-4" />
-                  <Skeleton className="w-12 h-4" />
+                  <div className="system-skeleton w-16 h-4" />
+                  <div className="system-skeleton w-12 h-4" />
                 </div>
               </div>
             </div>
             <div className="mt-6">
-              <Skeleton className="w-full h-10 rounded-lg" />
+              <div className="system-skeleton w-full h-10 rounded-lg" />
             </div>
           </div>
         ))}
-      </GridList>
+      </div>
     </section>
   );
 }
@@ -118,11 +115,11 @@ export default function Home() {
           <div className="flex items-center justify-between mb-6">
             <h2 className="flex items-center gap-2">Lobbies to Rejoin</h2>
           </div>
-          <GridList>
+          <div className="system-grid-list">
             {toRejoin.map((lobby) => (
               <LobbyGridItem key={lobby.id} lobby={lobby} />
             ))}
-          </GridList>
+          </div>
         </section>
       )}
 
@@ -132,11 +129,11 @@ export default function Home() {
             <div className="flex items-center justify-between mb-6">
               <h2 className="flex items-center gap-2">Lobbies</h2>
             </div>
-            <GridList>
+            <div className="system-grid-list">
               {active.map((lobby) => (
                 <LobbyGridItem key={lobby.id} lobby={lobby} />
               ))}
-            </GridList>
+            </div>
           </>
         )}
 
@@ -145,11 +142,12 @@ export default function Home() {
             <p className="text-xl font-medium">No Lobbies Found</p>
             <p className="mt-2 text-gray-500">Check back later or</p>
             <Link
+              viewTransition
               to="/lobbies/new"
               prefetch="intent"
               className="mt-4 flex justify-center"
             >
-              <Button>Create Your Own</Button>
+              <Button className="system-button">Create Your Own</Button>
             </Link>
           </div>
         )}

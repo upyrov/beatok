@@ -1,4 +1,4 @@
-import { Button as BaseButton, Input as BaseInput } from "@base-ui/react";
+import { Input as BaseInput, Button } from "@base-ui/react";
 import { useState } from "react";
 import {
   CgCheck,
@@ -52,7 +52,7 @@ export function Kit({ kit, onDelete }: { kit: IKit; onDelete: () => void }) {
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2">
                 <BaseInput
-                  className="flex-1 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 rounded px-2 py-1 text-sm focus:outline-none focus:border-blue-500"
+                  className="flex-1 system-input text-sm"
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
                   autoFocus
@@ -65,14 +65,14 @@ export function Kit({ kit, onDelete }: { kit: IKit; onDelete: () => void }) {
                     }
                   }}
                 />
-                <BaseButton
+                <Button
                   onClick={handleUpdate}
                   disabled={!editName.trim()}
                   className="text-green-400 hover:text-green-300 transition-colors disabled:opacity-50"
                 >
                   <CgCheck size={18} />
-                </BaseButton>
-                <BaseButton
+                </Button>
+                <Button
                   onClick={() => {
                     setIsEditing(false);
                     setEditName(kit.name);
@@ -81,14 +81,14 @@ export function Kit({ kit, onDelete }: { kit: IKit; onDelete: () => void }) {
                   className="text-gray-400 hover:text-gray-300 transition-colors"
                 >
                   <CgClose size={18} />
-                </BaseButton>
+                </Button>
               </div>
               {genres.length > 0 && (
                 <div className="flex flex-wrap gap-2 mt-1">
                   {genres.map((genre) => {
                     const isSelected = editGenreIds.includes(genre.id);
                     return (
-                      <BaseButton
+                      <Button
                         key={genre.id}
                         type="button"
                         onClick={() => {
@@ -105,7 +105,7 @@ export function Kit({ kit, onDelete }: { kit: IKit; onDelete: () => void }) {
                         }`}
                       >
                         {genre.name}
-                      </BaseButton>
+                      </Button>
                     );
                   })}
                 </div>
@@ -114,12 +114,12 @@ export function Kit({ kit, onDelete }: { kit: IKit; onDelete: () => void }) {
           ) : (
             <div className="flex items-center gap-2 flex-1">
               <span>{kit.name}</span>
-              <BaseButton
+              <Button
                 onClick={() => setIsEditing(true)}
                 className="text-gray-400 hover:text-blue-400 transition-colors"
               >
                 <CgPen size={18} />
-              </BaseButton>
+              </Button>
             </div>
           )}
           {kit.genres?.length > 0 && !isEditing && (
@@ -129,7 +129,7 @@ export function Kit({ kit, onDelete }: { kit: IKit; onDelete: () => void }) {
           )}
         </div>
         <div className="flex gap-3 items-center">
-          <BaseButton
+          <Button
             onClick={() => setShowCategories(!showCategories)}
             className="text-gray-400 hover:text-gray-300 transition-colors"
           >
@@ -138,9 +138,9 @@ export function Kit({ kit, onDelete }: { kit: IKit; onDelete: () => void }) {
             ) : (
               <CgChevronDown size={18} />
             )}
-          </BaseButton>
-          <BaseButton
-            onClick={(e) => {
+          </Button>
+          <Button
+            onClick={(e: React.MouseEvent) => {
               e.stopPropagation();
               if (confirm(`Are you sure you want to delete kit "${kit.name}"?`))
                 onDelete();
@@ -148,12 +148,12 @@ export function Kit({ kit, onDelete }: { kit: IKit; onDelete: () => void }) {
             className="text-gray-400 hover:text-red-400 transition-colors"
           >
             <CgTrash size={18} />
-          </BaseButton>
+          </Button>
         </div>
       </div>
 
       {showCategories && (
-        <div className="animate-fade-in">
+        <div className="transition duration-300 starting:opacity-0 starting:translate-y-1">
           <Categories kitId={kit.id} />
         </div>
       )}
