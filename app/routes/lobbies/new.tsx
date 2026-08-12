@@ -73,6 +73,7 @@ export default function NewLobby() {
                 Lobby Name
               </label>
               <BaseInput
+                id="genreId"
                 type="text"
                 className="system-input w-full"
                 placeholder="My Lobby"

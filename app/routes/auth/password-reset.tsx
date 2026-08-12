@@ -68,6 +68,7 @@ export default function PasswordReset() {
               <label className="flex flex-col gap-1">
                 Email
                 <BaseInput
+                  id={field.name}
                   name={field.name}
                   type="email"
                   value={field.state.value}

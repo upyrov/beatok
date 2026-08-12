@@ -53,8 +53,8 @@ export default function PrivacyPolicy() {
           </h2>
           <p className="mb-4">
             We will only use your personal data when the law allows us to. Most
-            commonly, we will use your personal data to manage your account,
-            facilitate beat battles, and improve our services.
+            commonly, we will use your personal data to manage your account and
+            lobbies.
           </p>
         </div>
       </PageContainer>

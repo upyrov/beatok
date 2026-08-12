@@ -68,6 +68,7 @@ export default function Signin() {
             <label className="flex flex-col gap-1 font-medium text-sm text-gray-700 dark:text-gray-300">
               Email
               <BaseInput
+                id="password"
                 name={field.name}
                 type="email"
                 value={field.state.value}
@@ -90,6 +91,7 @@ export default function Signin() {
             <label className="flex flex-col gap-1 font-medium text-sm text-gray-700 dark:text-gray-300">
               Password
               <BaseInput
+                id={field.name}
                 name={field.name}
                 type="password"
                 value={field.state.value}

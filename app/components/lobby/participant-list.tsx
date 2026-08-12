@@ -86,11 +86,13 @@ export function ParticipantList({
                   Owner
                 </span>
               )}
-              {p.user.id === user?.id && user?.isAnonymous && p.user.id !== lobby?.ownerId && (
-                <span className="bg-black/10 dark:bg-white/10 text-gray-500 dark:text-gray-400 text-[10px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-wider">
-                  You
-                </span>
-              )}
+              {p.user.id === user?.id &&
+                user?.isAnonymous &&
+                p.user.id !== lobby?.ownerId && (
+                  <span className="bg-black/10 dark:bg-white/10 text-gray-500 dark:text-gray-400 text-[10px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-wider">
+                    You
+                  </span>
+                )}
             </div>
 
             <div className="flex items-center gap-2 ml-auto">
