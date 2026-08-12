@@ -86,7 +86,7 @@ export function Waiting() {
             <MutationBoundary mutation={startLobbyMutation}>
               <ActionButton
                 onClick={handleStartLobby}
-                isPending={startLobbyMutation.isPending}
+                pending={startLobbyMutation.isPending}
               >
                 Start Lobby
               </ActionButton>

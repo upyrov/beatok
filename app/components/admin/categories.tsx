@@ -79,7 +79,7 @@ export function Categories({ kitId }: { kitId: string }) {
               <ActionButton
                 type="submit"
                 disabled={!canSubmit}
-                isPending={isSubmitting || createMutation.isPending}
+                pending={isSubmitting || createMutation.isPending}
               >
                 <CgAdd />
               </ActionButton>

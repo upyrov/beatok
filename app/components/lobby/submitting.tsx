@@ -236,7 +236,7 @@ export function Submitting() {
             <MutationBoundary mutation={deleteSubmissionMutation}>
               <ActionButton
                 onClick={handleDeleteSubmission}
-                isPending={deleteSubmissionMutation.isPending}
+                pending={deleteSubmissionMutation.isPending}
               >
                 Delete Submission
               </ActionButton>

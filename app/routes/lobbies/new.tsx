@@ -35,6 +35,7 @@ export default function NewLobby() {
       submissionTime: 10,
     },
     onSubmit: async ({ value }) => {
+      if (createLobbyMutation.isPending) return;
       try {
         const createdLobbyId = await createLobbyMutation.mutateAsync({
           name: value.name,
@@ -204,7 +205,7 @@ export default function NewLobby() {
               <ActionButton
                 type="submit"
                 disabled={isDisabled}
-                isPending={isSubmitting || createLobbyMutation.isPending}
+                pending={isSubmitting || createLobbyMutation.isPending}
               >
                 Create Lobby
               </ActionButton>

@@ -30,8 +30,12 @@ export default function Signup() {
       email: "",
       password: "",
     },
-    onSubmit: ({ value }) =>
-      signUpMutation.mutate(value, { onSuccess: () => navigate("/") }),
+    onSubmit: async ({ value }) => {
+      if (signUpMutation.isPending) return;
+      await signUpMutation.mutateAsync(value, {
+        onSuccess: () => navigate("/"),
+      });
+    },
   });
 
   return (
@@ -118,7 +122,7 @@ export default function Signup() {
             <ActionButton
               type="submit"
               disabled={!canSubmit}
-              isPending={isSubmitting || signUpMutation.isPending}
+              pending={isSubmitting || signUpMutation.isPending}
             >
               Sign up
             </ActionButton>
@@ -139,7 +143,7 @@ export default function Signup() {
             onSuccess: () => navigate("/"),
           })
         }
-        isPending={signInWithGoogleMutation.isPending}
+        pending={signInWithGoogleMutation.isPending}
       >
         <CgGoogle /> Continue with Google
       </ActionButton>

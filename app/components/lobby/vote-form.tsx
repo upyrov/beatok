@@ -139,7 +139,7 @@ export function VoteForm({
                 <ActionButton
                   type="submit"
                   disabled={!canSubmit}
-                  isPending={isSubmitting || isPending}
+                  pending={isSubmitting || isPending}
                 >
                   {existingScoreId ? "Update" : "Vote"}
                 </ActionButton>

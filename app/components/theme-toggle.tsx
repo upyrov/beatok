@@ -5,9 +5,7 @@ export function ThemeToggle() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
 
   useEffect(() => {
-    // Check initial theme from localStorage or default to light
     const savedTheme = localStorage.getItem("theme");
-    // As per user request, default is light mode. We will ignore system preference if no saved theme, to enforce day mode default.
     const initialTheme = savedTheme === "dark" ? "dark" : "light";
     setTheme(initialTheme);
 

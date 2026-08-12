@@ -22,7 +22,12 @@ export default function PasswordReset() {
     defaultValues: {
       email: "",
     },
-    onSubmit: ({ value }) => resetPasswordMutation.mutate(value.email),
+    onSubmit: async ({ value }) => {
+      if (resetPasswordMutation.isPending) return;
+      try {
+        await resetPasswordMutation.mutateAsync(value.email);
+      } catch {}
+    },
   });
 
   return (
@@ -81,7 +86,7 @@ export default function PasswordReset() {
               <ActionButton
                 type="submit"
                 disabled={!canSubmit}
-                isPending={isSubmitting || resetPasswordMutation.isPending}
+                pending={isSubmitting || resetPasswordMutation.isPending}
               >
                 Send Reset Link
               </ActionButton>

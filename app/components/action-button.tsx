@@ -2,12 +2,12 @@ import { CgSpinner } from "react-icons/cg";
 import { Button, type ButtonProps } from "./button";
 
 export interface ActionButtonProps extends ButtonProps {
-  isPending?: boolean;
+  pending?: boolean;
 }
 
 export function ActionButton({
   children,
-  isPending,
+  pending,
   disabled,
   className = "",
   ...props
@@ -15,10 +15,10 @@ export function ActionButton({
   return (
     <Button
       {...props}
-      disabled={disabled || isPending}
+      disabled={disabled || pending}
       className={`relative inline-flex items-center justify-center gap-2 transition duration-200 disabled:opacity-60 disabled:cursor-not-allowed ${className}`}
     >
-      {isPending && (
+      {pending && (
         <div className="absolute inset-0 flex items-center justify-center">
           <CgSpinner
             role="status"
@@ -28,7 +28,7 @@ export function ActionButton({
           />
         </div>
       )}
-      <span className={isPending ? "opacity-0" : ""}>{children}</span>
+      <span className={pending ? "opacity-0" : ""}>{children}</span>
     </Button>
   );
 }

@@ -139,7 +139,7 @@ export default function Action() {
             <ActionButton
               type="submit"
               disabled={!canSubmit}
-              isPending={isSubmitting || confirmPasswordResetMutation.isPending}
+              pending={isSubmitting || confirmPasswordResetMutation.isPending}
             >
               Reset Password
             </ActionButton>

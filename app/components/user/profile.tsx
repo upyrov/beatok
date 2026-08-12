@@ -3,7 +3,7 @@ import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { type } from "arktype";
 import { useCallback, useState } from "react";
-import { CgProfile, CgSpinner } from "react-icons/cg";
+import { CgProfile, CgSpinner, CgTrash } from "react-icons/cg";
 import { queryKeys } from "~/api/query-keys";
 import type { Profile as IProfile } from "~/api/types/user";
 import { useUpdateUser, useUploadAvatarUrl } from "~/api/user";
@@ -42,11 +42,20 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
     [getUploadUrlMutation, updateUserMutation, queryClient, user.id],
   );
 
+  const handleRemoveAvatar = useCallback(async () => {
+    await updateUserMutation.mutateAsync({ picture: null });
+    queryClient.invalidateQueries({
+      queryKey: queryKeys.users.detail(user.id),
+    });
+    queryClient.invalidateQueries({ queryKey: queryKeys.users.me() });
+  }, [updateUserMutation, queryClient, user.id]);
+
   const form = useForm({
     defaultValues: {
       name: user.name || "",
     },
     onSubmit: async ({ value }) => {
+      if (updateUserMutation.isPending) return;
       try {
         await updateUserMutation.mutateAsync({ name: value.name });
         queryClient.invalidateQueries({
@@ -72,26 +81,39 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
 
   return (
     <div className="flex items-center gap-6 bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 p-6 rounded-xl relative">
-      <div className="relative group/avatar inline-flex shrink-0 w-32 h-32">
-        {user.picture ? (
-          <>
-            {!imageLoaded && (
-              <div className="absolute inset-0 flex items-center justify-center z-10">
-                <Skeleton className="absolute inset-0 rounded-lg w-full h-full" />
-                <CgSpinner className="animate-spin text-gray-500 w-8 h-8 relative" />
-              </div>
-            )}
-            <img
-              src={user.picture}
-              alt={user.name ?? "Anonymous"}
-              onLoad={() => setImageLoaded(true)}
-              className={`object-cover border border-black/20 dark:border-white/20 p-0.5 w-full h-full rounded-lg ${imageLoaded ? "" : "invisible"}`}
-            />
-          </>
-        ) : (
-          <CgProfile className="text-gray-400 border border-black/20 dark:border-white/20 p-0.5 w-full h-full rounded-lg" />
-        )}
-        {dropzoneOverlay}
+      <div className="flex flex-col items-center gap-2">
+        <div className="relative group/avatar inline-flex shrink-0 w-32 h-32">
+          {user.picture ? (
+            <>
+              {!imageLoaded && (
+                <div className="absolute inset-0 flex items-center justify-center z-10">
+                  <Skeleton className="absolute inset-0 rounded-lg w-full h-full" />
+                  <CgSpinner className="animate-spin text-gray-500 w-8 h-8 relative" />
+                </div>
+              )}
+              <img
+                src={user.picture}
+                alt={user.name ?? "Anonymous"}
+                onLoad={() => setImageLoaded(true)}
+                className={`object-cover border border-black/20 dark:border-white/20 p-0.5 w-full h-full rounded-lg ${imageLoaded ? "" : "invisible"}`}
+              />
+            </>
+          ) : (
+            <CgProfile className="text-gray-400 border border-black/20 dark:border-white/20 p-0.5 w-full h-full rounded-lg" />
+          )}
+          {dropzoneOverlay}
+          {isCurrentUser && user.picture && (
+            <button
+              type="button"
+              onClick={handleRemoveAvatar}
+              disabled={updateUserMutation.isPending}
+              className="absolute -top-2 -right-2 z-20 bg-black/80 hover:bg-red-500 text-white p-1.5 rounded-full shadow-md transition-colors disabled:opacity-50"
+              title="Remove profile picture"
+            >
+              <CgTrash size={16} />
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="flex flex-col flex-1 gap-2">

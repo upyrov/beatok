@@ -7,7 +7,6 @@ import { LobbyState } from "~/api/types/enums";
 import type { DetailedLobby } from "~/api/types/lobby";
 import type { Me, RatingChange } from "~/api/types/user";
 import { ActionButton } from "~/components/action-button";
-import { Fallback } from "~/components/fallback";
 import { Chat } from "~/components/lobby/chat";
 import { End } from "~/components/lobby/end";
 import { ParticipantList } from "~/components/lobby/participant-list";
@@ -192,8 +191,9 @@ export default function Lobby() {
               <ActionButton
                 onClick={handleLeave}
                 disabled={leaveMutation.isPending}
+                pending={leaveMutation.isPending}
               >
-                {leaveMutation.isPending ? <Fallback /> : "Leave"}
+                Leave
               </ActionButton>
             </div>
             <div className="flex gap-8">

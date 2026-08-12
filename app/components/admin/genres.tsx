@@ -44,7 +44,7 @@ export function Genres() {
                   <ActionButton
                     type="submit"
                     disabled={!canSubmit}
-                    isPending={isSubmitting || createMutation.isPending}
+                    pending={isSubmitting || createMutation.isPending}
                   >
                     <CgAdd />
                   </ActionButton>

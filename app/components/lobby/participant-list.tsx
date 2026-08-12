@@ -115,7 +115,7 @@ export function ParticipantList({
                   <MutationBoundary mutation={kickParticipantMutation}>
                     <ActionButton
                       onClick={() => handleKick(p.user.id)}
-                      isPending={kickParticipantMutation.isPending}
+                      pending={kickParticipantMutation.isPending}
                     >
                       Kick
                     </ActionButton>

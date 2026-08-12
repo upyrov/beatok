@@ -41,7 +41,7 @@ export interface Signup {
 
 export interface UserUpdate {
   name?: string;
-  picture?: string;
+  picture?: string | null;
 }
 
 export interface User {
