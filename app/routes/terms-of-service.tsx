@@ -11,9 +11,7 @@ export default function TermsOfService() {
         <h1 className="text-4xl font-bold mb-8">Terms of Service</h1>
 
         <div className="prose prose-gray dark:prose-invert">
-          <p className="mb-4 text-gray-500">
-            Last updated: {new Date().toLocaleDateString()}
-          </p>
+          <p className="mb-4 text-gray-500">Last updated: August 12, 2026</p>
 
           <h2 className="text-2xl font-bold mt-8 mb-4">
             1. Acceptance of Terms
@@ -27,10 +25,10 @@ export default function TermsOfService() {
 
           <h2 className="text-2xl font-bold mt-8 mb-4">2. User Accounts</h2>
           <p className="mb-4">
-            When you create an account with us, you must provide information
-            that is accurate, complete, and current at all times. Failure to do
-            so constitutes a breach of the Terms, which may result in immediate
-            termination of your account on our Service.
+            Our service can be used anonymously without creating an account. If
+            you choose to use the service anonymously, you do so at your own
+            risk. We do not hold any responsibility for the security of your
+            account, your data, or any content you submit.
           </p>
 
           <h2 className="text-2xl font-bold mt-8 mb-4">
