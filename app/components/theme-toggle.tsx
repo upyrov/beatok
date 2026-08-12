@@ -1,8 +1,8 @@
-import { Button } from "@base-ui/react";
+import { Button, Menu } from "@base-ui/react";
 import { useCallback, useEffect, useState } from "react";
 import { CgMoon, CgSun } from "react-icons/cg";
 
-export function ThemeToggle() {
+function useTheme() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
 
   useEffect(() => {
@@ -28,6 +28,32 @@ export function ThemeToggle() {
       document.documentElement.classList.remove("dark");
     }
   }, [theme]);
+
+  return { theme, toggleTheme };
+}
+
+export function ThemeToggleMenuItem() {
+  const { theme, toggleTheme } = useTheme();
+
+  return (
+    <Menu.Item
+      className="system-popup-item w-full flex items-center gap-2 cursor-pointer"
+      onClick={() => {
+        toggleTheme();
+      }}
+    >
+      {theme === "light" ? (
+        <CgMoon className="text-lg" />
+      ) : (
+        <CgSun className="text-lg" />
+      )}
+      {theme === "light" ? "Dark Mode" : "Light Mode"}
+    </Menu.Item>
+  );
+}
+
+export function ThemeToggle() {
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <Button

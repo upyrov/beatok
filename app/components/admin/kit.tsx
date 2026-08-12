@@ -101,7 +101,7 @@ export function Kit({ kit, onDelete }: { kit: IKit; onDelete: () => void }) {
                         className={`text-xs px-2 py-1 rounded transition-colors ${
                           isSelected
                             ? "bg-blue-600 text-white"
-                            : "bg-black/10 dark:bg-white/10 text-gray-300 hover:bg-white/20"
+                            : "bg-muted text-foreground hover:bg-muted-hover"
                         }`}
                       >
                         {genre.name}

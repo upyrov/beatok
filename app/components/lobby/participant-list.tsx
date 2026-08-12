@@ -72,20 +72,25 @@ export function ParticipantList({
       <h2 className="text-xl font-bold mb-4">Participants</h2>
       <ul className="flex flex-col gap-2">
         {lobby?.participants.map((p) => (
-          <li key={p.id} className="flex items-center gap-2 justify-between">
-            <div className="flex items-center gap-2">
-              <UserCard user={p.user} />
-              <div className="flex gap-1 text-sm">
-                {!p.isConnected && (
-                  <span className="text-gray-400">(Disconnected)</span>
-                )}
-                {p.user.id === lobby?.ownerId && (
-                  <span className="text-gray-400">(Owner)</span>
-                )}
-                {p.user.id === user?.id && (
-                  <span className="text-gray-400">(You)</span>
-                )}
-              </div>
+          <li key={p.id} className="flex items-center gap-4 justify-between">
+            <UserCard user={p.user} className="is-lg flex-1" />
+
+            <div className="flex gap-1 text-sm items-center">
+              {!p.isConnected && (
+                <span className="bg-black/10 dark:bg-white/10 text-gray-500 dark:text-gray-400 text-[10px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-wider">
+                  Disconnected
+                </span>
+              )}
+              {p.user.id === lobby?.ownerId && (
+                <span className="bg-black/10 dark:bg-white/10 text-gray-500 dark:text-gray-400 text-[10px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-wider">
+                  Owner
+                </span>
+              )}
+              {p.user.id === user?.id && user?.isAnonymous && p.user.id !== lobby?.ownerId && (
+                <span className="bg-black/10 dark:bg-white/10 text-gray-500 dark:text-gray-400 text-[10px] font-bold px-2 py-0.5 rounded-sm uppercase tracking-wider">
+                  You
+                </span>
+              )}
             </div>
 
             <div className="flex items-center gap-2 ml-auto">

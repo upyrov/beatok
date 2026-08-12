@@ -8,17 +8,19 @@ export interface UserCardProps {
   className?: string;
   showRole?: boolean;
   showRating?: boolean;
+  direction?: "horizontal" | "vertical";
 }
 
 export function UserCard({
   user,
   className = "",
   showRating = false,
+  direction = "horizontal",
 }: UserCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
 
   const sizeClasses =
-    "w-6 h-6 group-[.is-md]:w-8 group-[.is-md]:h-8 group-[.is-lg]:w-16 group-[.is-lg]:h-16";
+    "w-6 h-6 group-[.is-md]:w-8 group-[.is-md]:h-8 group-[.is-lg]:w-12 group-[.is-lg]:h-12 group-[.is-xl]:w-16 group-[.is-xl]:h-16";
 
   const content = (
     <>
@@ -47,7 +49,7 @@ export function UserCard({
         )}
       </div>
       <div className="flex flex-col justify-center">
-        <span className="font-semibold group-hover:transition-colors group-[.is-md]:text-base group-[.is-lg]:text-xl">
+        <span className="font-semibold group-hover:transition-colors group-[.is-md]:text-base group-[.is-lg]:text-lg group-[.is-xl]:text-xl">
           {user.name ?? "Anonymous"}
         </span>
         {showRating && (
@@ -63,7 +65,7 @@ export function UserCard({
     <Link
       viewTransition
       to={`/users/${user.id}`}
-      className={`inline-flex items-center gap-2 hover:bg-muted p-1 rounded transition-colors group text-sm ${className}`}
+      className={`inline-flex ${direction === "vertical" ? "flex-col" : ""} items-center ${direction === "vertical" ? "gap-1" : "gap-2"} hover:bg-muted p-1 rounded transition-colors group text-sm ${className}`}
     >
       {content}
     </Link>

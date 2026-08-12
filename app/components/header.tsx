@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router";
 import type { Me } from "~/api/types/user";
 import { UserCard } from "~/components/user-card";
 import { useSignOut } from "~/hooks/use-auth";
-import { ThemeToggle } from "./theme-toggle";
+import { ThemeToggle, ThemeToggleMenuItem } from "./theme-toggle";
 
 export function Header({ user }: { user: Me | null }) {
   const signOutMutation = useSignOut();
@@ -33,7 +33,11 @@ export function Header({ user }: { user: Me | null }) {
           <Menu.Root>
             <Menu.Trigger className="focus:outline-none group">
               <div className="hover:bg-black/5 dark:hover:bg-white/5 rounded-lg px-3 py-1.5 transition cursor-pointer flex items-center">
-                <UserCard user={user} className="is-md pointer-events-none" />
+                <UserCard
+                  user={user}
+                  className="is-md pointer-events-none"
+                  direction="vertical"
+                />
               </div>
             </Menu.Trigger>
             <Menu.Portal>
@@ -50,6 +54,7 @@ export function Header({ user }: { user: Me | null }) {
                   >
                     <CgUser className="text-lg" /> Profile
                   </Menu.Item>
+                  <ThemeToggleMenuItem />
                   <Menu.Item
                     className="system-popup-item w-full flex items-center gap-2 cursor-pointer text-red-600 dark:text-red-400 focus:bg-red-50 dark:focus:bg-red-500/10 focus:text-red-700 dark:focus:text-red-300"
                     onClick={() => signOutMutation.mutate()}
@@ -61,13 +66,15 @@ export function Header({ user }: { user: Me | null }) {
             </Menu.Portal>
           </Menu.Root>
         ) : (
-          <Link viewTransition to="/signin">
-            <Button className="system-button">
-              <CgLogIn />
-            </Button>
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link viewTransition to="/signin">
+              <Button className="system-button">
+                <CgLogIn />
+              </Button>
+            </Link>
+            <ThemeToggle />
+          </div>
         )}
-        <ThemeToggle />
       </div>
     </header>
   );

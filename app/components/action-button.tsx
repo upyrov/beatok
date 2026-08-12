@@ -18,7 +18,7 @@ export function ActionButton({
     <Button
       {...props}
       disabled={disabled || pending}
-      className={`system-button ${className}`}
+      className={`system-button relative ${className}`}
     >
       {pending && (
         <div className="absolute inset-0 flex items-center justify-center">

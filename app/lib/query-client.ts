@@ -1,7 +1,21 @@
-import { QueryClient } from "@tanstack/react-query";
+import { MutationCache, QueryCache, QueryClient } from "@tanstack/react-query";
+
+const globalErrorHandler = (error: Error) => {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(
+      new CustomEvent("globalerror", { detail: error.message }),
+    );
+  }
+};
 
 export function makeQueryClient() {
   return new QueryClient({
+    queryCache: new QueryCache({
+      onError: globalErrorHandler,
+    }),
+    mutationCache: new MutationCache({
+      onError: globalErrorHandler,
+    }),
     defaultOptions: {
       queries: {
         // With SSR, we usually want to set some default staleTime

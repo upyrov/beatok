@@ -74,7 +74,7 @@ export default function LandingPage() {
         </p>
         <div className="flex gap-4 transition duration-300 starting:opacity-0 starting:translate-y-1 delay-200">
           <Link viewTransition to="/lobbies">
-            <Button className="system-button px-12 py-5 text-xl font-bold bg-blue-600 hover:bg-blue-500 border-none shadow-[0_0_1.25rem_rgba(37,99,235,0.5)]">
+            <Button className="system-button px-12 py-5 text-xl font-bold bg-blue-600 hover:bg-blue-500 border-none">
               Start
             </Button>
           </Link>
@@ -171,9 +171,7 @@ export default function LandingPage() {
       <section className="py-24 px-4 flex flex-col items-center justify-center">
         <PageContainer className="max-w-4xl flex flex-col md:flex-row items-center gap-16">
           <div className="flex-1 flex flex-col gap-6">
-            <h2 className="text-3xl font-bold tracking-tight">
-              Precision Voting
-            </h2>
+            <h2 className="text-3xl font-bold tracking-tight">Voting</h2>
             <p className="text-lg text-gray-600 dark:text-gray-400">
               We ditched the boring ratings. When it's time to judge a beat,
               you'll dial in your score using our analog knob. Go ahead, give it
