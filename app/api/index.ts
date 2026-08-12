@@ -43,37 +43,39 @@ export async function fetchApi<T>(
   return undefined as T;
 }
 
+type ResolveItem<T> = T extends readonly [infer Item, ...unknown[]] ? Item : T;
+type ResolveArgs<T> = T extends readonly [unknown, ...infer Args] ? Args : [];
+
 export class CrudApi<
-  TItem,
-  TCreate,
-  TUpdate,
-  TListArgs extends unknown[] = [],
+  TConfig,
+  TCreate = unknown,
+  TUpdate = unknown,
 > {
   constructor(
     protected basePath: string,
     protected queryKeys: {
       lists: () => readonly unknown[];
       detail: (id: string) => readonly unknown[];
-      list: (...args: TListArgs) => readonly unknown[];
+      list: (...args: ResolveArgs<TConfig>) => readonly unknown[];
     },
-    protected buildListPath?: (...args: TListArgs) => string,
+    protected buildListPath?: (...args: ResolveArgs<TConfig>) => string,
   ) {}
 
-  listQueryOptions = (...args: TListArgs) => ({
+  listQueryOptions = (...args: ResolveArgs<TConfig>) => ({
     queryKey: this.queryKeys.list(...args),
     queryFn: () =>
-      fetchApi<TItem[]>(
+      fetchApi<ResolveItem<TConfig>[]>(
         this.buildListPath ? this.buildListPath(...args) : this.basePath,
       ),
   });
 
-  useList = (...args: TListArgs) => useQuery(this.listQueryOptions(...args));
+  useList = (...args: ResolveArgs<TConfig>) => useQuery(this.listQueryOptions(...args));
 
   useCreate = () => {
     const queryClient = useQueryClient();
     return useMutation({
       mutationFn: (data: TCreate) =>
-        fetchApi<TItem>(this.basePath, {
+        fetchApi<ResolveItem<TConfig>>(this.basePath, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
@@ -88,7 +90,7 @@ export class CrudApi<
     const queryClient = useQueryClient();
     return useMutation({
       mutationFn: (params: { id: string; data: TUpdate }) =>
-        fetchApi<TItem>(`${this.basePath}/${params.id}`, {
+        fetchApi<ResolveItem<TConfig>>(`${this.basePath}/${params.id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(params.data),

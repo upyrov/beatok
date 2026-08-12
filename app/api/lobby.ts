@@ -6,7 +6,7 @@ import type { CreateLobby, Lobby, LobbyFilter } from "./types/lobby";
 import type { CreateScore, ScoreUpdate } from "./types/score";
 
 export const { listQueryOptions: lobbiesQueryOptions, useList: useLobbies } =
-  new CrudApi<Lobby, CreateLobby, unknown, [LobbyFilter?]>(
+  new CrudApi<[Lobby, LobbyFilter?], CreateLobby>(
     "/lobbies",
     queryKeys.lobbies as any,
     (filter?: LobbyFilter) => {

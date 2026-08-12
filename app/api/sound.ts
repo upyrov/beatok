@@ -9,10 +9,9 @@ import type {
 } from "./types/sound";
 
 export class SoundApi extends CrudApi<
-  Sound,
+  [Sound, string],
   CreateSound,
-  SoundUpdate,
-  [string]
+  SoundUpdate
 > {
   useUploadUrl = () => {
     return useMutation({

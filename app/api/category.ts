@@ -11,7 +11,7 @@ export const {
   useCreate: useCreateCategory,
   useUpdate: useUpdateCategory,
   useDelete: useDeleteCategory,
-} = new CrudApi<Category, CreateCategory, CategoryUpdate, [string]>(
+} = new CrudApi<[Category, string], CreateCategory, CategoryUpdate>(
   "/categories",
   queryKeys.categories,
   (kitId: string) =>
