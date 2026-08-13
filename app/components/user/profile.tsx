@@ -79,9 +79,9 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
   ) : null;
 
   return (
-    <div className="flex items-center gap-6 bg-muted border border-muted-border p-6 rounded-xl relative">
+    <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 bg-muted border border-muted-border p-6 rounded-xl relative">
       <div className="flex flex-col items-center gap-2">
-        <div className="relative group/avatar inline-flex shrink-0 w-32 h-32">
+        <div className="relative group/avatar inline-flex shrink-0 w-24 h-24 sm:w-32 sm:h-32">
           {user.picture ? (
             <>
               {!imageLoaded && (
@@ -115,7 +115,7 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
         </div>
       </div>
 
-      <div className="flex flex-col flex-1 gap-2">
+      <div className="flex flex-col flex-1 gap-2 items-center sm:items-start text-center sm:text-left w-full">
         {isCurrentUser ? (
           <BaseForm
             onSubmit={(e) => {
@@ -123,7 +123,7 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
               e.stopPropagation();
               form.handleSubmit();
             }}
-            className="flex items-center gap-2 max-w-sm"
+            className="flex flex-col sm:flex-row items-center gap-2 w-full max-w-sm"
           >
             <form.Field
               name="name"
@@ -154,11 +154,11 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
             />
           </BaseForm>
         ) : (
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-200">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-200">
             {user.name}
           </h1>
         )}
-        <div className="flex items-center gap-6 mt-2 text-sm text-gray-600 dark:text-gray-400">
+        <div className="flex items-center justify-center sm:justify-start gap-4 sm:gap-6 mt-2 text-sm text-gray-600 dark:text-gray-400 w-full">
           <div className="flex flex-col">
             <span className="font-semibold text-gray-900 dark:text-gray-100">
               Rating
