@@ -107,7 +107,7 @@ export function useSignUp() {
   });
 }
 
-async function signInWithGoogle() {
+export async function signInWithGoogle() {
   const provider = new GoogleAuthProvider();
 
   try {
@@ -119,26 +119,8 @@ async function signInWithGoogle() {
     const userCredential = await signInWithPopup(auth, provider);
     return userCredential.user;
   } catch (error: any) {
-    if (
-      error.code === "auth/credential-already-in-use" ||
-      error.code === "auth/email-already-in-use" ||
-      error.code === "auth/account-exists-with-different-credential"
-    ) {
-      const userCredential = await signInWithPopup(auth, provider);
-      return userCredential.user;
-    }
     throw error;
   }
-}
-
-export function useSignInWithGoogle() {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: () => signInWithGoogle(),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: queryKeys.users.me() }),
-  });
 }
 
 export function useSignOut() {

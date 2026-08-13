@@ -1,15 +1,18 @@
 import { Form as BaseForm, Input as BaseInput, Button } from "@base-ui/react";
 import { useForm } from "@tanstack/react-form";
+import { useQueryClient } from "@tanstack/react-query";
 import { type } from "arktype";
+import { useState } from "react";
 import { CgGoogle } from "react-icons/cg";
 import { Link, useNavigate } from "react-router";
+import { queryKeys } from "~/api/query-keys";
 import { ActionButton } from "~/components/action-button";
 import { FieldError } from "~/components/field-error";
 import { MutationBoundary } from "~/components/mutation-boundary";
 import {
+  signInWithGoogle,
   useResetPassword,
   useSignIn,
-  useSignInWithGoogle,
 } from "~/hooks/use-auth";
 import type { Route } from "./+types/signin";
 
@@ -26,7 +29,9 @@ export function meta({}: Route.MetaArgs) {
 export default function Signin() {
   const navigate = useNavigate();
   const signInMutation = useSignIn();
-  const signInWithGoogleMutation = useSignInWithGoogle();
+  const queryClient = useQueryClient();
+  const [isGooglePending, setIsGooglePending] = useState(false);
+  const [googleError, setGoogleError] = useState<Error | null>(null);
   const resetPasswordMutation = useResetPassword();
 
   const form = useForm({
@@ -57,7 +62,7 @@ export default function Signin() {
         className="flex flex-col gap-4"
       >
         <MutationBoundary error={signInMutation.error} />
-        <MutationBoundary error={signInWithGoogleMutation.error} />
+        <MutationBoundary error={googleError} />
 
         <form.Field
           name="email"
@@ -129,12 +134,22 @@ export default function Signin() {
 
       <ActionButton
         type="button"
-        onClick={() =>
-          signInWithGoogleMutation.mutate(undefined, {
-            onSuccess: () => navigate("/"),
-          })
-        }
-        pending={signInWithGoogleMutation.isPending}
+        onClick={async () => {
+          try {
+            setIsGooglePending(true);
+            setGoogleError(null);
+            await signInWithGoogle();
+            await queryClient.invalidateQueries({
+              queryKey: queryKeys.users.me(),
+            });
+            navigate("/");
+          } catch (error: any) {
+            setGoogleError(error);
+          } finally {
+            setIsGooglePending(false);
+          }
+        }}
+        pending={isGooglePending}
       >
         <CgGoogle className="mr-2" size={18} /> Continue with Google
       </ActionButton>
