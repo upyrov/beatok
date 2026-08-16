@@ -37,7 +37,7 @@ export function UserCard({
             )}
             <img
               src={user.picture}
-              alt={user.name ?? "Anonymous"}
+              alt={user.name || "Anonymous"}
               onLoad={() => setImageLoaded(true)}
               className={`object-cover border border-black/20 dark:border-white/20 p-0.5 rounded-sm w-full h-full ${imageLoaded ? "" : "invisible"}`}
             />
@@ -50,7 +50,7 @@ export function UserCard({
       </div>
       <div className="flex flex-col justify-center">
         <span className="font-semibold group-hover:transition-colors group-[.is-md]:text-base group-[.is-lg]:text-lg group-[.is-xl]:text-xl">
-          {user.name ?? "Anonymous"}
+          {user.name || "Anonymous"}
         </span>
         {showRating && (
           <span className="text-gray-400 text-xs group-[.is-md]:text-sm group-[.is-lg]:text-sm">
