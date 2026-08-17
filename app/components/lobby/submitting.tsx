@@ -1,6 +1,6 @@
 import { Button } from "@base-ui/react";
 import JSZip from "jszip";
-import { use, useCallback, useEffect, useMemo } from "react";
+import { use, useCallback, useMemo } from "react";
 import { CgSoftwareDownload } from "react-icons/cg";
 import { useOutletContext } from "react-router";
 import {
@@ -8,13 +8,11 @@ import {
   useDeleteSubmission,
   useUploadUrl,
 } from "~/api/submission";
-import { LobbyState } from "~/api/types/enums";
 import type { Sound } from "~/api/types/sound";
-import type { Submission as ISubmission } from "~/api/types/submission";
 import type { Me } from "~/api/types/user";
 import { ActionButton } from "~/components/action-button";
-import { AudioPlayer } from "~/components/audio-player";
 import { FileDropzone } from "~/components/file-dropzone";
+import { AudioPlayer } from "~/components/lazy-audio-player";
 import { MutationBoundary } from "~/components/mutation-boundary";
 import { LobbyContext } from "~/contexts";
 import { useCountdown } from "~/hooks/use-countdown";
@@ -60,33 +58,6 @@ export function Submitting() {
       sounds: group!,
     }));
   }, [lobby]);
-
-  useEffect(() => {
-    if (!connection) return;
-
-    function handleVotingStarted(
-      votingTime: string,
-      votingSubmissions: ISubmission[],
-    ) {
-      setLobby((prev) => {
-        if (!prev) return prev;
-        return {
-          ...prev,
-          state: LobbyState.Voting,
-          votingTime: votingTime,
-          votingStartedAt: new Date().toISOString(),
-          submissions: prev.submissions?.length
-            ? prev.submissions
-            : votingSubmissions,
-        };
-      });
-    }
-
-    connection.on("VotingStarted", handleVotingStarted);
-    return () => {
-      connection.off("VotingStarted", handleVotingStarted);
-    };
-  }, [connection, setLobby]);
 
   const handleUpload = useCallback(
     async (file: File, onProgress: (progress: number) => void) => {

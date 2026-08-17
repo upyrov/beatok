@@ -6,9 +6,16 @@ import { CgPlayButton, CgPlayPause } from "react-icons/cg";
 interface AudioPlayerProps {
   src: string;
   className?: string;
+  syncStartAt?: string;
+  hideControls?: boolean;
 }
 
-export function AudioPlayer({ src, className = "" }: AudioPlayerProps) {
+export function AudioPlayer({
+  src,
+  className = "",
+  syncStartAt,
+  hideControls = false,
+}: AudioPlayerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { wavesurfer, isReady, isPlaying, currentTime } = useWavesurfer({
@@ -20,6 +27,7 @@ export function AudioPlayer({ src, className = "" }: AudioPlayerProps) {
     cursorWidth: 1,
     cursorColor: "#000000",
     normalize: true,
+    interact: !hideControls,
   });
 
   const [duration, setDuration] = useState(0);
@@ -55,6 +63,32 @@ export function AudioPlayer({ src, className = "" }: AudioPlayerProps) {
     return () => window.removeEventListener("audioplay", handleGlobalPlay);
   }, [wavesurfer, playerId]);
 
+  useEffect(() => {
+    if (!wavesurfer || !syncStartAt) return;
+
+    const onReady = () => {
+      const startMs = new Date(syncStartAt).getTime();
+      const offsetSeconds = (Date.now() - startMs) / 1000;
+
+      if (offsetSeconds > 0) {
+        wavesurfer.setTime(offsetSeconds);
+      }
+      wavesurfer.play().catch((err) => {
+        if (err.name === "NotAllowedError") {
+          const enableAudio = () => {
+            wavesurfer.play().catch(() => {});
+          };
+          window.addEventListener("click", enableAudio, { once: true });
+        }
+      });
+    };
+
+    wavesurfer.on("ready", onReady);
+    return () => {
+      wavesurfer.un("ready", onReady);
+    };
+  }, [wavesurfer, syncStartAt]);
+
   const handleClick = useCallback(() => wavesurfer?.playPause(), [wavesurfer]);
 
   const formatTime = useCallback((seconds: number) => {
@@ -68,14 +102,16 @@ export function AudioPlayer({ src, className = "" }: AudioPlayerProps) {
     <div
       className={`transition duration-300 starting:opacity-0 starting:translate-y-1 flex items-center gap-2 rounded-lg w-full bg-gray-200 p-1.5 border border-black/5 ${className}`}
     >
-      <Button
-        type="button"
-        onClick={handleClick}
-        disabled={!isReady}
-        className="shrink-0 w-8 h-8 flex items-center justify-center bg-white hover:bg-gray-100 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed rounded-full transition-colors focus:outline-none text-black shadow-sm"
-      >
-        {isPlaying ? <CgPlayPause size={20} /> : <CgPlayButton size={20} />}
-      </Button>
+      {!hideControls && (
+        <Button
+          type="button"
+          onClick={handleClick}
+          disabled={!isReady}
+          className="shrink-0 w-8 h-8 flex items-center justify-center bg-white hover:bg-gray-100 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed rounded-full transition-colors focus:outline-none text-black shadow-sm"
+        >
+          {isPlaying ? <CgPlayPause size={20} /> : <CgPlayButton size={20} />}
+        </Button>
+      )}
 
       <div className="flex-1 h-8 relative rounded min-w-20" ref={containerRef}>
         {!isReady && (
@@ -95,9 +131,11 @@ export function AudioPlayer({ src, className = "" }: AudioPlayerProps) {
         )}
       </div>
 
-      <div className="shrink-0 text-[10px] font-mono text-gray-500 whitespace-nowrap px-1 text-right">
-        {formatTime(currentTime)} / {formatTime(duration)}
-      </div>
+      {!hideControls && (
+        <div className="shrink-0 text-[10px] font-mono text-gray-500 whitespace-nowrap px-1 text-right">
+          {formatTime(currentTime)} / {formatTime(duration)}
+        </div>
+      )}
     </div>
   );
 }

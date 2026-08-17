@@ -1,7 +1,9 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { CgProfile, CgSpinner } from "react-icons/cg";
 import { Link } from "react-router";
 import type { Me, User } from "~/api/types/user";
+import { userByIdQueryOptions } from "~/api/user";
 
 export interface UserCardProps {
   user: Me | User;
@@ -17,6 +19,10 @@ export function UserCard({
   showRating = false,
   direction = "horizontal",
 }: UserCardProps) {
+  const queryClient = useQueryClient();
+  const prefetch = () => {
+    queryClient.prefetchQuery(userByIdQueryOptions(user.id));
+  };
   const [imageLoaded, setImageLoaded] = useState(false);
 
   const sizeClasses =
@@ -65,6 +71,8 @@ export function UserCard({
     <Link
       viewTransition
       to={`/users/${user.id}`}
+      onMouseEnter={prefetch}
+      onFocus={prefetch}
       className={`inline-flex ${direction === "vertical" ? "flex-col" : ""} items-center ${direction === "vertical" ? "gap-1" : "gap-2"} hover:bg-muted p-1 rounded transition-colors group text-sm ${className}`}
     >
       {content}

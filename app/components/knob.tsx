@@ -10,6 +10,7 @@ export function Knob({
   min = 0,
   max = 100,
   onChange,
+  onChangeEnd,
   size = 40,
   color = "#4ade80",
 }: {
@@ -17,6 +18,7 @@ export function Knob({
   min?: number;
   max?: number;
   onChange: (val: number) => void;
+  onChangeEnd?: (val: number) => void;
   size?: number;
   color?: string;
 }) {
@@ -48,12 +50,15 @@ export function Knob({
 
   const handlePointerUp = useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
+      if (isDragging && onChangeEnd) {
+        onChangeEnd(valueRef.current);
+      }
       setIsDragging(false);
       if (e.currentTarget.hasPointerCapture(e.pointerId)) {
         e.currentTarget.releasePointerCapture(e.pointerId);
       }
     },
-    [],
+    [isDragging, onChangeEnd],
   );
 
   const valueRef = useRef(value);
@@ -62,9 +67,11 @@ export function Knob({
   const updateValue = useCallback(
     (e: KeyboardEvent, newVal: number) => {
       e.preventDefault();
-      onChange(Math.max(min, Math.min(max, newVal)));
+      const val = Math.max(min, Math.min(max, newVal));
+      onChange(val);
+      if (onChangeEnd) onChangeEnd(val);
     },
-    [min, max, onChange],
+    [min, max, onChange, onChangeEnd],
   );
 
   useHotkey("ArrowUp", (e) => updateValue(e, valueRef.current + STEP), {

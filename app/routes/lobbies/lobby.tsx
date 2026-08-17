@@ -5,6 +5,7 @@ import { useNavigate, useOutletContext, useParams } from "react-router";
 import { queryKeys } from "~/api/query-keys";
 import { LobbyState } from "~/api/types/enums";
 import type { DetailedLobby } from "~/api/types/lobby";
+import type { Submission } from "~/api/types/submission";
 import type { Me, RatingChange } from "~/api/types/user";
 import { ActionButton } from "~/components/action-button";
 import { Chat } from "~/components/lobby/chat";
@@ -105,8 +106,47 @@ export default function Lobby() {
     }
 
     connection.on("Ended", handleEnded);
+
+    connection.on("VotingStarted", () => {
+      setLobby((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          state: LobbyState.Voting,
+          votingStartedAt: new Date().toISOString(),
+        };
+      });
+    });
+
+    connection.on(
+      "SubmissionForPlayback",
+      (submission: Submission, startedAt: string) => {
+        setLobby((prev) => {
+          if (!prev) return prev;
+
+          const newSubmissions = prev.submissions?.find(
+            (s) => s.id === submission.id,
+          )
+            ? prev.submissions
+            : [...(prev.submissions || []), submission];
+
+          return {
+            ...prev,
+            state: LobbyState.Voting,
+            submissions: newSubmissions,
+            currentPlaybackItem: {
+              submissionId: submission.id,
+              startedAt: startedAt,
+              order: 0,
+            },
+          };
+        });
+      },
+    );
     return () => {
       connection.off("Ended", handleEnded);
+      connection.off("VotingStarted");
+      connection.off("SubmissionForPlayback");
     };
   }, [user, connection, setLobby]);
 

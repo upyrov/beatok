@@ -5,9 +5,7 @@ import { use } from "react";
 import { useOutletContext } from "react-router";
 import { useUpdateScore, useVote } from "~/api/lobby";
 import type { Me } from "~/api/types/user";
-import { ActionButton } from "~/components/action-button";
 import { Knob } from "~/components/knob";
-import { MutationBoundary } from "~/components/mutation-boundary";
 import { LobbyContext } from "~/contexts";
 
 export function VoteForm({
@@ -25,54 +23,29 @@ export function VoteForm({
   existingScoreValue?: number;
   onVote: () => void;
 }) {
-  const { setLobby } = use(LobbyContext);
+  const { lobby, setLobby } = use(LobbyContext);
   const { user } = useOutletContext<{ user: Me | null }>();
 
   const voteMutation = useVote();
   const updateScoreMutation = useUpdateScore();
 
   const form = useForm({
-    defaultValues: { score: existingScoreValue ?? 5 },
+    defaultValues: { score: existingScoreValue ?? 0 },
     onSubmit: async ({ value }) => {
       onVote();
-      if (existingScoreId) {
-        setLobby((prev) => {
-          if (!prev) return prev;
-          return {
-            ...prev,
-            participants: prev.participants.map((p) => {
-              if (p.user.id !== user?.id) return p;
-              return {
-                ...p,
-                scores: p.scores?.map((s) =>
-                  s.id === existingScoreId
-                    ? { ...s, value: String(value.score) }
-                    : s,
-                ),
-              };
-            }),
-          };
+      const realScore = lobby?.participants
+        .find((p) => p.user.id === user?.id)
+        ?.scores?.find(
+          (s) => s.submissionId === submissionId && !s.id.startsWith("temp-"),
+        );
+
+      if (realScore) {
+        await updateScoreMutation.mutateAsync({
+          id: lobbyId,
+          scoreId: realScore.id,
+          data: { value: value.score },
         });
       } else {
-        setLobby((prev) => {
-          if (!prev) return prev;
-          return {
-            ...prev,
-            participants: prev.participants.map((p) => {
-              if (p.user.id !== user?.id) return p;
-              const newScore = {
-                id: "temp-" + Date.now(), // Optimistic ID
-                value: String(value.score),
-                submissionId,
-                participationId: p.id,
-              };
-              return {
-                ...p,
-                scores: [...(p.scores ?? []), newScore],
-              };
-            }),
-          };
-        });
         await voteMutation.mutateAsync({
           id: lobbyId,
           data: { value: value.score, submissionId },
@@ -111,7 +84,45 @@ export function VoteForm({
             <div className="flex items-center gap-3">
               <Knob
                 value={field.state.value}
-                onChange={field.handleChange}
+                onChange={(val) => {
+                  field.handleChange(val);
+                  // Optimistic UI update instantly while dragging
+                  setLobby((prev) => {
+                    if (!prev) return prev;
+                    return {
+                      ...prev,
+                      participants: prev.participants.map((p) => {
+                        if (p.user.id !== user?.id) return p;
+
+                        const existing = p.scores?.find(
+                          (s) => s.submissionId === submissionId,
+                        );
+                        if (existing) {
+                          return {
+                            ...p,
+                            scores: p.scores?.map((s) =>
+                              s.id === existing.id
+                                ? { ...s, value: String(val) }
+                                : s,
+                            ),
+                          };
+                        } else {
+                          const newScore = {
+                            id: "temp-" + Date.now(),
+                            value: String(val),
+                            submissionId,
+                            participationId: p.id,
+                          };
+                          return {
+                            ...p,
+                            scores: [...(p.scores ?? []), newScore],
+                          };
+                        }
+                      }),
+                    };
+                  });
+                }}
+                onChangeEnd={() => form.handleSubmit()}
                 min={0}
                 max={10}
                 size={60}
@@ -129,22 +140,6 @@ export function VoteForm({
             </div>
           )}
         />
-        <MutationBoundary mutation={voteMutation}>
-          <MutationBoundary mutation={updateScoreMutation}>
-            <form.Subscribe
-              selector={(state) => [state.canSubmit, state.isSubmitting]}
-              children={([canSubmit, isSubmitting]) => (
-                <ActionButton
-                  type="submit"
-                  disabled={!canSubmit}
-                  pending={isSubmitting || isPending}
-                >
-                  {existingScoreId ? "Update" : "Vote"}
-                </ActionButton>
-              )}
-            />
-          </MutationBoundary>
-        </MutationBoundary>
       </BaseForm>
       {isSuccess && (
         <div className="text-green-400 font-medium text-xs">

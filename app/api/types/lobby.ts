@@ -1,5 +1,6 @@
 import type { LobbyState } from "./enums";
 import type { Genre } from "./genre";
+import type { LobbyPlaybackItem } from "./lobby-playback-item";
 import type { Participation } from "./participation";
 import type { SoundWithCategory } from "./sound";
 import type { Submission } from "./submission";
@@ -32,6 +33,7 @@ export interface DetailedLobby {
   sounds: SoundWithCategory[];
   submissions: Submission[];
   winningSubmissionId: string | null;
+  currentPlaybackItem?: LobbyPlaybackItem;
 }
 
 export interface Lobby {
