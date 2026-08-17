@@ -23,6 +23,7 @@ export function AudioPlayer({ src, className = "" }: AudioPlayerProps) {
   });
 
   const [duration, setDuration] = useState(0);
+  const playerId = useRef(Math.random().toString(36).slice(2)).current;
 
   useEffect(() => {
     if (!wavesurfer) return;
@@ -30,10 +31,29 @@ export function AudioPlayer({ src, className = "" }: AudioPlayerProps) {
     const subscriptions = [
       wavesurfer.on("decode", (duration) => setDuration(duration)),
       wavesurfer.on("ready", () => setDuration(wavesurfer.getDuration())),
+      wavesurfer.on("play", () => {
+        window.dispatchEvent(
+          new CustomEvent("audioplay", { detail: playerId }),
+        );
+      }),
     ];
 
     return () => subscriptions.forEach((unsubscribe) => unsubscribe());
-  }, [wavesurfer]);
+  }, [wavesurfer, playerId]);
+
+  useEffect(() => {
+    if (!wavesurfer) return;
+
+    async function handleGlobalPlay(e: Event) {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail !== playerId && wavesurfer?.isPlaying()) {
+        wavesurfer.pause();
+      }
+    }
+
+    window.addEventListener("audioplay", handleGlobalPlay);
+    return () => window.removeEventListener("audioplay", handleGlobalPlay);
+  }, [wavesurfer, playerId]);
 
   const handleClick = useCallback(() => wavesurfer?.playPause(), [wavesurfer]);
 
