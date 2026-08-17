@@ -11,6 +11,17 @@ export function GlobalErrorModal() {
       let msg = customEvent.detail;
 
       // Prettify common errors
+      if (typeof msg === "string") {
+        msg = msg
+          .replace(/^Firebase:\s*/i, "")
+          .replace(/\s*\(auth\/[a-z-]+\)\.?/i, "")
+          .replace(
+            /^Error\s*\(\s*auth\/[a-z-]+\s*\)\.?/i,
+            "An authentication error occurred.",
+          )
+          .trim();
+      }
+
       if (msg.includes("429")) {
         msg =
           "You are doing that too fast. Please slow down and try again (Rate Limit Exceeded).";

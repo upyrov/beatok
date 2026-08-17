@@ -28,6 +28,17 @@ export function MutationBoundary({
     activeError?.message ||
     "An unexpected error occurred. Please try again later.";
 
+  if (typeof errorMessage === "string") {
+    errorMessage = errorMessage
+      .replace(/^Firebase:\s*/i, "")
+      .replace(/\s*\(auth\/[a-z-]+\)\.?/i, "")
+      .replace(
+        /^Error\s*\(\s*auth\/[a-z-]+\s*\)\.?/i,
+        "An authentication error occurred.",
+      )
+      .trim();
+  }
+
   if (activeError?.code) {
     switch (activeError.code) {
       case "auth/invalid-email":
