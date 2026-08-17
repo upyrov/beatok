@@ -1,4 +1,4 @@
-import { Button } from "@base-ui/react";
+import { Button } from "~/components/ui/button";
 import { type } from "arktype";
 import { CgAdd } from "react-icons/cg";
 import { useGenres } from "~/api/genre";

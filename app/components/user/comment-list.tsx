@@ -1,4 +1,4 @@
-import { Button } from "@base-ui/react";
+import { Button } from "~/components/ui/button";
 import { useState } from "react";
 import { useComments } from "~/api/user";
 import { UserCard } from "~/components/user-card";
@@ -21,7 +21,7 @@ export function CommentList({ userId }: { userId: string }) {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-6">
       {!commentsResult?.items.length ? (
         <div className="text-gray-400 text-center py-8">No comments yet.</div>
       ) : (

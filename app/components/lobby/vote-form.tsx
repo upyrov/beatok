@@ -40,16 +40,58 @@ export function VoteForm({
         );
 
       if (realScore) {
-        await updateScoreMutation.mutateAsync({
-          id: lobbyId,
-          scoreId: realScore.id,
-          data: { value: value.score },
-        });
+        try {
+          await updateScoreMutation.mutateAsync({
+            id: lobbyId,
+            scoreId: realScore.id,
+            data: { value: value.score },
+          });
+        } catch (err) {
+          // Revert optimistic update
+          setLobby((prev) => {
+            if (!prev) return prev;
+            return {
+              ...prev,
+              participants: prev.participants.map((p) => {
+                if (p.user.id !== user?.id) return p;
+                return {
+                  ...p,
+                  scores: p.scores?.map((s) =>
+                    s.id === realScore.id
+                      ? { ...s, value: String(existingScoreValue ?? 0) }
+                      : s,
+                  ),
+                };
+              }),
+            };
+          });
+        }
       } else {
-        await voteMutation.mutateAsync({
-          id: lobbyId,
-          data: { value: value.score, submissionId },
-        });
+        try {
+          await voteMutation.mutateAsync({
+            id: lobbyId,
+            data: { value: value.score, submissionId },
+          });
+        } catch (err) {
+          // Revert optimistic update
+          setLobby((prev) => {
+            if (!prev) return prev;
+            return {
+              ...prev,
+              participants: prev.participants.map((p) => {
+                if (p.user.id !== user?.id) return p;
+                return {
+                  ...p,
+                  scores: p.scores?.filter(
+                    (s) =>
+                      s.submissionId !== submissionId ||
+                      !s.id.startsWith("temp-"),
+                  ),
+                };
+              }),
+            };
+          });
+        }
       }
     },
   });

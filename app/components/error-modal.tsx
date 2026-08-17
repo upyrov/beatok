@@ -1,4 +1,4 @@
-import { Button } from "@base-ui/react";
+import { Button } from "~/components/ui/button";
 import { useEffect, useState } from "react";
 import { CgClose, CgDanger } from "react-icons/cg";
 
@@ -65,7 +65,7 @@ export function GlobalErrorModal() {
         </div>
         <div className="flex justify-end mt-2">
           <Button
-            className="system-button bg-gray-900 text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
+            className="bg-gray-900 text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
             onClick={() => setErrorMsg(null)}
           >
             Dismiss

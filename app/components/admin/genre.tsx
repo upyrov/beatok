@@ -1,4 +1,5 @@
-import { Input as BaseInput, Button } from "@base-ui/react";
+import { Input as BaseInput } from "@base-ui/react";
+import { Button } from "~/components/ui/button";
 import { useState } from "react";
 import { CgCheck, CgClose, CgPen, CgTrash } from "react-icons/cg";
 import { useDeleteGenre, useUpdateGenreName } from "~/api/genre";
@@ -26,7 +27,7 @@ export function Genre({ genre }: { genre: IGenre }) {
     return (
       <div className="flex justify-between items-center gap-2 py-1">
         <BaseInput
-          className="flex-1 system-input text-sm"
+          className="flex-1 text-sm"
           value={editName}
           onChange={(e) => setEditName(e.target.value)}
           onKeyDown={(e) => {

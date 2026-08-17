@@ -1,4 +1,5 @@
-import { Button, Menu } from "@base-ui/react";
+import { Menu } from "@base-ui/react";
+import { Button } from "~/components/ui/button";
 import { useCallback, useEffect, useState } from "react";
 import { CgMoon, CgSun } from "react-icons/cg";
 

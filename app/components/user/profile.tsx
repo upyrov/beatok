@@ -79,7 +79,7 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
   ) : null;
 
   return (
-    <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 bg-muted border border-muted-border p-6 rounded-xl relative">
+    <div className="system-card flex flex-col sm:flex-row items-center sm:items-start gap-6 relative">
       <div className="flex flex-col items-center gap-2">
         <div className="relative group/avatar inline-flex shrink-0 w-24 h-24 sm:w-32 sm:h-32">
           {user.picture ? (
