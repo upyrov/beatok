@@ -1,4 +1,5 @@
-import { Button } from "@base-ui/react";
+import { CgSoftwareUpload, CgCheckO, CgDesktop, CgTrash } from "react-icons/cg";
+import { Button } from "~/components/ui/button";
 import JSZip from "jszip";
 import { use, useCallback, useMemo } from "react";
 import { CgSoftwareDownload } from "react-icons/cg";
@@ -168,7 +169,7 @@ export function Submitting() {
           {groupedCategories.length > 0 && (
             <Button
               onClick={onDownloadZip}
-              className="system-button flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg bg-white hover:bg-gray-200   border-none font-semibold"
+              className="flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg bg-white hover:bg-gray-200   border-none font-semibold"
             >
               <CgSoftwareDownload size={18} /> Download All (ZIP)
             </Button>
@@ -184,7 +185,7 @@ export function Submitting() {
                     <div className="flex items-center gap-2 w-full">
                       <AudioPlayer src={s.value} className="flex-1 min-w-0" />
                       <Button
-                        className="system-button shrink-0"
+                        className="shrink-0"
                         onClick={(e: React.MouseEvent) => handleDownload(e, s)}
                         title="Download"
                       >
@@ -208,8 +209,9 @@ export function Submitting() {
               <ActionButton
                 onClick={handleDeleteSubmission}
                 pending={deleteSubmissionMutation.isPending}
+                className="flex items-center justify-center gap-2"
               >
-                Delete Submission
+                <CgTrash /> Delete Submission
               </ActionButton>
             </MutationBoundary>
           </div>

@@ -80,7 +80,7 @@ export default function Signin() {
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
                 placeholder="email@beatok.xyz"
-                className="system-input w-full mt-1 font-normal"
+                className="w-full mt-1 font-normal"
               />
               <FieldError errors={field.state.meta.errors} />
             </label>
@@ -103,7 +103,7 @@ export default function Signin() {
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
                 placeholder="Secret123!"
-                className="system-input w-full mt-1 font-normal"
+                className="w-full mt-1 font-normal"
               />
               <FieldError errors={field.state.meta.errors} />
             </label>

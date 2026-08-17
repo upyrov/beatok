@@ -75,7 +75,7 @@ export default function NewLobby() {
               <BaseInput
                 id="genreId"
                 type="text"
-                className="system-input w-full"
+                className="w-full"
                 placeholder="My Lobby"
                 value={field.state.value}
                 onBlur={field.handleBlur}
@@ -104,7 +104,7 @@ export default function NewLobby() {
                   onValueChange={(value) => field.handleChange(value!)}
                 >
                   <Select.Trigger
-                    className="system-input flex justify-between items-center w-full"
+                    className="flex justify-between items-center w-full"
                     onBlur={field.handleBlur}
                   >
                     <Select.Value placeholder="Select a genre">

@@ -1,4 +1,4 @@
-import { Button } from "@base-ui/react";
+import { Button } from "~/components/ui/button";
 import { useCallback, useMemo } from "react";
 import type { ActivityDay } from "~/api/types/user";
 

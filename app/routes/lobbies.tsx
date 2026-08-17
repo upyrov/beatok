@@ -1,4 +1,5 @@
-import { Button } from "@base-ui/react";
+import { CgLogIn, CgMathPlus } from "react-icons/cg";
+import { Button } from "~/components/ui/button";
 import { useMemo } from "react";
 import { Link } from "react-router";
 import { lobbiesQueryOptions, useLobbies } from "~/api/lobby";
@@ -30,7 +31,7 @@ function LobbyGridItem({ lobby }: { lobby: Lobby }) {
       <LobbyCard lobby={lobby} />
       <div className="mt-6">
         <Link viewTransition to={`/lobbies/${lobby.id}`} prefetch="intent">
-          <Button className="system-button">Join</Button>
+          <Button className="flex items-center gap-2"><CgLogIn /> Join</Button>
         </Link>
       </div>
     </div>
@@ -147,7 +148,7 @@ export default function Home() {
               prefetch="intent"
               className="mt-4 flex justify-center"
             >
-              <Button className="system-button">Create Your Own</Button>
+              <Button className="flex items-center gap-2"><CgMathPlus /> Create Your Own</Button>
             </Link>
           </div>
         )}

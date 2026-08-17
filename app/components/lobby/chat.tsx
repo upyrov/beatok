@@ -9,6 +9,7 @@ import { LobbyContext } from "~/contexts";
 import { ActionButton } from "../action-button";
 
 export interface Message {
+  id?: string;
   content: string;
   sender: User | Me;
 }
@@ -66,16 +67,21 @@ export function Chat() {
       const content = value.content;
       form.reset();
 
+      const tempId = crypto.randomUUID();
+
       // Optimistic update
       if (user) {
-        setMessages((prev) => [...prev, { content, sender: user }]);
+        setMessages((prev) => [...prev, { id: tempId, content, sender: user }]);
       }
 
       try {
         await connection.invoke("SendMessage", lobby.id, content);
       } catch (error) {
         console.error(error);
-        // Optionally revert message here if it fails
+        // Revert message on failure
+        if (user) {
+          setMessages((prev) => prev.filter((m) => m.id !== tempId));
+        }
       }
     },
   });

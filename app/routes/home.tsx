@@ -1,6 +1,6 @@
-import { Button } from "@base-ui/react";
+import { Button } from "~/components/ui/button";
 import { useState } from "react";
-import { CgSpinner } from "react-icons/cg";
+import { CgSpinner, CgPlayButtonO, CgEnter, CgHeadset, CgTrophy, CgArrowRight } from "react-icons/cg";
 import { Link, redirect } from "react-router";
 import { lobbiesQueryOptions, useLobbies } from "~/api/lobby";
 import { userQueryOptions } from "~/api/user";
@@ -74,8 +74,8 @@ export default function LandingPage() {
         </p>
         <div className="flex gap-4 transition duration-300 starting:opacity-0 starting:translate-y-1 delay-200">
           <Link viewTransition to="/lobbies">
-            <Button className="system-button px-12 py-5 text-xl font-bold bg-blue-600 hover:bg-blue-500 border-none">
-              Start
+            <Button className="flex items-center gap-2 px-12 py-5 text-xl font-bold bg-blue-600 hover:bg-blue-500 border-none">
+              <CgPlayButtonO /> Start
             </Button>
           </Link>
         </div>
@@ -86,7 +86,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             <div className="flex flex-col items-center text-center">
               <div className="w-16 h-16 rounded-full bg-red-400/10 flex items-center justify-center text-red-400 font-bold text-2xl mb-6">
-                1
+                <CgEnter />
               </div>
               <h3 className="text-xl font-bold mb-3">Join & Get Sounds</h3>
               <p className="text-gray-600 dark:text-gray-400">
@@ -101,7 +101,7 @@ export default function LandingPage() {
 
             <div className="flex flex-col items-center text-center">
               <div className="w-16 h-16 rounded-full bg-orange-500/10 flex items-center justify-center text-orange-500 font-bold text-2xl mb-6">
-                2
+                <CgHeadset />
               </div>
               <h3 className="text-xl font-bold mb-3">Make the Beat</h3>
               <p className="text-gray-600 dark:text-gray-400">
@@ -112,7 +112,7 @@ export default function LandingPage() {
 
             <div className="flex flex-col items-center text-center">
               <div className="w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center text-green-500 font-bold text-2xl mb-6">
-                3
+                <CgTrophy />
               </div>
               <h3 className="text-xl font-bold mb-3">Vote &amp; Win</h3>
               <p className="text-gray-600 dark:text-gray-400">
@@ -134,7 +134,7 @@ export default function LandingPage() {
                 to="/dashboard"
                 className="text-blue-500 font-medium hover:underline"
               >
-                View all lobbies &rarr;
+                <span className="flex items-center gap-1">View all lobbies <CgArrowRight /></span>
               </Link>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -168,7 +168,7 @@ export default function LandingPage() {
         </section>
       )}
 
-      <section className="py-24 px-4 flex flex-col items-center justify-center">
+      <section className="py-24 px-4">
         <PageContainer className="max-w-4xl flex flex-col md:flex-row items-center gap-16">
           <div className="flex-1 flex flex-col gap-6">
             <h2 className="text-3xl font-bold tracking-tight">Voting</h2>
@@ -187,7 +187,7 @@ export default function LandingPage() {
               size={120}
               color={vote >= 8 ? "#4ade80" : vote >= 4 ? "#fb923c" : "#f87171"}
             />
-            <div className="text-4xl font-bold font-mono w-24 text-center mt-4">
+            <div className="text-4xl font-bold font-mono w-24 text-center">
               {vote}
             </div>
           </div>

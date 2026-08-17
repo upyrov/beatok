@@ -1,4 +1,5 @@
-import { Input as BaseInput, Button } from "@base-ui/react";
+import { Input as BaseInput } from "@base-ui/react";
+import { Button } from "~/components/ui/button";
 import { useState } from "react";
 import {
   CgCheck,
@@ -50,7 +51,7 @@ export function Category({
         {isEditing ? (
           <div className="flex items-center gap-2 flex-1 mr-4">
             <BaseInput
-              className="flex-1 system-input text-sm"
+              className="flex-1 text-sm"
               value={editName}
               onChange={(e) => setEditName(e.target.value)}
               autoFocus

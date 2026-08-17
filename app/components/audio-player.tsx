@@ -1,4 +1,4 @@
-import { Button } from "@base-ui/react";
+import { Button } from "~/components/ui/button";
 import { useWavesurfer } from "@wavesurfer/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CgPlayButton, CgPlayPause } from "react-icons/cg";

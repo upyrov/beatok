@@ -1,3 +1,4 @@
+import { CgPlayButtonO, CgSandClock } from "react-icons/cg";
 import { use, useCallback, useEffect } from "react";
 import { useOutletContext } from "react-router";
 import { useStartLobby } from "~/api/lobby";

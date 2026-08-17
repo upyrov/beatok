@@ -57,8 +57,8 @@ function ActivitySection({
 
   return (
     <>
-      <div className="system-card">
-        <div className="flex justify-between items-center mb-4">
+      <div className="system-card flex flex-col gap-6">
+        <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold">Activity Graph</h2>
           {!!availableYears?.length && (
             <Select.Root
@@ -71,7 +71,7 @@ function ActivitySection({
                 );
               }}
             >
-              <Select.Trigger className="system-input cursor-pointer flex justify-between items-center gap-2">
+              <Select.Trigger className="cursor-pointer flex justify-between items-center gap-2">
                 <Select.Value>
                   {(value) => (value === "default" ? "Last 365 days" : value)}
                 </Select.Value>
@@ -123,9 +123,9 @@ function ActivitySection({
       {selectedDate && (
         <div
           key={selectedDate}
-          className="system-card transition duration-300 starting:opacity-0 starting:translate-y-1"
+          className="system-card transition duration-300 starting:opacity-0 starting:translate-y-1 flex flex-col gap-6"
         >
-          <h2 className="text-2xl font-bold mb-6">
+          <h2 className="text-2xl font-bold">
             Activity for {selectedDate}
           </h2>
           <Activity userId={userId} date={selectedDate} />
@@ -195,7 +195,7 @@ export default function User() {
         initialAvailableYears={user.availableYears}
       />
       {showComments && (
-        <div className="system-card">
+        <div className="system-card flex flex-col gap-6">
           <h2 className="text-2xl font-bold">Comments</h2>
           {canComment && <CommentForm userId={id} />}
           <CommentList userId={id} />

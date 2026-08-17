@@ -1,4 +1,4 @@
-import { Button } from "@base-ui/react";
+import { Button } from "~/components/ui/button";
 import type { ReactNode } from "react";
 import { CgSpinner } from "react-icons/cg";
 
@@ -18,7 +18,7 @@ export function ActionButton({
     <Button
       {...props}
       disabled={disabled || pending}
-      className={`system-button relative ${className}`}
+      className={`relative ${className}`}
     >
       {pending && (
         <div className="absolute inset-0 flex items-center justify-center">
