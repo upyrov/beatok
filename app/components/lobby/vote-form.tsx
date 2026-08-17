@@ -36,11 +36,6 @@ export function VoteForm({
     onSubmit: async ({ value }) => {
       onVote();
       if (existingScoreId) {
-        await updateScoreMutation.mutateAsync({
-          id: lobbyId,
-          scoreId: existingScoreId,
-          data: { value: value.score },
-        });
         setLobby((prev) => {
           if (!prev) return prev;
           return {
@@ -59,10 +54,6 @@ export function VoteForm({
           };
         });
       } else {
-        const scoreId = await voteMutation.mutateAsync({
-          id: lobbyId,
-          data: { value: value.score, submissionId },
-        });
         setLobby((prev) => {
           if (!prev) return prev;
           return {
@@ -70,7 +61,7 @@ export function VoteForm({
             participants: prev.participants.map((p) => {
               if (p.user.id !== user?.id) return p;
               const newScore = {
-                id: scoreId,
+                id: "temp-" + Date.now(), // Optimistic ID
                 value: String(value.score),
                 submissionId,
                 participationId: p.id,
@@ -81,6 +72,10 @@ export function VoteForm({
               };
             }),
           };
+        });
+        await voteMutation.mutateAsync({
+          id: lobbyId,
+          data: { value: value.score, submissionId },
         });
       }
     },

@@ -2,18 +2,20 @@ import { Form as BaseForm, Input as BaseInput } from "@base-ui/react";
 import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
 import { use, useEffect, useRef, useState } from "react";
-import type { User } from "~/api/types/user";
+import { useOutletContext } from "react-router";
+import type { Me, User } from "~/api/types/user";
 import { UserCard } from "~/components/user-card";
 import { LobbyContext } from "~/contexts";
 import { ActionButton } from "../action-button";
 
 export interface Message {
   content: string;
-  sender: User;
+  sender: User | Me;
 }
 
 export function Chat() {
   const { lobby, connection } = use(LobbyContext);
+  const { user } = useOutletContext<{ user: Me | null }>();
   const [messages, setMessages] = useState<Message[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -32,6 +34,13 @@ export function Chat() {
         )?.user;
         if (!sender) return prev;
 
+        // Basic deduplication if it echoes back
+        if (sender.id === user?.id) {
+          const isDuplicate = prev.some(
+            (m) => m.sender.id === user?.id && m.content === content,
+          );
+          if (isDuplicate) return prev;
+        }
         return [...prev, { content, sender }];
       });
     }
@@ -54,11 +63,19 @@ export function Chat() {
     },
     onSubmit: async ({ value }) => {
       if (!connection || !lobby?.id) return;
+      const content = value.content;
+      form.reset();
+
+      // Optimistic update
+      if (user) {
+        setMessages((prev) => [...prev, { content, sender: user }]);
+      }
+
       try {
-        await connection.invoke("SendMessage", lobby.id, value.content);
-        form.reset();
+        await connection.invoke("SendMessage", lobby.id, content);
       } catch (error) {
         console.error(error);
+        // Optionally revert message here if it fails
       }
     },
   });
