@@ -1,6 +1,7 @@
 import { Button as BaseButton } from "@base-ui/react";
 import { useCallback, useMemo } from "react";
 import type { ActivityDay } from "~/api/types/user";
+import { formatDate } from "~/lib/time";
 
 interface ActivityGraphProps {
   activity: ActivityDay[];
@@ -85,15 +86,6 @@ export function ActivityGraph({
     [maxCount],
   );
 
-  const formatDate = useCallback((dateStr: string) => {
-    const date = new Date(`${dateStr}T00:00:00`);
-    return new Intl.DateTimeFormat("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    }).format(date);
-  }, []);
-
   // const totalActivities = activity.reduce((acc, curr) => acc + curr.count, 0);
 
   return (
@@ -151,7 +143,7 @@ export function ActivityGraph({
                   return (
                     <td key={day.date} className="p-0 relative">
                       <BaseButton
-                        title={`${day.count} activities on ${formatDate(day.date)}`}
+                        title={`${day.count} activities on ${formatDate(day.date, false)}`}
                         onClick={() =>
                           onDateSelect(isSelected ? undefined : day.date)
                         }

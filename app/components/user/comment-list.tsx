@@ -1,7 +1,8 @@
-import { Button } from "~/components/ui/button";
 import { useState } from "react";
 import { useComments } from "~/api/user";
+import { Button } from "~/components/ui/button";
 import { UserCard } from "~/components/user-card";
+import { formatDate } from "~/lib/time";
 
 export function CommentList({ userId }: { userId: string }) {
   const [page, setPage] = useState(1);
@@ -32,8 +33,8 @@ export function CommentList({ userId }: { userId: string }) {
           >
             <div className="flex items-center justify-between">
               <UserCard user={comment.author} />
-              <span className="text-xs text-gray-400">
-                {new Date(comment.createdAt).toLocaleString()}
+              <span className="text-gray-400 text-xs">
+                {formatDate(comment.createdAt)}
               </span>
             </div>
             <p className="text-gray-800 dark:text-gray-200 whitespace-pre-wrap mt-2">
