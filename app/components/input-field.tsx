@@ -1,5 +1,5 @@
-import { Input as BaseInput } from "@base-ui/react";
 import { FieldError } from "./field-error";
+import { Input } from "~/components/ui/input";
 
 interface InputFieldProps<TValue> {
   name: string;
@@ -22,9 +22,9 @@ export function InputField<TValue>({
 }: InputFieldProps<TValue>) {
   return (
     <div className={`flex flex-col gap-1 ${className}`}>
-      <BaseInput
+      <Input
         name={name}
-        className="w-full px-3 py-2"
+        className="w-full"
         placeholder={placeholder}
         value={value as string}
         onBlur={onBlur}

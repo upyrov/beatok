@@ -111,25 +111,25 @@ body {
 }
 
 @utility system-panel {
-  @apply border border-panel-border shadow-panel rounded-md;
+  @apply border border-panel-border shadow-panel rounded-lg;
   background: var(--surface-panel);
 }
 
 @utility system-input {
-  @apply bg-input text-foreground border border-input-border shadow-input rounded-sm px-2 py-1 outline-none focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:border-blue-500 transition-colors;
+  @apply bg-input text-foreground border border-input-border shadow-input rounded-md px-2 py-1 outline-none focus-visible:ring-1 focus-visible:ring-blue-500 focus-visible:border-blue-500 transition-colors;
 }
 
 @utility system-popup {
-  @apply border border-panel-border shadow-popup rounded-md p-1 z-50 text-foreground;
+  @apply border border-panel-border shadow-popup rounded-lg p-1 z-50 text-foreground;
   background: var(--surface-panel);
 }
 
 @utility system-popup-item {
-  @apply cursor-pointer p-2 hover:bg-muted-hover rounded-sm data-highlighted:bg-muted-hover data-highlighted:text-foreground outline-none transition-colors;
+  @apply cursor-pointer p-2 hover:bg-muted-hover rounded-md data-highlighted:bg-muted-hover data-highlighted:text-foreground outline-none transition-colors;
 }
 
 @utility system-button {
-  @apply relative px-4 h-9 border rounded-md text-[13px] font-medium flex items-center justify-center transition duration-100 disabled:opacity-50 disabled:cursor-not-allowed;
+  @apply relative px-4 h-9 border rounded-lg text-[13px] font-medium flex items-center justify-center transition duration-100 disabled:opacity-50 disabled:cursor-not-allowed;
   background-image: linear-gradient(
     to bottom,
     var(--btn-bg-from),
@@ -161,7 +161,7 @@ body {
 }
 
 @utility system-skeleton {
-  @apply animate-pulse bg-muted rounded-md;
+  @apply animate-pulse bg-muted rounded-lg;
 }
 
 @utility system-card {

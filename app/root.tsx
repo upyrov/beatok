@@ -1,3 +1,4 @@
+import { HotkeysProvider } from "@tanstack/react-hotkeys";
 import { QueryClientProvider, useQueryClient } from "@tanstack/react-query";
 import { onAuthStateChanged } from "firebase/auth";
 import { useEffect } from "react";
@@ -122,9 +123,11 @@ export default function App() {
   const queryClient = getQueryClient();
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <Content />
-    </QueryClientProvider>
+    <HotkeysProvider>
+      <QueryClientProvider client={queryClient}>
+        <Content />
+      </QueryClientProvider>
+    </HotkeysProvider>
   );
 }
 

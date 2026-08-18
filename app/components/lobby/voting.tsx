@@ -46,12 +46,9 @@ export function Voting() {
       </div>
 
       <div className="relative flex-1 flex flex-col min-h-125">
-        {/* Gradient Fade overlay */}
-        <div className="absolute top-0 left-0 w-full h-32 bg-linear-to-b from-white dark:from-[#0a0a0a] to-transparent z-10 pointer-events-none" />
-
         <div
           ref={scrollRef}
-          className="flex-1 overflow-y-auto flex flex-col gap-6 pb-8 pt-16 px-2 scroll-smooth"
+          className="flex-1 overflow-y-auto flex flex-col gap-6 pb-8 pt-16 px-2 scroll-smooth [mask-image:linear-gradient(to_bottom,transparent,black_8rem)] [-webkit-mask-image:linear-gradient(to_bottom,transparent,black_8rem)]"
         >
           {history.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center text-gray-500 gap-4 mt-12">

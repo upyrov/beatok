@@ -1,11 +1,25 @@
 import { Form as BaseForm } from "@base-ui/react";
 import { useForm } from "@tanstack/react-form";
+import { useHotkey } from "@tanstack/react-hotkeys";
 import { type } from "arktype";
+import { useRef } from "react";
 import { useAddComment } from "~/api/user";
+import { Keyboard } from "~/components/ui/kbd";
 import { ActionButton } from "../action-button";
 
 export function CommentForm({ userId }: { userId: string }) {
   const addComment = useAddComment(userId);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  useHotkey(
+    "Mod+Enter",
+    () => {
+      if (formRef.current) {
+        formRef.current.requestSubmit();
+      }
+    },
+    { target: formRef },
+  );
 
   const form = useForm({
     defaultValues: {
@@ -23,6 +37,7 @@ export function CommentForm({ userId }: { userId: string }) {
 
   return (
     <BaseForm
+      ref={formRef}
       onSubmit={(e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -54,7 +69,8 @@ export function CommentForm({ userId }: { userId: string }) {
               type="submit"
               disabled={!canSubmit || isSubmitting || addComment.isPending}
             >
-              Post Comment
+              Post Comment{" "}
+              <Keyboard className="hidden md:inline-block ml-1">Mod+↵</Keyboard>
             </ActionButton>
           )}
         />

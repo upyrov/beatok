@@ -1,9 +1,11 @@
 import { Form as BaseForm, Input as BaseInput } from "@base-ui/react";
 import { useForm } from "@tanstack/react-form";
+
 import { type } from "arktype";
 import { use, useEffect, useRef, useState } from "react";
 import { useOutletContext } from "react-router";
 import type { Me, User } from "~/api/types/user";
+
 import { UserCard } from "~/components/user-card";
 import { LobbyContext } from "~/contexts";
 import { ActionButton } from "../action-button";
@@ -19,6 +21,7 @@ export function Chat() {
   const { user } = useOutletContext<{ user: Me | null }>();
   const [messages, setMessages] = useState<Message[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
 
   const participantsRef = useRef(lobby?.participants ?? []);
   useEffect(() => {
@@ -80,13 +83,15 @@ export function Chat() {
         console.error(error);
         window.dispatchEvent(
           new CustomEvent("globalerror", {
-            detail: error instanceof Error ? error.message : "Failed to send message",
-          })
+            detail:
+              error instanceof Error ? error.message : "Failed to send message",
+          }),
         );
         // Revert message on failure
         if (user) {
           setMessages((prev) => prev.filter((m) => m.id !== tempId));
         }
+        form.setFieldValue("content", content);
       }
     },
   });
@@ -106,7 +111,8 @@ export function Chat() {
         ))}
       </div>
       <BaseForm
-        onSubmit={(e: React.FormEvent) => {
+        ref={formRef}
+        onSubmit={(e: React.SyntheticEvent) => {
           e.preventDefault();
           e.stopPropagation();
           form.handleSubmit();

@@ -1,6 +1,8 @@
+import { useHotkey } from "@tanstack/react-hotkeys";
 import { useWavesurfer } from "@wavesurfer/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CgPlayButton, CgPlayPause } from "react-icons/cg";
+import { Keyboard } from "~/components/ui/kbd";
 
 interface AudioPlayerProps {
   src: string;
@@ -90,6 +92,13 @@ export function AudioPlayer({
 
   const handleClick = useCallback(() => wavesurfer?.playPause(), [wavesurfer]);
 
+  useHotkey("Space", (e) => {
+    if (!hideControls && isReady) {
+      e.preventDefault();
+      handleClick();
+    }
+  });
+
   const formatTime = useCallback((seconds: number) => {
     if (isNaN(seconds) || !isFinite(seconds)) return "0:00";
     const m = Math.floor(seconds / 60);
@@ -99,13 +108,14 @@ export function AudioPlayer({
 
   return (
     <div
-      className={`transition duration-300 starting:opacity-0 starting:translate-y-1 flex items-center gap-2 rounded-lg w-full bg-gray-200 p-1.5 border border-black/5 ${className}`}
+      className={`transition duration-300 starting:opacity-0 starting:translate-y-1 flex items-center gap-2 rounded-lg w-full bg-gray-200 p-1.5 border border-black/5 relative ${className}`}
     >
       {!hideControls && (
         <button
           type="button"
           onClick={handleClick}
           disabled={!isReady}
+          title="Play/Pause (Space)"
           className="shrink-0 w-8 h-8 flex items-center justify-center bg-white hover:bg-gray-100 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed rounded-full transition-colors focus:outline-none text-black shadow-sm"
         >
           {isPlaying ? <CgPlayPause size={20} /> : <CgPlayButton size={20} />}
@@ -131,8 +141,11 @@ export function AudioPlayer({
       </div>
 
       {!hideControls && (
-        <div className="shrink-0 text-[10px] font-mono text-gray-500 whitespace-nowrap px-1 text-right">
-          {formatTime(currentTime)} / {formatTime(duration)}
+        <div className="shrink-0 flex items-center gap-2">
+          <Keyboard className="hidden md:inline-block">Space</Keyboard>
+          <div className="text-[10px] font-mono text-gray-500 whitespace-nowrap px-1 text-right">
+            {formatTime(currentTime)} / {formatTime(duration)}
+          </div>
         </div>
       )}
     </div>

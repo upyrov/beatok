@@ -50,8 +50,9 @@ export function VoteForm({
           console.error(err);
           window.dispatchEvent(
             new CustomEvent("globalerror", {
-              detail: err instanceof Error ? err.message : "Failed to update vote",
-            })
+              detail:
+                err instanceof Error ? err.message : "Failed to update vote",
+            }),
           );
           // Revert optimistic update
           setLobby((prev) => {
@@ -83,7 +84,7 @@ export function VoteForm({
           window.dispatchEvent(
             new CustomEvent("globalerror", {
               detail: err instanceof Error ? err.message : "Failed to vote",
-            })
+            }),
           );
           // Revert optimistic update
           setLobby((prev) => {
@@ -122,7 +123,7 @@ export function VoteForm({
   return (
     <div className="flex flex-col gap-2">
       <BaseForm
-        onSubmit={(e: React.FormEvent) => {
+        onSubmit={(e: React.SyntheticEvent) => {
           e.preventDefault();
           e.stopPropagation();
           form.handleSubmit();
@@ -195,11 +196,11 @@ export function VoteForm({
           )}
         />
       </BaseForm>
-      {isSuccess && (
+      {/*{isSuccess && (
         <div className="text-green-400 font-medium text-xs">
           Vote registered!
         </div>
-      )}
+      )}*/}
     </div>
   );
 }
