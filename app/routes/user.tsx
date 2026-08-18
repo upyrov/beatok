@@ -15,6 +15,7 @@ import { CommentForm } from "~/components/user/comment-form";
 import { CommentList } from "~/components/user/comment-list";
 import { Profile } from "~/components/user/profile";
 import { getQueryClient } from "~/lib/query-client";
+import { formatDate } from "~/lib/time";
 import type { Route } from "./+types/user";
 
 export async function clientLoader({ params }: Route.ClientLoaderArgs) {
@@ -126,7 +127,7 @@ function ActivitySection({
           className="system-card transition duration-300 starting:opacity-0 starting:translate-y-1 flex flex-col gap-6"
         >
           <h2 className="text-2xl font-bold">
-            Activity for {selectedDate}
+            Activity for {formatDate(selectedDate, false)}
           </h2>
           <Activity userId={userId} date={selectedDate} />
         </div>

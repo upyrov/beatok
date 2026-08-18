@@ -1,35 +1,25 @@
+import { format, isToday, parseISO } from "date-fns";
+
 export const formatDate = (date: string | Date, includeTime = true) => {
-  let dateObj = date;
-  if (typeof date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
-    dateObj = `${date}T00:00:00`;
+  const dateObj =
+    typeof date === "string"
+      ? parseISO(date.includes("T") ? date : `${date}T00:00:00`)
+      : date;
+
+  if (isToday(dateObj) && includeTime) {
+    return format(dateObj, "h:mm a");
   }
-  const d = new Date(dateObj);
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    ...(includeTime && {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: true,
-    }),
-  }).format(d);
+
+  return format(dateObj, includeTime ? "M/d/yyyy, h:mm a" : "M/d/yyyy");
 };
 
-export const formatDuration = (timeSpan: string) => {
-  if (!timeSpan) return "";
-  const parts = timeSpan.split(":");
-  if (parts.length === 3) {
-    const [h, m, s] = parts;
-    const hInt = parseInt(h, 10);
-    const mInt = parseInt(m, 10);
-    const sInt = parseInt(s, 10);
+export function formatDuration(timeSpan: string) {
+  if (!timeSpan || !timeSpan.includes(":")) return timeSpan;
 
-    if (hInt === 0) {
-      if (sInt === 0) return `${mInt} min`;
-      return `${mInt}:${s.padStart(2, "0")} min`;
-    }
-    return `${hInt}h ${mInt}m`;
-  }
-  return timeSpan;
-};
+  const [h, m, s] = timeSpan.split(":").map(Number);
+  if (isNaN(h)) return timeSpan;
+
+  if (h === 0)
+    return s === 0 ? `${m} min` : `${m}:${String(s).padStart(2, "0")} min`;
+  return `${h}h ${m}m`;
+}
