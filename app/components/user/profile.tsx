@@ -79,7 +79,7 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
   });
 
   const dropzoneOverlay = isCurrentUser ? (
-    <div className="absolute inset-0 bg-black/60 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center z-10 rounded-lg overflow-hidden [&>div]:w-full [&>div]:h-full [&>div>div]:w-full [&>div>div]:h-full [&>div>div]:p-0 [&>div>div]:border-none [&>div>div]:!bg-transparent [&>div>div]:rounded-none [&>div>p]:mb-0 [&>div>p]:flex [&>div>p]:items-center [&>div>p]:justify-center [&>div>p]:h-full">
+    <div className="absolute inset-0 bg-black/60 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center z-10 rounded-lg overflow-hidden [&>div]:w-full [&>div]:h-full [&>div>div]:w-full [&>div>div]:h-full [&>div>div]:p-0 [&>div>div]:border-none [&>div>div]:bg-transparent [&>div>div]:rounded-none [&>div>p]:mb-0 [&>div>p]:flex [&>div>p]:items-center [&>div>p]:justify-center [&>div>p]:h-full">
       <FileDropzone
         label={<CgSoftwareUpload size={32} className="text-white/80" />}
         accept={{ "image/jpeg": [".jpg", ".jpeg"], "image/png": [".png"] }}

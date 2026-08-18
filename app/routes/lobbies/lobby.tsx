@@ -57,7 +57,6 @@ export default function Lobby() {
       }
     },
     onError(error) {
-      console.error(error);
       window.dispatchEvent(
         new CustomEvent("globalerror", {
           detail:
@@ -75,7 +74,6 @@ export default function Lobby() {
       navigate("/");
     },
     onError(error) {
-      console.error(error);
       window.dispatchEvent(
         new CustomEvent("globalerror", {
           detail:

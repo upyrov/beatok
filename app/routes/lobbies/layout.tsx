@@ -53,7 +53,6 @@ export default function Layout() {
           connection.stop();
         }
       } catch (error) {
-        console.error(error);
         window.dispatchEvent(
           new CustomEvent("globalerror", {
             detail:

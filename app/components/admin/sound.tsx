@@ -43,7 +43,6 @@ export function Sound({
         { onSuccess: () => setIsEditing(false) },
       );
     } catch (error) {
-      console.error(error);
       alert(error instanceof Error ? error.message : "Upload failed");
     }
   }
