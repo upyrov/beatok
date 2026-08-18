@@ -47,6 +47,12 @@ export function VoteForm({
             data: { value: value.score },
           });
         } catch (err) {
+          console.error(err);
+          window.dispatchEvent(
+            new CustomEvent("globalerror", {
+              detail: err instanceof Error ? err.message : "Failed to update vote",
+            })
+          );
           // Revert optimistic update
           setLobby((prev) => {
             if (!prev) return prev;
@@ -73,6 +79,12 @@ export function VoteForm({
             data: { value: value.score, submissionId },
           });
         } catch (err) {
+          console.error(err);
+          window.dispatchEvent(
+            new CustomEvent("globalerror", {
+              detail: err instanceof Error ? err.message : "Failed to vote",
+            })
+          );
           // Revert optimistic update
           setLobby((prev) => {
             if (!prev) return prev;

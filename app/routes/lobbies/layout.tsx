@@ -40,6 +40,12 @@ export default function Layout() {
       try {
         await connection.start();
 
+        connection.on("Error", (errorDto: { message: string }) => {
+          window.dispatchEvent(
+            new CustomEvent("globalerror", { detail: errorDto.message })
+          );
+        });
+
         if (isActive) {
           newConnection = connection;
           setConnection(connection);
@@ -48,6 +54,11 @@ export default function Layout() {
         }
       } catch (error) {
         console.error(error);
+        window.dispatchEvent(
+          new CustomEvent("globalerror", {
+            detail: error instanceof Error ? error.message : "Socket connection failed",
+          })
+        );
       }
     }
 

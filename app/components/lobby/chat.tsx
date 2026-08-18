@@ -78,6 +78,11 @@ export function Chat() {
         await connection.invoke("SendMessage", lobby.id, content);
       } catch (error) {
         console.error(error);
+        window.dispatchEvent(
+          new CustomEvent("globalerror", {
+            detail: error instanceof Error ? error.message : "Failed to send message",
+          })
+        );
         // Revert message on failure
         if (user) {
           setMessages((prev) => prev.filter((m) => m.id !== tempId));

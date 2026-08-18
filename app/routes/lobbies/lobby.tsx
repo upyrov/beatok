@@ -56,6 +56,11 @@ export default function Lobby() {
     },
     onError(error) {
       console.error(error);
+      window.dispatchEvent(
+        new CustomEvent("globalerror", {
+          detail: error instanceof Error ? error.message : "Failed to join lobby",
+        })
+      );
     },
   });
   const leaveMutation = useMutation({
@@ -68,6 +73,11 @@ export default function Lobby() {
     },
     onError(error) {
       console.error(error);
+      window.dispatchEvent(
+        new CustomEvent("globalerror", {
+          detail: error instanceof Error ? error.message : "Failed to leave lobby",
+        })
+      );
     },
   });
 
