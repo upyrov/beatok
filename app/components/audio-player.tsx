@@ -2,7 +2,7 @@ import { useHotkey } from "@tanstack/react-hotkeys";
 import { useWavesurfer } from "@wavesurfer/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CgPlayButton, CgPlayPause } from "react-icons/cg";
-import { Keyboard } from "~/components/ui/kbd";
+import { Keyboard } from "~/components/ui/keyboard";
 
 interface AudioPlayerProps {
   src: string;

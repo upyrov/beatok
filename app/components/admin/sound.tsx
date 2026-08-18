@@ -1,9 +1,9 @@
 import { Input as BaseInput } from "@base-ui/react";
-import { Button } from "~/components/ui/button";
 import { useState } from "react";
 import { CgCheck, CgClose, CgPen, CgTrash } from "react-icons/cg";
 import { useUpdateSound, useUploadSoundUrl } from "~/api/sound";
 import type { Sound } from "~/api/types/sound";
+import { Button } from "~/components/ui/button";
 import { validateAudioFile } from "~/lib/audio";
 import { uploadFile } from "~/lib/upload";
 import { AudioPlayer } from "../audio-player";
@@ -68,7 +68,7 @@ export function Sound({
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2">
                 <BaseInput
-                  className="flex-1 text-sm"
+                  className="flex-1 text-sm text-center system-input"
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
                   autoFocus
@@ -83,7 +83,9 @@ export function Sound({
                 <Button
                   onClick={handleNameUpdate}
                   disabled={!editName.trim()}
-                  className="text-green-400 hover:text-green-300 transition-colors disabled:opacity-50"
+                  variant="outline"
+                  size="icon"
+                  className="text-green-500 hover:text-green-600 transition-colors disabled:opacity-50"
                 >
                   <CgCheck size={18} />
                 </Button>
@@ -92,7 +94,9 @@ export function Sound({
                     setIsEditing(false);
                     setEditName(sound.name);
                   }}
-                  className="text-gray-400 hover:text-gray-300 transition-colors"
+                  variant="outline"
+                  size="icon"
+                  className="text-gray-500 hover:text-gray-700 transition-colors"
                 >
                   <CgClose size={18} />
                 </Button>
@@ -106,24 +110,32 @@ export function Sound({
           ) : (
             <div className="flex items-center gap-2 flex-1">
               <span className="font-medium text-sm">{sound.name}</span>
-              <Button
-                onClick={() => setIsEditing(true)}
-                className="text-gray-400 hover:text-blue-400 transition-colors"
-              >
-                <CgPen size={18} />
-              </Button>
             </div>
           )}
         </div>
-        <Button
-          onClick={(e: React.MouseEvent) => {
-            e.stopPropagation();
-            onDelete();
-          }}
-          className="text-gray-400 hover:text-red-400 transition-colors self-start mt-1"
-        >
-          <CgTrash size={18} />
-        </Button>
+        <div className="flex gap-2 items-center self-start mt-1">
+          {!isEditing && (
+            <Button
+              onClick={() => setIsEditing(true)}
+              variant="outline"
+              size="icon"
+              className="text-gray-500 hover:text-blue-500 transition-colors"
+            >
+              <CgPen size={18} />
+            </Button>
+          )}
+          <Button
+            onClick={(e: React.MouseEvent) => {
+              e.stopPropagation();
+              onDelete();
+            }}
+            variant="outline"
+            size="icon"
+            className="text-gray-500 hover:text-red-500 transition-colors"
+          >
+            <CgTrash size={18} />
+          </Button>
+        </div>
       </div>
       {!isEditing && <AudioPlayer src={sound.value} />}
     </div>

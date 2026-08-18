@@ -53,6 +53,7 @@ export function Categories({ kitId }: { kitId: string }) {
                 errors={field.state.meta.errors}
                 placeholder="New category name..."
                 className="flex-1"
+                inputClassName="text-center"
               />
             )}
           />

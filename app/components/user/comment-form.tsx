@@ -4,7 +4,7 @@ import { useHotkey } from "@tanstack/react-hotkeys";
 import { type } from "arktype";
 import { useRef } from "react";
 import { useAddComment } from "~/api/user";
-import { Keyboard } from "~/components/ui/kbd";
+import { Keyboard } from "~/components/ui/keyboard";
 import { ActionButton } from "../action-button";
 
 export function CommentForm({ userId }: { userId: string }) {

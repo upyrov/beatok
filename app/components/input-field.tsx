@@ -1,5 +1,5 @@
-import { FieldError } from "./field-error";
 import { Input } from "~/components/ui/input";
+import { FieldError } from "./field-error";
 
 interface InputFieldProps<TValue> {
   name: string;
@@ -9,6 +9,7 @@ interface InputFieldProps<TValue> {
   onBlur: () => void;
   placeholder?: string;
   className?: string;
+  inputClassName?: string;
 }
 
 export function InputField<TValue>({
@@ -19,12 +20,13 @@ export function InputField<TValue>({
   onBlur,
   placeholder,
   className = "",
+  inputClassName = "",
 }: InputFieldProps<TValue>) {
   return (
     <div className={`flex flex-col gap-1 ${className}`}>
       <Input
         name={name}
-        className="w-full"
+        className={`w-full ${inputClassName}`}
         placeholder={placeholder}
         value={value as string}
         onBlur={onBlur}

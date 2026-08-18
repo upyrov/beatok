@@ -1,4 +1,3 @@
-import { CgCrown, CgUserRemove } from "react-icons/cg";
 import { use, useCallback, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router";
 import { useKickParticipant } from "~/api/lobby";

@@ -3,7 +3,15 @@ import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { type } from "arktype";
 import { useCallback, useState } from "react";
-import { CgProfile, CgSpinner, CgTrash } from "react-icons/cg";
+import {
+  CgChart,
+  CgSoftwareUpload,
+  CgSpinner,
+  CgTrash,
+  CgTrending,
+  CgTrophy,
+  CgUser,
+} from "react-icons/cg";
 import { queryKeys } from "~/api/query-keys";
 import type { Profile as IProfile } from "~/api/types/user";
 import { useUpdateUser, useUploadAvatarUrl } from "~/api/user";
@@ -56,7 +64,10 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
     onSubmit: async ({ value }) => {
       if (updateUserMutation.isPending) return;
       try {
-        await updateUserMutation.mutateAsync({ name: value.name });
+        await updateUserMutation.mutateAsync({
+          name: value.name,
+          picture: user.picture,
+        });
         queryClient.invalidateQueries({
           queryKey: queryKeys.users.detail(user.id),
         });
@@ -68,9 +79,9 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
   });
 
   const dropzoneOverlay = isCurrentUser ? (
-    <div className="absolute inset-0 bg-black/60 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center z-10 rounded-lg overflow-hidden [&>div>div]:p-2 [&>div>div]:border-none [&>div>div]:bg-transparent [&>div>p]:text-xs">
+    <div className="absolute inset-0 bg-black/60 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center z-10 rounded-lg overflow-hidden [&>div]:w-full [&>div]:h-full [&>div>div]:w-full [&>div>div]:h-full [&>div>div]:p-0 [&>div>div]:border-none [&>div>div]:!bg-transparent [&>div>div]:rounded-none [&>div>p]:mb-0 [&>div>p]:flex [&>div>p]:items-center [&>div>p]:justify-center [&>div>p]:h-full">
       <FileDropzone
-        label="Update"
+        label={<CgSoftwareUpload size={32} className="text-white/80" />}
         accept={{ "image/jpeg": [".jpg", ".jpeg"], "image/png": [".png"] }}
         maxFiles={1}
         onUpload={handleAvatarUpload}
@@ -87,7 +98,11 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
               {!imageLoaded && (
                 <div className="absolute inset-0 flex items-center justify-center z-10">
                   <div className="system-skeleton absolute inset-0 rounded-lg w-full h-full" />
-                  <CgSpinner className="animate-spin text-gray-500 w-8 h-8 relative" />
+                  <CgSpinner
+                    role="status"
+                    aria-label={"Loading..."}
+                    className="animate-spin text-gray-500 w-8 h-8 relative"
+                  />
                 </div>
               )}
               <img
@@ -98,7 +113,7 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
               />
             </>
           ) : (
-            <CgProfile className="text-gray-400 border border-black/20 dark:border-white/20 p-0.5 w-full h-full rounded-lg" />
+            <CgUser className="text-gray-400 border border-black/20 dark:border-white/20 p-0.5 w-full h-full rounded-lg" />
           )}
           {dropzoneOverlay}
           {isCurrentUser && user.picture && (
@@ -135,7 +150,7 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
                   placeholder="Your Name"
-                  className="flex-1 bg-black/10 dark:bg-white/10 rounded-lg px-3 py-2 text-xl font-semibold focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="flex-1 system-input text-xl font-semibold w-full"
                 />
               )}
             />
@@ -159,25 +174,25 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
           </h1>
         )}
         <div className="flex items-center justify-center sm:justify-start gap-4 sm:gap-6 mt-2 text-sm text-gray-600 dark:text-gray-400 w-full">
-          <div className="flex flex-col">
-            <span className="font-semibold text-gray-900 dark:text-gray-100">
-              Rating
+          <div className="flex flex-col items-center">
+            <span className="font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-1.5">
+              <CgChart /> Rating
             </span>
-            <span>{user.rating}</span>
+            <span className="mt-1">{user.rating}</span>
           </div>
           <div className="w-px h-8 bg-black/10 dark:bg-white/10" />
-          <div className="flex flex-col">
-            <span className="font-semibold text-gray-900 dark:text-gray-100">
-              Wins
+          <div className="flex flex-col items-center">
+            <span className="font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-1.5">
+              <CgTrophy /> Wins
             </span>
-            <span>{user.wins}</span>
+            <span className="mt-1">{user.wins}</span>
           </div>
           <div className="w-px h-8 bg-black/10 dark:bg-white/10" />
-          <div className="flex flex-col">
-            <span className="font-semibold text-gray-900 dark:text-gray-100">
-              Win Rate
+          <div className="flex flex-col items-center">
+            <span className="font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-1.5">
+              <CgTrending /> Win Rate
             </span>
-            <span>{Math.round(user.winRate)}%</span>
+            <span className="mt-1">{Math.round(user.winRate)}%</span>
           </div>
         </div>
       </div>

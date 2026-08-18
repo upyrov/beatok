@@ -31,7 +31,7 @@ export default function PasswordReset() {
   });
 
   return (
-    <>
+    <div className="system-panel p-8 w-full max-w-sm flex flex-col transition duration-300 starting:opacity-0 starting:translate-y-1">
       {resetPasswordMutation.isSuccess ? (
         <div className="flex flex-col gap-4 text-center">
           <h2 className="text-xl font-bold">Check your email</h2>
@@ -42,7 +42,7 @@ export default function PasswordReset() {
           <Link
             viewTransition
             to="/signin"
-            className="text-blue-500 hover:underline mt-4 block"
+            className="text-blue-600 dark:text-blue-400 hover:underline mt-4 block"
           >
             Return to sign in
           </Link>
@@ -56,7 +56,9 @@ export default function PasswordReset() {
           }}
           className="flex flex-col gap-4"
         >
-          <h2 className="text-xl font-bold mb-2">Reset Password</h2>
+          <h2 className="text-2xl font-bold mb-2 text-center text-gray-900 dark:text-white">
+            Reset Password
+          </h2>
           <MutationBoundary error={resetPasswordMutation.error} />
 
           <form.Field
@@ -65,7 +67,7 @@ export default function PasswordReset() {
               onChange: type("string.email"),
             }}
             children={(field) => (
-              <label className="flex flex-col gap-1">
+              <label className="flex flex-col gap-1 font-medium text-sm text-gray-700 dark:text-gray-300">
                 Email
                 <BaseInput
                   id={field.name}
@@ -75,7 +77,7 @@ export default function PasswordReset() {
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
                   placeholder="email@beatok.xyz"
-                  className="border p-2 rounded"
+                  className="w-full mt-1 font-normal system-input"
                 />
                 <FieldError errors={field.state.meta.errors} />
               </label>
@@ -95,15 +97,17 @@ export default function PasswordReset() {
             )}
           />
 
-          <Link
-            viewTransition
-            to="/signin"
-            className="text-blue-500 hover:underline mt-4 block"
-          >
-            Back to sign in
-          </Link>
+          <div className="mt-6 flex justify-center text-sm">
+            <Link
+              viewTransition
+              to="/signin"
+              className="text-blue-600 dark:text-blue-400 hover:underline block"
+            >
+              Back to sign in
+            </Link>
+          </div>
         </BaseForm>
       )}
-    </>
+    </div>
   );
 }

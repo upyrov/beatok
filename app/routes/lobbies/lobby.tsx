@@ -15,6 +15,7 @@ import { Submitting } from "~/components/lobby/submitting";
 import { Voting } from "~/components/lobby/voting";
 import { Waiting } from "~/components/lobby/waiting";
 import { LobbyContext } from "~/contexts";
+import { requestNotificationPermission } from "~/lib/notification";
 import type { Route } from "./+types/lobby";
 
 export function meta({}: Route.MetaArgs) {
@@ -52,14 +53,16 @@ export default function Lobby() {
       if (lobby) {
         setLobby(lobby);
         queryClient.setQueryData(queryKeys.lobbies.detail(lobby.id), lobby);
+        queryClient.invalidateQueries({ queryKey: queryKeys.lobbies.lists() });
       }
     },
     onError(error) {
       console.error(error);
       window.dispatchEvent(
         new CustomEvent("globalerror", {
-          detail: error instanceof Error ? error.message : "Failed to join lobby",
-        })
+          detail:
+            error instanceof Error ? error.message : "Failed to join lobby",
+        }),
       );
     },
   });
@@ -68,15 +71,16 @@ export default function Lobby() {
       return connection!.invoke("Leave", id);
     },
     onSuccess() {
-      queryClient.invalidateQueries({ queryKey: queryKeys.lobbies.list({}) });
+      queryClient.invalidateQueries({ queryKey: queryKeys.lobbies.lists() });
       navigate("/");
     },
     onError(error) {
       console.error(error);
       window.dispatchEvent(
         new CustomEvent("globalerror", {
-          detail: error instanceof Error ? error.message : "Failed to leave lobby",
-        })
+          detail:
+            error instanceof Error ? error.message : "Failed to leave lobby",
+        }),
       );
     },
   });
@@ -91,9 +95,7 @@ export default function Lobby() {
       joinAttemptId.current = id;
       joinMutation.mutate();
 
-      import("~/lib/notification").then((m) =>
-        m.requestNotificationPermission(),
-      );
+      requestNotificationPermission();
     }
   }, [user, connection, id, lobby, joinMutation.mutate]);
 

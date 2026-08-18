@@ -22,6 +22,13 @@ export function Footer() {
           >
             Terms of Service
           </Link>
+          <Link
+            viewTransition
+            to="/credits"
+            className="hover:text-gray-900 dark:hover:text-white transition-colors"
+          >
+            Credits
+          </Link>
         </div>
       </div>
     </footer>

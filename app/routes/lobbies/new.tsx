@@ -28,10 +28,10 @@ export default function NewLobby() {
 
   const form = useForm({
     defaultValues: {
-      name: "",
+      name: "My Lobby",
       genreId: "",
-      participantLimit: 10,
-      submissionTime: 10,
+      participantLimit: 5,
+      submissionTime: 30,
     },
     onSubmit: async ({ value }) => {
       if (createLobbyMutation.isPending) return;
@@ -70,12 +70,12 @@ export default function NewLobby() {
           children={(field) => (
             <div className="flex flex-col gap-1">
               <label className="font-medium text-gray-700 dark:text-gray-300">
-                Lobby Name
+                Name
               </label>
               <BaseInput
                 id="genreId"
                 type="text"
-                className="w-full"
+                className="w-full system-input"
                 placeholder="My Lobby"
                 value={field.state.value}
                 onBlur={field.handleBlur}
@@ -96,48 +96,47 @@ export default function NewLobby() {
               <label className="font-medium text-gray-700 dark:text-gray-300">
                 Genre
               </label>
-              {genresQuery.isPending ? (
-                <div className="system-skeleton w-full h-9 rounded-sm" />
-              ) : (
-                <Select.Root
-                  value={field.state.value || null}
-                  onValueChange={(value) => field.handleChange(value!)}
+              <Select.Root
+                value={field.state.value || null}
+                onValueChange={(value) => field.handleChange(value!)}
+              >
+                <Select.Trigger
+                  className="system-input flex justify-between items-center w-full"
+                  onBlur={field.handleBlur}
                 >
-                  <Select.Trigger
-                    className="flex justify-between items-center w-full"
-                    onBlur={field.handleBlur}
+                  <Select.Value
+                    placeholder="Select a genre"
+                    className="flex-1 text-left"
                   >
-                    <Select.Value placeholder="Select a genre">
-                      {(value) =>
-                        value
-                          ? genres.find((g) => g.id === value)?.name
-                          : "Select a genre"
-                      }
-                    </Select.Value>
-                    <Select.Icon />
-                  </Select.Trigger>
-                  <Select.Portal>
-                    <Select.Positioner
-                      side="bottom"
-                      align="start"
-                      alignItemWithTrigger={false}
-                      sideOffset={4}
-                    >
-                      <Select.Popup className="system-popup min-w-(--anchor-width)">
-                        {genres.map((genre) => (
-                          <Select.Item
-                            key={genre.id}
-                            value={genre.id}
-                            className="system-popup-item"
-                          >
-                            <Select.ItemText>{genre.name}</Select.ItemText>
-                          </Select.Item>
-                        ))}
-                      </Select.Popup>
-                    </Select.Positioner>
-                  </Select.Portal>
-                </Select.Root>
-              )}
+                    {(value) =>
+                      value
+                        ? genres.find((g) => g.id === value)?.name
+                        : "Select a genre"
+                    }
+                  </Select.Value>
+                  <Select.Icon />
+                </Select.Trigger>
+                <Select.Portal>
+                  <Select.Positioner
+                    side="bottom"
+                    align="start"
+                    alignItemWithTrigger={false}
+                    sideOffset={4}
+                  >
+                    <Select.Popup className="system-popup min-w-(--anchor-width)">
+                      {genres.map((genre) => (
+                        <Select.Item
+                          key={genre.id}
+                          value={genre.id}
+                          className="system-popup-item"
+                        >
+                          <Select.ItemText>{genre.name}</Select.ItemText>
+                        </Select.Item>
+                      ))}
+                    </Select.Popup>
+                  </Select.Positioner>
+                </Select.Portal>
+              </Select.Root>
               <FieldError errors={field.state.meta.errors} />
             </div>
           )}

@@ -99,7 +99,7 @@ export function useUpdateUser() {
   return useMutation({
     mutationFn: (data: UserUpdate) =>
       fetchApi<void>("/users", {
-        method: "PATCH",
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       }),

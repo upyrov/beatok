@@ -1,4 +1,3 @@
-import { Button } from "~/components/ui/button";
 import { type } from "arktype";
 import { CgAdd } from "react-icons/cg";
 import { useGenres } from "~/api/genre";
@@ -6,6 +5,7 @@ import { useCreateKit, useDeleteKit, useKits } from "~/api/kit";
 import { ActionButton } from "~/components/action-button";
 import { CrudManager } from "~/components/crud-manager";
 import { InputField } from "~/components/input-field";
+import { Button } from "~/components/ui/button";
 import { Kit } from "./kit";
 
 export function Kits() {
@@ -51,6 +51,7 @@ export function Kits() {
                   errors={field.state.meta.errors}
                   placeholder="Kit name"
                   className="flex-1"
+                  inputClassName="text-center"
                 />
                 <form.Subscribe
                   selector={(state: any) => [

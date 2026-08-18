@@ -1,5 +1,5 @@
-import { CgTrophy } from "react-icons/cg";
 import { use } from "react";
+import { CgTrophy } from "react-icons/cg";
 import { LobbyContext } from "~/contexts";
 import { AudioPlayer } from "../audio-player";
 

@@ -1,6 +1,6 @@
-import { Button } from "~/components/ui/button";
 import { useEffect, useState } from "react";
 import { CgClose, CgDanger } from "react-icons/cg";
+import { Button } from "~/components/ui/button";
 
 export function GlobalErrorModal() {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);

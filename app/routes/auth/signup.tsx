@@ -74,7 +74,7 @@ export default function Signup() {
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
                 placeholder="John Doe"
-                className="w-full mt-1 font-normal"
+                className="w-full mt-1 font-normal system-input"
               />
               <FieldError errors={field.state.meta.errors} />
             </label>
@@ -97,7 +97,7 @@ export default function Signup() {
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
                 placeholder="email@beatok.xyz"
-                className="w-full mt-1 font-normal"
+                className="w-full mt-1 font-normal system-input"
               />
               <FieldError errors={field.state.meta.errors} />
             </label>
@@ -120,7 +120,7 @@ export default function Signup() {
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
                 placeholder="Secret123!"
-                className="w-full mt-1 font-normal"
+                className="w-full mt-1 font-normal system-input"
               />
               <FieldError errors={field.state.meta.errors} />
             </label>

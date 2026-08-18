@@ -10,6 +10,7 @@ export default [
   route("admin", "routes/admin.tsx"),
   route("privacy-policy", "routes/privacy-policy.tsx"),
   route("terms-of-service", "routes/terms-of-service.tsx"),
+  route("credits", "routes/credits.tsx"),
 
   layout("routes/auth/layout.tsx", [
     route("signin", "routes/auth/signin.tsx"),

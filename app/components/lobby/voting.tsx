@@ -48,7 +48,7 @@ export function Voting() {
       <div className="relative flex-1 flex flex-col min-h-125">
         <div
           ref={scrollRef}
-          className="flex-1 overflow-y-auto flex flex-col gap-6 pb-8 pt-16 px-2 scroll-smooth [mask-image:linear-gradient(to_bottom,transparent,black_8rem)] [-webkit-mask-image:linear-gradient(to_bottom,transparent,black_8rem)]"
+          className="flex-1 overflow-y-auto flex flex-col gap-6 pb-8 pt-16 px-2 scroll-smooth mask-[linear-gradient(to_bottom,transparent,black_8rem)]` (tailwindcss suggestCanonicalClasses) [-webkit-mask-image:linear-gradient(to_bottom,transparent,black_8rem)]"
         >
           {history.length === 0 ? (
             <div className="flex-1 flex flex-col items-center justify-center text-gray-500 gap-4 mt-12">
@@ -68,7 +68,7 @@ export function Voting() {
               return (
                 <div
                   key={submission.id}
-                  className={`bg-muted p-6 rounded-xl border border-muted-border flex flex-col gap-6 shadow-xl transition-all duration-700 ease-out ${
+                  className={`bg-muted p-6 rounded-xl border border-muted-border flex flex-col gap-6 shadow-xl transition-[transform,opacity] duration-700 ease-out ${
                     isCurrent
                       ? "opacity-100 scale-100 filter-none"
                       : "opacity-40 scale-95 grayscale"

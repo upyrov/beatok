@@ -1,5 +1,5 @@
 import { Select } from "@base-ui/react";
-import { Suspense, useState } from "react";
+import { Suspense, startTransition, useState } from "react";
 import { useParams } from "react-router";
 import {
   commentsQueryOptions,
@@ -65,14 +65,23 @@ function ActivitySection({
             <Select.Root
               value={selectedYear?.toString() ?? "default"}
               onValueChange={(value) => {
-                setSelectedYear(
-                  value === "default"
-                    ? undefined
-                    : parseInt(value as string, 10),
-                );
+                const update = () => {
+                  setSelectedYear(
+                    value === "default"
+                      ? undefined
+                      : parseInt(value as string, 10),
+                  );
+                };
+                if (document.startViewTransition) {
+                  document.startViewTransition(() => {
+                    startTransition(update);
+                  });
+                } else {
+                  startTransition(update);
+                }
               }}
             >
-              <Select.Trigger className="cursor-pointer flex justify-between items-center gap-2">
+              <Select.Trigger className="flex justify-between items-center gap-2">
                 <Select.Value>
                   {(value) => (value === "default" ? "Last 365 days" : value)}
                 </Select.Value>
@@ -84,6 +93,7 @@ function ActivitySection({
                   align="start"
                   alignItemWithTrigger={false}
                   sideOffset={4}
+                  className="z-50"
                 >
                   <Select.Popup className="system-popup min-w-(--anchor-width">
                     <Select.Item value="default" className="system-popup-item">
@@ -105,12 +115,12 @@ function ActivitySection({
           )}
         </div>
         {isFetching ? (
-          <div className="w-full flex justify-center py-8">
-            <div className="system-skeleton w-full h-64" />
+          <div className="w-full flex justify-center py-4">
+            <div className="system-skeleton w-full h-40" />
           </div>
         ) : (
           <Suspense
-            fallback={<div className="system-skeleton w-full h-64 mt-4" />}
+            fallback={<div className="system-skeleton w-full h-40 mt-4" />}
           >
             <ActivityGraph
               activity={activity}
@@ -156,7 +166,7 @@ export function HydrateFallback() {
           <div className="system-skeleton w-48 h-8 rounded-lg" />
           <div className="system-skeleton w-32 h-10 rounded-lg" />
         </div>
-        <div className="system-skeleton w-full h-64 mt-4" />
+        <div className="system-skeleton w-full h-40 mt-4" />
       </div>
 
       {/* Comments Skeleton */}

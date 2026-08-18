@@ -117,9 +117,6 @@ export function VoteForm({
     );
   }
 
-  const isPending = voteMutation.isPending || updateScoreMutation.isPending;
-  const isSuccess = voteMutation.isSuccess || updateScoreMutation.isSuccess;
-
   return (
     <div className="flex flex-col gap-2">
       <BaseForm
@@ -196,11 +193,6 @@ export function VoteForm({
           )}
         />
       </BaseForm>
-      {/*{isSuccess && (
-        <div className="text-green-400 font-medium text-xs">
-          Vote registered!
-        </div>
-      )}*/}
     </div>
   );
 }

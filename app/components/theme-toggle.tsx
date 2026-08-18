@@ -1,7 +1,7 @@
 import { Menu } from "@base-ui/react";
-import { Button } from "~/components/ui/button";
 import { useCallback, useEffect, useState } from "react";
 import { CgMoon, CgSun } from "react-icons/cg";
+import { Button } from "~/components/ui/button";
 
 function useTheme() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
@@ -38,7 +38,7 @@ export function ThemeToggleMenuItem() {
 
   return (
     <Menu.Item
-      className="system-popup-item w-full flex items-center gap-2 cursor-pointer"
+      className="system-popup-item w-full flex items-center gap-2"
       onClick={() => {
         toggleTheme();
       }}
@@ -58,12 +58,17 @@ export function ThemeToggle() {
 
   return (
     <Button
+      variant="outline"
+      size="icon"
       onClick={toggleTheme}
-      className="p-2 rounded-full hover:bg-black/5 dark:hover:bg-black/10 dark:bg-white/10 transition-colors text-gray-700 dark:text-gray-300 outline-none focus-visible:ring-2 focus-visible:ring-primary"
       aria-label="Toggle theme"
       title={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
     >
-      {theme === "light" ? <CgMoon size={20} /> : <CgSun size={20} />}
+      {theme === "light" ? (
+        <CgMoon className="text-lg" />
+      ) : (
+        <CgSun className="text-lg" />
+      )}
     </Button>
   );
 }

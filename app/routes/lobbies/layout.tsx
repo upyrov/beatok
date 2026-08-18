@@ -42,7 +42,7 @@ export default function Layout() {
 
         connection.on("Error", (errorDto: { message: string }) => {
           window.dispatchEvent(
-            new CustomEvent("globalerror", { detail: errorDto.message })
+            new CustomEvent("globalerror", { detail: errorDto.message }),
           );
         });
 
@@ -56,8 +56,11 @@ export default function Layout() {
         console.error(error);
         window.dispatchEvent(
           new CustomEvent("globalerror", {
-            detail: error instanceof Error ? error.message : "Socket connection failed",
-          })
+            detail:
+              error instanceof Error
+                ? error.message
+                : "Socket connection failed",
+          }),
         );
       }
     }

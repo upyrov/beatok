@@ -1,8 +1,6 @@
-import { CgSoftwareUpload, CgCheckO, CgDesktop, CgTrash } from "react-icons/cg";
-import { Button } from "~/components/ui/button";
 import JSZip from "jszip";
 import { use, useCallback, useMemo } from "react";
-import { CgSoftwareDownload } from "react-icons/cg";
+import { CgSoftwareDownload, CgTrash } from "react-icons/cg";
 import { useOutletContext } from "react-router";
 import {
   useCreateSubmission,
@@ -15,9 +13,14 @@ import { ActionButton } from "~/components/action-button";
 import { FileDropzone } from "~/components/file-dropzone";
 import { AudioPlayer } from "~/components/lazy-audio-player";
 import { MutationBoundary } from "~/components/mutation-boundary";
+import { Button } from "~/components/ui/button";
 import { LobbyContext } from "~/contexts";
 import { useCountdown } from "~/hooks/use-countdown";
 import { validateAudioFile } from "~/lib/audio";
+import {
+  playNotificationSound,
+  sendBrowserNotification,
+} from "~/lib/notification";
 import { uploadFile } from "~/lib/upload";
 
 export function Submitting() {
@@ -35,16 +38,12 @@ export function Submitting() {
     lobby?.submissionTime ?? "00:00:00",
     lobby?.submissionStartedAt,
     (timeLeft) => {
-      import("~/lib/notification").then(
-        ({ playNotificationSound, sendBrowserNotification }) => {
-          if (timeLeft === 10) {
-            playNotificationSound("warning");
-          } else if (!timeLeft) {
-            playNotificationSound("alert");
-            sendBrowserNotification("Time's up! Return to Beatok to vote!");
-          }
-        },
-      );
+      if (timeLeft === 10) {
+        playNotificationSound("warning");
+      } else if (!timeLeft) {
+        playNotificationSound("alert");
+        sendBrowserNotification("Time's up! Return to Beatok to vote!");
+      }
     },
   );
 

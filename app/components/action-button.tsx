@@ -1,6 +1,6 @@
-import { Button } from "~/components/ui/button";
 import type { ReactNode } from "react";
 import { CgSpinner } from "react-icons/cg";
+import { Button } from "~/components/ui/button";
 
 export interface ActionButtonProps extends React.ComponentProps<typeof Button> {
   pending?: boolean;

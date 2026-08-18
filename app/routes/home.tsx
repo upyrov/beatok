@@ -1,11 +1,18 @@
-import { Button } from "~/components/ui/button";
 import { useState } from "react";
-import { CgSpinner, CgPlayButtonO, CgEnter, CgHeadset, CgTrophy, CgArrowRight } from "react-icons/cg";
+import {
+  CgArrowRight,
+  CgEnter,
+  CgHeadset,
+  CgPlayButtonO,
+  CgSpinner,
+  CgTrophy,
+} from "react-icons/cg";
 import { Link, redirect } from "react-router";
 import { lobbiesQueryOptions, useLobbies } from "~/api/lobby";
 import { userQueryOptions } from "~/api/user";
 import { Knob } from "~/components/knob";
 import { PageContainer } from "~/components/page-container";
+import { Button } from "~/components/ui/button";
 import { getQueryClient } from "~/lib/query-client";
 import type { Route } from "./+types/home";
 
@@ -50,7 +57,12 @@ export async function clientLoader() {
 export function HydrateFallback() {
   return (
     <div className="flex flex-col flex-1 items-center justify-center transition duration-300 starting:opacity-0 starting:translate-y-1">
-      <CgSpinner className="animate-spin text-gray-400" size={48} />
+      <CgSpinner
+        role="status"
+        aria-label={"Loading..."}
+        className="animate-spin text-gray-400"
+        size={48}
+      />
     </div>
   );
 }
@@ -134,7 +146,9 @@ export default function LandingPage() {
                 to="/dashboard"
                 className="text-blue-500 font-medium hover:underline"
               >
-                <span className="flex items-center gap-1">View all lobbies <CgArrowRight /></span>
+                <span className="flex items-center gap-1">
+                  View all lobbies <CgArrowRight />
+                </span>
               </Link>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

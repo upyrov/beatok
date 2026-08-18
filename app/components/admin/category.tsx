@@ -1,5 +1,4 @@
 import { Input as BaseInput } from "@base-ui/react";
-import { Button } from "~/components/ui/button";
 import { useState } from "react";
 import {
   CgCheck,
@@ -11,6 +10,7 @@ import {
 } from "react-icons/cg";
 import { useUpdateCategory } from "~/api/category";
 import { Knob } from "~/components/knob";
+import { Button } from "~/components/ui/button";
 import { Sounds } from "./sounds";
 
 export function Category({
@@ -51,7 +51,7 @@ export function Category({
         {isEditing ? (
           <div className="flex items-center gap-2 flex-1 mr-4">
             <BaseInput
-              className="flex-1 text-sm"
+              className="flex-1 text-sm text-center system-input"
               value={editName}
               onChange={(e) => setEditName(e.target.value)}
               autoFocus
@@ -79,7 +79,9 @@ export function Category({
             <Button
               onClick={handleUpdate}
               disabled={!editName.trim()}
-              className="text-green-400 hover:text-green-300 transition-colors disabled:opacity-50"
+              variant="outline"
+              size="icon"
+              className="text-green-500 hover:text-green-600 transition-colors disabled:opacity-50"
             >
               <CgCheck size={18} />
             </Button>
@@ -89,7 +91,9 @@ export function Category({
                 setEditName(category.name);
                 setEditRandomSoundsCount(category.randomSoundsCount);
               }}
-              className="text-gray-400 hover:text-gray-300 transition-colors"
+              variant="outline"
+              size="icon"
+              className="text-gray-500 hover:text-gray-700 transition-colors"
             >
               <CgClose size={18} />
             </Button>
@@ -98,27 +102,33 @@ export function Category({
           <div className="flex items-center gap-2 flex-1">
             <span>{category.name}</span>
             <span
-              className="text-[10px] text-gray-500 bg-black/10 dark:bg-white/10 rounded px-1.5 py-0.5"
+              className="text-[10px] font-bold text-gray-500 bg-black/10 dark:bg-white/10 rounded px-1.5 py-0.5"
               title="Random sounds count"
             >
               {category.randomSoundsCount}
             </span>
+          </div>
+        )}
+        <div className="flex gap-2 items-center">
+          {!isEditing && (
             <Button
               onClick={() => {
                 setIsEditing(true);
                 setEditName(category.name);
                 setEditRandomSoundsCount(category.randomSoundsCount);
               }}
-              className="text-gray-400 hover:text-blue-400 transition-colors"
+              variant="outline"
+              size="icon"
+              className="text-gray-500 hover:text-blue-500 transition-colors"
             >
               <CgPen size={18} />
             </Button>
-          </div>
-        )}
-        <div className="flex gap-3 items-center">
+          )}
           <Button
             onClick={() => setShowSounds(!showSounds)}
-            className="text-gray-400 hover:text-gray-300 transition-colors"
+            variant="outline"
+            size="icon"
+            className="text-gray-500 hover:text-gray-700 transition-colors"
           >
             {showSounds ? (
               <CgChevronUp size={18} />
@@ -136,7 +146,9 @@ export function Category({
               )
                 onDelete();
             }}
-            className="text-gray-400 hover:text-red-400 transition-colors"
+            variant="outline"
+            size="icon"
+            className="text-gray-500 hover:text-red-500 transition-colors"
           >
             <CgTrash size={18} />
           </Button>

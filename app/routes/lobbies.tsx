@@ -1,11 +1,11 @@
-import { CgLogIn, CgMathPlus } from "react-icons/cg";
-import { Button } from "~/components/ui/button";
 import { useMemo } from "react";
+import { CgLogIn, CgMathPlus } from "react-icons/cg";
 import { Link } from "react-router";
 import { lobbiesQueryOptions, useLobbies } from "~/api/lobby";
 import type { Lobby } from "~/api/types/lobby";
 import { LobbyCard } from "~/components/lobby-card";
 import { PageContainer } from "~/components/page-container";
+import { Button } from "~/components/ui/button";
 import { getQueryClient } from "~/lib/query-client";
 import type { Route } from "./+types/home";
 
@@ -27,11 +27,19 @@ export async function clientLoader() {
 
 function LobbyGridItem({ lobby }: { lobby: Lobby }) {
   return (
-    <div className="system-card flex flex-col p-5">
+    <div className="system-card flex flex-col p-5 hover:border-black/20 dark:hover:border-white/20 transition-colors">
       <LobbyCard lobby={lobby} />
       <div className="mt-6">
-        <Link viewTransition to={`/lobbies/${lobby.id}`} prefetch="intent">
-          <Button className="flex items-center gap-2"><CgLogIn /> Join</Button>
+        <Link
+          viewTransition
+          to={`/lobbies/${lobby.id}`}
+          prefetch="intent"
+          className="block w-full"
+        >
+          <Button className="w-full flex items-center justify-center gap-2">
+            <CgLogIn className="text-lg" />{" "}
+            {lobby.isJoined ? "Rejoin" : "Join Lobby"}
+          </Button>
         </Link>
       </div>
     </div>
@@ -148,7 +156,9 @@ export default function Home() {
               prefetch="intent"
               className="mt-4 flex justify-center"
             >
-              <Button className="flex items-center gap-2"><CgMathPlus /> Create Your Own</Button>
+              <Button className="flex items-center gap-2">
+                <CgMathPlus /> Create Your Own
+              </Button>
             </Link>
           </div>
         )}

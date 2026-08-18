@@ -1,5 +1,4 @@
 import { Input as BaseInput } from "@base-ui/react";
-import { Button } from "~/components/ui/button";
 import { useState } from "react";
 import {
   CgCheck,
@@ -12,6 +11,7 @@ import {
 import { useGenres } from "~/api/genre";
 import { useUpdateKit } from "~/api/kit";
 import type { Kit as IKit } from "~/api/types/kit";
+import { Button } from "~/components/ui/button";
 import { Categories } from "./categories";
 
 export function Kit({ kit, onDelete }: { kit: IKit; onDelete: () => void }) {
@@ -53,7 +53,7 @@ export function Kit({ kit, onDelete }: { kit: IKit; onDelete: () => void }) {
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2">
                 <BaseInput
-                  className="flex-1 text-sm"
+                  className="flex-1 text-sm text-center system-input"
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
                   autoFocus
@@ -69,7 +69,9 @@ export function Kit({ kit, onDelete }: { kit: IKit; onDelete: () => void }) {
                 <Button
                   onClick={handleUpdate}
                   disabled={!editName.trim()}
-                  className="text-green-400 hover:text-green-300 transition-colors disabled:opacity-50"
+                  variant="outline"
+                  size="icon"
+                  className="text-green-500 hover:text-green-600 transition-colors disabled:opacity-50"
                 >
                   <CgCheck size={18} />
                 </Button>
@@ -79,7 +81,9 @@ export function Kit({ kit, onDelete }: { kit: IKit; onDelete: () => void }) {
                     setEditName(kit.name);
                     setEditGenreIds(kit.genres?.map((g) => g.id) ?? []);
                   }}
-                  className="text-gray-400 hover:text-gray-300 transition-colors"
+                  variant="outline"
+                  size="icon"
+                  className="text-gray-500 hover:text-gray-700 transition-colors"
                 >
                   <CgClose size={18} />
                 </Button>
@@ -99,9 +103,9 @@ export function Kit({ kit, onDelete }: { kit: IKit; onDelete: () => void }) {
                               : [...editGenreIds, genre.id],
                           );
                         }}
-                        className={`text-xs px-2 py-1 rounded transition-colors ${
+                        className={`text-xs px-2 py-1 rounded-lg transition-colors ${
                           isSelected
-                            ? "bg-blue-600 text-white"
+                            ? "bg-blue-600 text-white hover:bg-blue-700"
                             : "bg-muted text-foreground hover:bg-muted-hover"
                         }`}
                       >
@@ -115,24 +119,30 @@ export function Kit({ kit, onDelete }: { kit: IKit; onDelete: () => void }) {
           ) : (
             <div className="flex items-center gap-2 flex-1">
               <span>{kit.name}</span>
-              <Button
-                onClick={() => setIsEditing(true)}
-                className="text-gray-400 hover:text-blue-400 transition-colors"
-              >
-                <CgPen size={18} />
-              </Button>
             </div>
           )}
           {kit.genres?.length > 0 && !isEditing && (
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-gray-500 mt-1">
               Genres: {kit.genres.map((g) => g.name).join(", ")}
             </span>
           )}
         </div>
-        <div className="flex gap-3 items-center">
+        <div className="flex gap-2 items-center">
+          {!isEditing && (
+            <Button
+              onClick={() => setIsEditing(true)}
+              variant="outline"
+              size="icon"
+              className="text-gray-500 hover:text-blue-500 transition-colors"
+            >
+              <CgPen size={18} />
+            </Button>
+          )}
           <Button
             onClick={() => setShowCategories(!showCategories)}
-            className="text-gray-400 hover:text-gray-300 transition-colors"
+            variant="outline"
+            size="icon"
+            className="text-gray-500 hover:text-gray-700 transition-colors"
           >
             {showCategories ? (
               <CgChevronUp size={18} />
@@ -146,7 +156,9 @@ export function Kit({ kit, onDelete }: { kit: IKit; onDelete: () => void }) {
               if (confirm(`Are you sure you want to delete kit "${kit.name}"?`))
                 onDelete();
             }}
-            className="text-gray-400 hover:text-red-400 transition-colors"
+            variant="outline"
+            size="icon"
+            className="text-gray-500 hover:text-red-500 transition-colors"
           >
             <CgTrash size={18} />
           </Button>
