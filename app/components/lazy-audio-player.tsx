@@ -1,10 +1,11 @@
 import { lazy, Suspense } from "react";
+import type { AudioPlayerProps } from "./audio-player";
 
 const AudioPlayerCore = lazy(() =>
   import("./audio-player").then((m) => ({ default: m.AudioPlayer })),
 );
 
-export function AudioPlayer(props: any) {
+export function AudioPlayer(props: AudioPlayerProps) {
   return (
     <Suspense
       fallback={

@@ -27,7 +27,7 @@ export function Genres() {
           validators={{
             onChange: type("string > 0"),
           }}
-          children={(field: any) => (
+          children={(field) => (
             <div className="flex gap-2 items-start">
               <InputField
                 name={field.name}
@@ -40,8 +40,8 @@ export function Genres() {
                 inputClassName="text-center"
               />
               <form.Subscribe
-                selector={(state: any) => [state.canSubmit, state.isSubmitting]}
-                children={([canSubmit, isSubmitting]: [boolean, boolean]) => (
+                selector={(state) => [state.canSubmit, state.isSubmitting]}
+                children={([canSubmit, isSubmitting]) => (
                   <ActionButton
                     type="submit"
                     disabled={!canSubmit}

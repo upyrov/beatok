@@ -8,6 +8,7 @@ import { ActionButton } from "~/components/action-button";
 import { FieldError } from "~/components/field-error";
 import { Knob } from "~/components/knob";
 import { MutationBoundary } from "~/components/mutation-boundary";
+import { toastError } from "~/lib/toast";
 import type { Route } from "./+types/new";
 
 export function meta({}: Route.MetaArgs) {
@@ -47,7 +48,7 @@ export default function NewLobby() {
         });
         navigate(`/lobbies/${createdLobbyId}`);
       } catch (error) {
-        console.error(error);
+        toastError(error);
       }
     },
   });

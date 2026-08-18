@@ -8,7 +8,7 @@ import type { CreateScore, ScoreUpdate } from "./types/score";
 export const { listQueryOptions: lobbiesQueryOptions, useList: useLobbies } =
   new CrudApi<[Lobby, LobbyFilter?], CreateLobby>(
     "/lobbies",
-    queryKeys.lobbies as any,
+    queryKeys.lobbies,
     (filter?: LobbyFilter) => {
       const params = new URLSearchParams();
       if (filter) {

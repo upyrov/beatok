@@ -1,6 +1,5 @@
 import { Form as BaseForm } from "@base-ui/react";
-import { useForm } from "@tanstack/react-form";
-import type { UseMutationResult } from "@tanstack/react-query";
+import { useForm, type ReactFormExtendedApi } from "@tanstack/react-form";
 import React from "react";
 import { MutationBoundary } from "~/components/mutation-boundary";
 
@@ -9,8 +8,23 @@ interface CrudManagerProps<TItem, TFormData> {
   emptyMessage?: string;
   defaultValues: TFormData;
   onSubmit: (data: TFormData) => Promise<void>;
-  createMutationError: UseMutationResult<any, any, any, any>["error"];
-  renderFormFields: (form: any) => React.ReactNode;
+  createMutationError: Error | null;
+  renderFormFields: (
+    form: ReactFormExtendedApi<
+      TFormData,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any,
+      any
+    >,
+  ) => React.ReactNode;
   renderItem: (item: TItem) => React.ReactNode;
 }
 

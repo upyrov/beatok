@@ -17,13 +17,14 @@ import {
 import { queryKeys } from "~/api/query-keys";
 import type { Signin, Signup } from "~/api/types/user";
 import { auth } from "~/lib/firebase";
+import { toastError } from "~/lib/toast";
 
 export async function ensureAnonymouslySignedIn() {
   if (!auth.currentUser) {
     try {
       await signInAnonymously(auth);
     } catch (error) {
-      console.error(error);
+      toastError(error);
     }
   }
 }
@@ -76,8 +77,9 @@ async function signUp(data: Signup) {
       );
       user = userCredential.user;
     }
-  } catch (error: any) {
-    if (error.code === "auth/email-already-in-use") {
+  } catch (error) {
+    const err = error as { code?: string };
+    if (err.code === "auth/email-already-in-use") {
       const userCredential = await signInWithEmailAndPassword(
         auth,
         data.email,
@@ -109,18 +111,13 @@ export function useSignUp() {
 
 export async function signInWithGoogle() {
   const provider = new GoogleAuthProvider();
-
-  try {
-    if (auth.currentUser) {
-      const userCredential = await linkWithPopup(auth.currentUser, provider);
-      return userCredential.user;
-    }
-
-    const userCredential = await signInWithPopup(auth, provider);
+  if (auth.currentUser) {
+    const userCredential = await linkWithPopup(auth.currentUser, provider);
     return userCredential.user;
-  } catch (error: any) {
-    throw error;
   }
+
+  const userCredential = await signInWithPopup(auth, provider);
+  return userCredential.user;
 }
 
 export function useSignOut() {

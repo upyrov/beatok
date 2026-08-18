@@ -1,5 +1,5 @@
 export interface FieldErrorProps {
-  errors?: any[] | string | null;
+  errors?: unknown[] | string | null;
   className?: string;
 }
 
@@ -7,11 +7,13 @@ export function FieldError({ errors, className = "" }: FieldErrorProps) {
   if (!errors) return null;
 
   const errorList = Array.isArray(errors)
-    ? errors.map((e) => (typeof e === "string" ? e : e?.message || String(e)))
+    ? errors.map((e) =>
+        typeof e === "string" ? e : (e as Error)?.message || String(e),
+      )
     : [
         typeof errors === "string"
           ? errors
-          : (errors as any)?.message || String(errors),
+          : (errors as Error)?.message || String(errors),
       ];
 
   return (

@@ -16,6 +16,8 @@ export interface Message {
   sender: User | Me;
 }
 
+const contentValidator = { onChange: type("string > 0") };
+
 export function Chat() {
   const { lobby, connection } = use(LobbyContext);
   const { user } = useOutletContext<{ user: Me | null }>();
@@ -80,12 +82,6 @@ export function Chat() {
       try {
         await connection.invoke("SendMessage", lobby.id, content);
       } catch (error) {
-        window.dispatchEvent(
-          new CustomEvent("globalerror", {
-            detail:
-              error instanceof Error ? error.message : "Failed to send message",
-          }),
-        );
         // Revert message on failure
         if (user) {
           setMessages((prev) => prev.filter((m) => m.id !== tempId));
@@ -108,12 +104,6 @@ export function Chat() {
       try {
         await connection.invoke("SendMessage", lobby.id, emoji);
       } catch (error) {
-        window.dispatchEvent(
-          new CustomEvent("globalerror", {
-            detail:
-              error instanceof Error ? error.message : "Failed to send message",
-          }),
-        );
         if (user) {
           setMessages((prev) => prev.filter((m) => m.id !== tempId));
         }
@@ -160,9 +150,7 @@ export function Chat() {
         >
           <form.Field
             name="content"
-            validators={{
-              onChange: type("string > 0"),
-            }}
+            validators={contentValidator}
             children={(field) => (
               <BaseInput
                 name={field.name}

@@ -160,8 +160,8 @@ export default function Signup() {
               queryKey: queryKeys.users.me(),
             });
             navigate("/");
-          } catch (error: any) {
-            setGoogleError(error);
+          } catch (error) {
+            setGoogleError(error as Error);
           } finally {
             setIsGooglePending(false);
           }

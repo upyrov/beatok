@@ -27,7 +27,9 @@ export async function clientLoader({ params }: Route.ClientLoaderArgs) {
   return { user };
 }
 
-export function meta({ data }: Route.MetaArgs & { data: any }) {
+export function meta({
+  data,
+}: Route.MetaArgs & { data?: Awaited<ReturnType<typeof clientLoader>> }) {
   const title = data?.user?.name
     ? `Beatok | ${data.user.name}`
     : "Beatok | User Profile";

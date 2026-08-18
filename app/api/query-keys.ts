@@ -4,7 +4,7 @@ export const queryKeys = {
   lobbies: {
     all: ["lobbies"] as const,
     lists: () => [...queryKeys.lobbies.all, "list"] as const,
-    list: (filters: LobbyFilter) =>
+    list: (filters?: LobbyFilter) =>
       [...queryKeys.lobbies.lists(), { filters }] as const,
     details: () => [...queryKeys.lobbies.all, "detail"] as const,
     detail: (id: string) => [...queryKeys.lobbies.details(), id] as const,

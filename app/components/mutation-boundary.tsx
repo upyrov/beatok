@@ -1,32 +1,39 @@
 import type { UseMutationResult } from "@tanstack/react-query";
 import { useEffect, type ReactNode } from "react";
+import type { Error as ApiError } from "~/api/types/error";
+import { toastError } from "~/lib/toast";
 
-interface MutationBoundaryProps {
-  mutation?: UseMutationResult<any, Error, any, any>;
-  error?: any;
+interface MutationBoundaryProps<
+  TData = unknown,
+  TError = Error,
+  TVariables = unknown,
+  TContext = unknown,
+> {
+  mutation?: UseMutationResult<TData, TError, TVariables, TContext>;
+  error?: unknown;
   children?: ReactNode;
 }
 
-export function MutationBoundary({
+export function MutationBoundary<TData, TError, TVariables, TContext>({
   mutation,
   error,
   children,
-}: MutationBoundaryProps) {
+}: MutationBoundaryProps<TData, TError, TVariables, TContext>) {
   const activeError = error || (mutation?.isError ? mutation.error : null);
+  const err = activeError as (ApiError & { code?: string }) | null;
 
   useEffect(() => {
-    if (activeError && activeError.code !== "auth/popup-closed-by-user") {
-      console.error(activeError);
+    if (activeError && err?.code !== "auth/popup-closed-by-user") {
+      toastError(activeError);
     }
-  }, [activeError]);
+  }, [activeError, err?.code]);
 
-  if (activeError?.code === "auth/popup-closed-by-user") {
+  if (err?.code === "auth/popup-closed-by-user") {
     return <>{children}</>;
   }
 
   let errorMessage =
-    activeError?.message ||
-    "An unexpected error occurred. Please try again later.";
+    err?.message || "An unexpected error occurred. Please try again later.";
 
   if (typeof errorMessage === "string") {
     errorMessage = errorMessage
@@ -39,8 +46,8 @@ export function MutationBoundary({
       .trim();
   }
 
-  if (activeError?.code) {
-    switch (activeError.code) {
+  if (err?.code) {
+    switch (err.code) {
       case "auth/invalid-email":
         errorMessage = "The email address is invalid.";
         break;

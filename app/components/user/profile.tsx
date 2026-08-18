@@ -16,6 +16,7 @@ import { queryKeys } from "~/api/query-keys";
 import type { Profile as IProfile } from "~/api/types/user";
 import { useUpdateUser, useUploadAvatarUrl } from "~/api/user";
 import { FileDropzone } from "~/components/file-dropzone";
+import { toastError } from "~/lib/toast";
 import { uploadFile } from "~/lib/upload";
 import { ActionButton } from "../action-button";
 
@@ -73,7 +74,7 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
         });
         queryClient.invalidateQueries({ queryKey: queryKeys.users.me() });
       } catch (error) {
-        console.error(error);
+        toastError(error);
       }
     },
   });

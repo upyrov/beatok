@@ -1,5 +1,5 @@
 import { useHotkey } from "@tanstack/react-hotkeys";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 
 const STEP = 1;
 const LARGE_STEP = 10;
@@ -95,15 +95,11 @@ export function Knob({
   useHotkey("Home", (e) => updateValue(e, min), { target: knobRef });
   useHotkey("End", (e) => updateValue(e, max), { target: knobRef });
 
-  const { angle, circumference, strokeDashoffset } = useMemo(() => {
-    const percentage = (value - min) / (max - min);
-    const circ = 2 * Math.PI * RADIUS;
-    return {
-      angle: -135 + percentage * 270,
-      circumference: circ,
-      strokeDashoffset: circ - percentage * 0.75 * circ,
-    };
-  }, [value, min, max]);
+  const percentage = (value - min) / (max - min);
+  const circ = 2 * Math.PI * RADIUS;
+  const angle = -135 + percentage * 270;
+  const circumference = circ;
+  const strokeDashoffset = circ - percentage * 0.75 * circ;
 
   return (
     <div

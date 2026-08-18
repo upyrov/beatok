@@ -21,6 +21,7 @@ import {
   playNotificationSound,
   sendBrowserNotification,
 } from "~/lib/notification";
+import { toastError } from "~/lib/toast";
 import { uploadFile } from "~/lib/upload";
 
 export function Submitting() {
@@ -123,7 +124,7 @@ export function Submitting() {
         a.remove();
         URL.revokeObjectURL(blobUrl);
       } catch (error) {
-        console.error(error);
+        toastError(error);
       }
     },
     [],
@@ -140,7 +141,7 @@ export function Submitting() {
         const extension = sound.value.split(".").pop()?.split("?")[0] ?? "wav";
         zip.file(`${sound.name}-${sound.id}.${extension}`, blob);
       } catch (err) {
-        console.error("Failed to fetch sound:", err);
+        toastError("Failed to fetch sound:", err);
       }
     });
 

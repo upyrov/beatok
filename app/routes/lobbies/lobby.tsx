@@ -56,14 +56,7 @@ export default function Lobby() {
         queryClient.invalidateQueries({ queryKey: queryKeys.lobbies.lists() });
       }
     },
-    onError(error) {
-      window.dispatchEvent(
-        new CustomEvent("globalerror", {
-          detail:
-            error instanceof Error ? error.message : "Failed to join lobby",
-        }),
-      );
-    },
+    onError(error) {},
   });
   const leaveMutation = useMutation({
     mutationFn() {
@@ -73,14 +66,7 @@ export default function Lobby() {
       queryClient.invalidateQueries({ queryKey: queryKeys.lobbies.lists() });
       navigate("/");
     },
-    onError(error) {
-      window.dispatchEvent(
-        new CustomEvent("globalerror", {
-          detail:
-            error instanceof Error ? error.message : "Failed to leave lobby",
-        }),
-      );
-    },
+    onError(error) {},
   });
 
   const handleLeave = useCallback(

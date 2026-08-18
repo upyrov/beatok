@@ -41,7 +41,7 @@ export function Kits() {
             validators={{
               onChange: type("string > 0"),
             }}
-            children={(field: any) => (
+            children={(field) => (
               <div className="flex gap-2 items-start">
                 <InputField
                   name={field.name}
@@ -54,11 +54,8 @@ export function Kits() {
                   inputClassName="text-center"
                 />
                 <form.Subscribe
-                  selector={(state: any) => [
-                    state.canSubmit,
-                    state.isSubmitting,
-                  ]}
-                  children={([canSubmit, isSubmitting]: [boolean, boolean]) => (
+                  selector={(state) => [state.canSubmit, state.isSubmitting]}
+                  children={([canSubmit, isSubmitting]) => (
                     <ActionButton
                       type="submit"
                       disabled={!canSubmit}
@@ -74,7 +71,7 @@ export function Kits() {
 
           <form.Field
             name="genreIds"
-            children={(field: any) => (
+            children={(field) => (
               <>
                 {genres.length > 0 ? (
                   <div className="flex flex-wrap gap-2">

@@ -1,12 +1,16 @@
 import { Form as BaseForm } from "@base-ui/react";
 import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
-import { use } from "react";
+import { use, useRef } from "react";
 import { useOutletContext } from "react-router";
 import { useUpdateScore, useVote } from "~/api/lobby";
+import type { Score } from "~/api/types/score";
 import type { Me } from "~/api/types/user";
 import { Knob } from "~/components/knob";
 import { LobbyContext } from "~/contexts";
+import { toastError } from "~/lib/toast";
+
+const scoreValidator = { onChange: type("1 <= number <= 10") };
 
 export function VoteForm({
   submissionId,
@@ -29,6 +33,8 @@ export function VoteForm({
   const voteMutation = useVote();
   const updateScoreMutation = useUpdateScore();
 
+  const creatingPromiseRef = useRef<Promise<string> | null>(null);
+
   const form = useForm({
     defaultValues: { score: existingScoreValue ?? 0 },
     onSubmit: async ({ value }) => {
@@ -39,82 +45,87 @@ export function VoteForm({
           (s) => s.submissionId === submissionId && !s.id.startsWith("temp-"),
         );
 
-      if (realScore) {
+      let scoreIdToUpdate = realScore?.id;
+
+      if (!scoreIdToUpdate && creatingPromiseRef.current) {
+        try {
+          scoreIdToUpdate = await creatingPromiseRef.current;
+        } catch (e) {
+          // If creation failed, we let it fall through to create again.
+        }
+      }
+
+      const updateParticipantScores = (
+        updater: (scores: Score[]) => Score[],
+      ) => {
+        setLobby((prev) => {
+          if (!prev) return prev;
+          return {
+            ...prev,
+            participants: prev.participants.map((p) => {
+              if (p.user.id !== user?.id) return p;
+              return { ...p, scores: updater(p.scores ?? []) };
+            }),
+          };
+        });
+      };
+
+      if (scoreIdToUpdate) {
         try {
           await updateScoreMutation.mutateAsync({
             id: lobbyId,
-            scoreId: realScore.id,
+            scoreId: scoreIdToUpdate,
             data: { value: value.score },
           });
         } catch (err) {
-          console.error(err);
-          window.dispatchEvent(
-            new CustomEvent("globalerror", {
-              detail:
-                err instanceof Error ? err.message : "Failed to update vote",
-            }),
-          );
+          toastError(err);
           // Revert optimistic update
-          setLobby((prev) => {
-            if (!prev) return prev;
-            return {
-              ...prev,
-              participants: prev.participants.map((p) => {
-                if (p.user.id !== user?.id) return p;
-                return {
-                  ...p,
-                  scores: p.scores?.map((s) =>
-                    s.id === realScore.id
-                      ? { ...s, value: String(existingScoreValue ?? 0) }
-                      : s,
-                  ),
-                };
-              }),
-            };
-          });
+          updateParticipantScores((scores) =>
+            scores.map((s) =>
+              s.id === scoreIdToUpdate
+                ? { ...s, value: String(existingScoreValue ?? 0) }
+                : s,
+            ),
+          );
         }
       } else {
+        let promise: Promise<string> | null = null;
         try {
-          await voteMutation.mutateAsync({
+          promise = voteMutation.mutateAsync({
             id: lobbyId,
             data: { value: value.score, submissionId },
           });
-        } catch (err) {
-          console.error(err);
-          window.dispatchEvent(
-            new CustomEvent("globalerror", {
-              detail: err instanceof Error ? err.message : "Failed to vote",
-            }),
+          creatingPromiseRef.current = promise;
+          const newScoreId = await promise;
+
+          // Update optimistic score ID to real score ID
+          updateParticipantScores((scores) =>
+            scores.map((s) =>
+              s.submissionId === submissionId && s.id.startsWith("temp-")
+                ? { ...s, id: newScoreId }
+                : s,
+            ),
           );
+        } catch (err) {
+          toastError(err);
           // Revert optimistic update
-          setLobby((prev) => {
-            if (!prev) return prev;
-            return {
-              ...prev,
-              participants: prev.participants.map((p) => {
-                if (p.user.id !== user?.id) return p;
-                return {
-                  ...p,
-                  scores: p.scores?.filter(
-                    (s) =>
-                      s.submissionId !== submissionId ||
-                      !s.id.startsWith("temp-"),
-                  ),
-                };
-              }),
-            };
-          });
+          updateParticipantScores((scores) =>
+            scores.filter(
+              (s) =>
+                s.submissionId !== submissionId || !s.id.startsWith("temp-"),
+            ),
+          );
+        } finally {
+          if (promise && creatingPromiseRef.current === promise) {
+            creatingPromiseRef.current = null;
+          }
         }
       }
     },
   });
 
   if (isOwnTrack) {
-    return (
-      <span className="text-gray-400 text-sm">
-        Cannot vote on your own track
-      </span>
-    );
+    return null;
   }
 
   return (
@@ -129,9 +140,7 @@ export function VoteForm({
       >
         <form.Field
           name="score"
-          validators={{
-            onChange: type("1 <= number <= 10"),
-          }}
+          validators={scoreValidator}
           children={(field) => (
             <div className="flex items-center gap-3">
               <Knob

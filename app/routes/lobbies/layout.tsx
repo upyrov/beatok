@@ -40,11 +40,7 @@ export default function Layout() {
       try {
         await connection.start();
 
-        connection.on("Error", (errorDto: { message: string }) => {
-          window.dispatchEvent(
-            new CustomEvent("globalerror", { detail: errorDto.message }),
-          );
-        });
+        connection.on("Error", (errorDto: { message: string }) => {});
 
         if (isActive) {
           newConnection = connection;
@@ -52,16 +48,7 @@ export default function Layout() {
         } else {
           connection.stop();
         }
-      } catch (error) {
-        window.dispatchEvent(
-          new CustomEvent("globalerror", {
-            detail:
-              error instanceof Error
-                ? error.message
-                : "Socket connection failed",
-          }),
-        );
-      }
+      } catch (error) {}
     }
 
     getHubConnection();

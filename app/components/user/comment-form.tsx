@@ -5,6 +5,7 @@ import { type } from "arktype";
 import { useRef } from "react";
 import { useAddComment } from "~/api/user";
 import { Keyboard } from "~/components/ui/keyboard";
+import { toastError } from "~/lib/toast";
 import { ActionButton } from "../action-button";
 
 export function CommentForm({ userId }: { userId: string }) {
@@ -30,7 +31,7 @@ export function CommentForm({ userId }: { userId: string }) {
         await addComment.mutateAsync(value);
         form.reset();
       } catch (error) {
-        console.error(error);
+        toastError(error);
       }
     },
   });

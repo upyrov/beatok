@@ -1,3 +1,4 @@
+import { toastError } from "~/lib/toast";
 export function playNotificationSound(type: "warning" | "alert") {
   try {
     const AudioContext =
@@ -35,7 +36,7 @@ export function playNotificationSound(type: "warning" | "alert") {
       osc.stop(ctx.currentTime + 1.5);
     }
   } catch (err) {
-    console.error("Failed to play notification sound", err);
+    toastError("Failed to play notification sound", err);
   }
 }
 

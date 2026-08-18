@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { CgPlayButton, CgPlayPause } from "react-icons/cg";
 import { Keyboard } from "~/components/ui/keyboard";
 
-interface AudioPlayerProps {
+export interface AudioPlayerProps {
   src: string;
   className?: string;
   syncStartAt?: string;

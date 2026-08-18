@@ -10,7 +10,7 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
-import { GlobalErrorModal } from "~/components/error-modal";
+import { GlobalErrorToast } from "~/components/error-toast";
 import { Footer } from "~/components/footer";
 import { Header } from "~/components/header";
 import type { Route } from "./+types/root";
@@ -110,7 +110,7 @@ function Content() {
   return (
     <>
       <Header user={user} />
-      <GlobalErrorModal />
+      <GlobalErrorToast />
       <main className="flex flex-col min-h-[calc(100svh-var(--spacing-header))]">
         <Outlet context={{ user }} />
       </main>

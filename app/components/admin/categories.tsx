@@ -44,7 +44,7 @@ export function Categories({ kitId }: { kitId: string }) {
             validators={{
               onChange: type("string > 0"),
             }}
-            children={(field: any) => (
+            children={(field) => (
               <InputField
                 name={field.name}
                 value={field.state.value}
@@ -59,7 +59,7 @@ export function Categories({ kitId }: { kitId: string }) {
           />
           <form.Field
             name="randomSoundsCount"
-            children={(field: any) => (
+            children={(field) => (
               <div
                 title="Random Sounds Count"
                 className="flex items-center justify-center"
@@ -75,8 +75,8 @@ export function Categories({ kitId }: { kitId: string }) {
             )}
           />
           <form.Subscribe
-            selector={(state: any) => [state.canSubmit, state.isSubmitting]}
-            children={([canSubmit, isSubmitting]: [boolean, boolean]) => (
+            selector={(state) => [state.canSubmit, state.isSubmitting]}
+            children={([canSubmit, isSubmitting]) => (
               <ActionButton
                 type="submit"
                 disabled={!canSubmit}
