@@ -12,7 +12,7 @@ import { toastError } from "~/lib/toast";
 
 const scoreValidator = { onChange: type("1 <= number <= 10") };
 
-export function VoteForm({
+export function ScoreForm({
   submissionId,
   lobbyId,
   isOwnTrack,

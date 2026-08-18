@@ -4,7 +4,7 @@ import type { LobbyPlaybackItem } from "~/api/types/lobby-playback-item";
 import type { Me } from "~/api/types/user";
 import { AudioPlayer } from "~/components/lazy-audio-player";
 import { LobbyContext } from "~/contexts";
-import { VoteForm } from "./vote-form";
+import { ScoreForm } from "./score-form";
 
 export function Voting() {
   const { lobby } = use(LobbyContext);
@@ -107,7 +107,7 @@ export function Voting() {
                         (score) => score.submissionId === submission.id,
                       );
                       return (
-                        <VoteForm
+                        <ScoreForm
                           submissionId={submission.id}
                           lobbyId={lobby?.id ?? ""}
                           isOwnTrack={

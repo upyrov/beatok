@@ -12,24 +12,29 @@ export function Header({ user }: { user: Me | null }) {
   const navigate = useNavigate();
 
   return (
-    <header className="flex justify-between items-center h-header px-6 border-b border-black/5 dark:border-white/5 bg-white/50 dark:bg-black/20 backdrop-blur-md sticky top-0 z-40">
+    <header className="flex justify-between items-center h-header px-4 md:px-6 border-b border-black/5 dark:border-white/5 bg-white/50 dark:bg-black/20 backdrop-blur-md sticky top-0 z-40">
       <div>
-        <Link viewTransition to="/" className="flex items-center gap-3">
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
+        <Link
+          viewTransition
+          to="/"
+          className="flex items-center gap-2 sm:gap-3"
+        >
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
             Beatok
           </h1>
-          <span className="text-gray-300 dark:text-gray-600 text-2xl font-light leading-none pb-1">
+          <span className="hidden sm:inline text-gray-300 dark:text-gray-600 text-2xl font-light leading-none pb-1">
             |
           </span>
-          <p className="text-lg text-gray-500 dark:text-gray-400 font-medium">
+          <p className="hidden sm:block text-base sm:text-lg text-gray-500 dark:text-gray-400 font-medium">
             Beat Battle
           </p>
         </Link>
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 sm:gap-4">
         <Link viewTransition to="/lobbies/new">
-          <Button>
-            <CgMathPlus className="mr-2" /> Create Lobby
+          <Button className="px-3 sm:px-5">
+            <CgMathPlus className="sm:mr-2 text-lg" />{" "}
+            <span className="hidden sm:inline">Create Lobby</span>
           </Button>
         </Link>
         {user ? (
@@ -40,6 +45,7 @@ export function Header({ user }: { user: Me | null }) {
                   user={user}
                   className="is-md pointer-events-none"
                   direction="vertical"
+                  hideNameOnMobile
                 />
               </div>
             </Menu.Trigger>

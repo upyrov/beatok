@@ -11,6 +11,7 @@ export interface UserCardProps {
   showRole?: boolean;
   showRating?: boolean;
   direction?: "horizontal" | "vertical";
+  hideNameOnMobile?: boolean;
 }
 
 export function UserCard({
@@ -18,6 +19,7 @@ export function UserCard({
   className = "",
   showRating = false,
   direction = "horizontal",
+  hideNameOnMobile = false,
 }: UserCardProps) {
   const queryClient = useQueryClient();
   const prefetch = () => {
@@ -58,7 +60,9 @@ export function UserCard({
           />
         )}
       </div>
-      <div className="flex flex-col justify-center">
+      <div
+        className={`flex flex-col justify-center ${hideNameOnMobile ? "hidden sm:flex" : ""}`}
+      >
         <span className="font-semibold group-hover:transition-colors group-[.is-md]:text-base group-[.is-lg]:text-lg group-[.is-xl]:text-xl">
           {user.name || "Anonymous"}
         </span>
