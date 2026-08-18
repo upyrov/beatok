@@ -24,8 +24,7 @@ export default function Credits() {
 
         <div className="prose prose-gray dark:prose-invert">
           <p className="mb-4 text-gray-500">
-            Beatok is proudly built and maintained by these open-source
-            contributors:
+            Beatok is proudly built and maintained by these contributors:
           </p>
 
           <ul className="flex flex-col gap-2 mt-4">
