@@ -57,7 +57,7 @@ export function GlobalErrorToast() {
         </div>
         <button
           onClick={() => setErrorMsg(null)}
-          className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition shrink-0 cursor-pointer"
+          className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition shrink-0"
         >
           <CgClose size={16} />
         </button>

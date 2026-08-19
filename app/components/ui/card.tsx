@@ -1,7 +1,7 @@
 import * as React from "react";
 import { cn } from "~/lib/utils";
 
-const Card = React.forwardRef<
+const Root = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
@@ -11,9 +11,9 @@ const Card = React.forwardRef<
     {...props}
   />
 ));
-Card.displayName = "Card";
+Root.displayName = "Card";
 
-const CardHeader = React.forwardRef<
+const Header = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
@@ -23,9 +23,9 @@ const CardHeader = React.forwardRef<
     {...props}
   />
 ));
-CardHeader.displayName = "CardHeader";
+Header.displayName = "Card.Header";
 
-const CardTitle = React.forwardRef<
+const Title = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLHeadingElement>
 >(({ className, ...props }, ref) => (
@@ -38,9 +38,9 @@ const CardTitle = React.forwardRef<
     {...props}
   />
 ));
-CardTitle.displayName = "CardTitle";
+Title.displayName = "Card.Title";
 
-const CardDescription = React.forwardRef<
+const Description = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, ...props }, ref) => (
@@ -50,17 +50,17 @@ const CardDescription = React.forwardRef<
     {...props}
   />
 ));
-CardDescription.displayName = "CardDescription";
+Description.displayName = "Card.Description";
 
-const CardContent = React.forwardRef<
+const Content = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
   <div ref={ref} className={cn("p-6 pt-0", className)} {...props} />
 ));
-CardContent.displayName = "CardContent";
+Content.displayName = "Card.Content";
 
-const CardFooter = React.forwardRef<
+const Footer = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
@@ -70,13 +70,18 @@ const CardFooter = React.forwardRef<
     {...props}
   />
 ));
-CardFooter.displayName = "CardFooter";
+Footer.displayName = "Card.Footer";
 
-export {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
+export const Card = Object.assign(Root, {
+  Header,
+  Title,
+  Description,
+  Content,
+  Footer,
+}) as typeof Root & {
+  Header: typeof Header;
+  Title: typeof Title;
+  Description: typeof Description;
+  Content: typeof Content;
+  Footer: typeof Footer;
 };

@@ -3,6 +3,7 @@ import { CgLogIn, CgMathPlus } from "react-icons/cg";
 import { Link } from "react-router";
 import { lobbiesQueryOptions, useLobbies } from "~/api/lobby";
 import type { Lobby } from "~/api/types/lobby";
+import { Leaderboard } from "~/components/leaderboard";
 import { LobbyCard } from "~/components/lobby-card";
 import { PageContainer } from "~/components/page-container";
 import { Button } from "~/components/ui/button";
@@ -94,7 +95,14 @@ function HomeSkeleton() {
 export function HydrateFallback() {
   return (
     <PageContainer className="max-w-7xl">
-      <HomeSkeleton />
+      <div className="flex flex-col lg:flex-row gap-8 items-start w-full">
+        <div className="flex-1 min-w-0 flex flex-col gap-8 w-full">
+          <HomeSkeleton />
+        </div>
+        <aside className="w-full lg:w-80 shrink-0 sticky top-24 hidden lg:block">
+          <Leaderboard />
+        </aside>
+      </div>
     </PageContainer>
   );
 }
@@ -119,50 +127,58 @@ export default function Home() {
 
   return (
     <PageContainer className="max-w-7xl">
-      {toRejoin.length > 0 && (
-        <section>
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="flex items-center gap-2">Lobbies to Rejoin</h2>
-          </div>
-          <div className="system-grid-list">
-            {toRejoin.map((lobby) => (
-              <LobbyGridItem key={lobby.id} lobby={lobby} />
-            ))}
-          </div>
-        </section>
-      )}
+      <div className="flex flex-col lg:flex-row gap-8 items-start w-full">
+        <div className="flex-1 min-w-0 flex flex-col gap-8 w-full">
+          {toRejoin.length > 0 && (
+            <section>
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="flex items-center gap-2">Lobbies to Rejoin</h2>
+              </div>
+              <div className="system-grid-list">
+                {toRejoin.map((lobby) => (
+                  <LobbyGridItem key={lobby.id} lobby={lobby} />
+                ))}
+              </div>
+            </section>
+          )}
 
-      <section className="flex flex-col flex-1">
-        {!!active.length && (
-          <>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="flex items-center gap-2">Lobbies</h2>
-            </div>
-            <div className="system-grid-list">
-              {active.map((lobby) => (
-                <LobbyGridItem key={lobby.id} lobby={lobby} />
-              ))}
-            </div>
-          </>
-        )}
+          <section className="flex flex-col flex-1">
+            {!!active.length && (
+              <>
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="flex items-center gap-2">Lobbies</h2>
+                </div>
+                <div className="system-grid-list">
+                  {active.map((lobby) => (
+                    <LobbyGridItem key={lobby.id} lobby={lobby} />
+                  ))}
+                </div>
+              </>
+            )}
 
-        {!active.length && (
-          <div className="flex justify-center items-center flex-col flex-1 text-center">
-            <p className="text-xl font-medium">No Lobbies Found</p>
-            <p className="mt-2 text-gray-500">Check back later or</p>
-            <Link
-              viewTransition
-              to="/lobbies/new"
-              prefetch="intent"
-              className="mt-4 flex justify-center"
-            >
-              <Button className="flex items-center gap-2">
-                <CgMathPlus /> Create Your Own
-              </Button>
-            </Link>
-          </div>
-        )}
-      </section>
+            {!active.length && (
+              <div className="flex justify-center items-center flex-col flex-1 text-center">
+                <p className="text-xl font-medium">No Lobbies Found</p>
+                <p className="mt-2 text-gray-500">Check back later or</p>
+                <Link
+                  viewTransition
+                  to="/lobbies/new"
+                  prefetch="intent"
+                  className="mt-4 flex justify-center"
+                >
+                  <Button className="flex items-center gap-2">
+                    <CgMathPlus /> Create Your Own
+                  </Button>
+                </Link>
+              </div>
+            )}
+          </section>
+        </div>
+
+        <aside className="w-full lg:w-80 shrink-0 sticky top-24 hidden lg:block">
+          <Leaderboard />
+        </aside>
+      </div>
     </PageContainer>
   );
 }

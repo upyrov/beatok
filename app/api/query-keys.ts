@@ -62,4 +62,5 @@ export const queryKeys = {
     upload: (extension: string) =>
       [...queryKeys.users.all, "upload", extension] as const,
   },
+  leaderboard: (sortBy: string) => ["leaderboard", { sortBy }] as const,
 };

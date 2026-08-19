@@ -132,7 +132,7 @@ export function Chat() {
             <button
               key={emoji}
               onClick={() => handleQuickReaction(emoji)}
-              className="hover:bg-black/10 dark:hover:bg-white/10 rounded px-2 py-1 transition-colors cursor-pointer text-lg shrink-0"
+              className="hover:bg-black/10 dark:hover:bg-white/10 rounded px-2 py-1 transition-colors text-lg shrink-0"
               type="button"
             >
               {emoji}

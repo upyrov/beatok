@@ -139,5 +139,5 @@ body {
 }
 
 @utility system-grid-list {
-  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6;
+  @apply grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-6;
 }

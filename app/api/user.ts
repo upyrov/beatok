@@ -2,9 +2,31 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchApi } from ".";
 import { queryKeys } from "./query-keys";
 import type { Comment, CreateComment } from "./types/comment";
+import type { LeaderboardQuery } from "./types/leadeboard-query";
 import type { Lobby } from "./types/lobby";
 import type { PageResult } from "./types/page-result";
-import type { Me, PictureUpload, Profile, UserUpdate } from "./types/user";
+import type {
+  LeaderboardUser,
+  Me,
+  PictureUpload,
+  Profile,
+  UserUpdate,
+} from "./types/user";
+
+export function getLeaderboard(
+  query: LeaderboardQuery,
+): Promise<LeaderboardUser[]> {
+  const params = new URLSearchParams({ ...query });
+  return fetchApi<LeaderboardUser[]>(`/leaderboard?${params}`);
+}
+
+export const leaderboardQueryOptions = (query: LeaderboardQuery) => ({
+  queryKey: queryKeys.leaderboard(query.sortBy),
+  queryFn: () => getLeaderboard(query),
+});
+
+export const useLeaderboard = (query: LeaderboardQuery) =>
+  useQuery(leaderboardQueryOptions(query));
 
 export const getUser = (): Promise<Me> => fetchApi<Me>("/users/me");
 
@@ -103,11 +125,10 @@ export function useUpdateUser() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       }),
-    onSuccess: () => {
+    onSuccess: () =>
       queryClient.invalidateQueries({
         queryKey: queryKeys.users.me(),
-      });
-    },
+      }),
   });
 }
 

@@ -50,3 +50,7 @@ export interface User {
   rating: number;
   picture: string | null;
 }
+
+export interface LeaderboardUser extends User {
+  wins: number;
+}

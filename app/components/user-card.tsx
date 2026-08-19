@@ -39,7 +39,7 @@ export function UserCard({
           <>
             {!imageLoaded && (
               <div className="absolute inset-0 flex items-center justify-center z-10">
-                <div className="system-skeleton absolute inset-0 rounded-sm w-full h-full" />
+                <div className="system-skeleton absolute inset-0 rounded-full w-full h-full" />
                 <CgSpinner
                   role="status"
                   aria-label={"Loading..."}
@@ -51,13 +51,13 @@ export function UserCard({
               src={user.picture}
               alt={user.name || "Anonymous"}
               onLoad={() => setImageLoaded(true)}
-              className={`object-cover border border-black/20 dark:border-white/20 p-0.5 rounded-sm w-full h-full ${imageLoaded ? "" : "invisible"}`}
+              className={`object-cover rounded-full ring-1 ring-black/5 dark:ring-white/10 w-full h-full ${imageLoaded ? "" : "invisible"}`}
             />
           </>
         ) : (
-          <CgUser
-            className={`text-gray-400 group-hover:transition-colors border border-black/20 dark:border-white/20 p-0.5 rounded-sm w-full h-full`}
-          />
+          <div className="w-full h-full rounded-full bg-muted flex items-center justify-center shrink-0 ring-1 ring-black/5 dark:ring-white/10">
+            <CgUser className="text-gray-400 text-lg group-[.is-md]:text-xl group-[.is-lg]:text-3xl group-[.is-xl]:text-4xl" />
+          </div>
         )}
       </div>
       <div
