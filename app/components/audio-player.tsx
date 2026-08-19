@@ -74,23 +74,49 @@ export function AudioPlayer({
       if (offsetSeconds > 0) {
         wavesurfer.setTime(offsetSeconds);
       }
+      
       wavesurfer.play().catch((err) => {
-        if (err.name === "NotAllowedError") {
+        if (err.name === "NotAllowedError" || err.message.includes("play()")) {
+          wavesurfer.setMuted(true);
+          
+          // Muted autoplay usually works
+          wavesurfer.play().catch(() => {});
+
           const enableAudio = () => {
-            wavesurfer.play().catch(() => {});
+            wavesurfer.setMuted(false);
+            window.removeEventListener("click", enableAudio);
+            window.removeEventListener("keydown", enableAudio);
           };
-          window.addEventListener("click", enableAudio, { once: true });
+          
+          window.addEventListener("click", enableAudio);
+          window.addEventListener("keydown", enableAudio);
         }
       });
     };
 
     wavesurfer.on("ready", onReady);
+    
+    // If wavesurfer is already ready when this effect runs
+    if (wavesurfer.getDuration() > 0) {
+      onReady();
+    }
+
     return () => {
       wavesurfer.un("ready", onReady);
     };
   }, [wavesurfer, syncStartAt]);
 
-  const handleClick = useCallback(() => wavesurfer?.playPause(), [wavesurfer]);
+  const handleClick = useCallback(() => {
+    if (!wavesurfer) return;
+    if (wavesurfer.getMuted()) {
+      wavesurfer.setMuted(false);
+      if (!wavesurfer.isPlaying()) {
+        wavesurfer.play();
+      }
+      return;
+    }
+    wavesurfer.playPause();
+  }, [wavesurfer]);
 
   useHotkey("Space", (e) => {
     if (!hideControls && isReady) {
