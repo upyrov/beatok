@@ -67,7 +67,7 @@ export function Sound({
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2">
                 <BaseInput
-                  className="flex-1 text-sm text-center system-input"
+                  className="flex-1 text-sm system-input"
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
                   autoFocus
@@ -95,7 +95,7 @@ export function Sound({
                   }}
                   variant="outline"
                   size="icon"
-                  className="text-gray-500 hover:text-gray-700 transition-colors"
+                  className="text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors"
                 >
                   <CgClose size={18} />
                 </Button>
@@ -118,7 +118,7 @@ export function Sound({
               onClick={() => setIsEditing(true)}
               variant="outline"
               size="icon"
-              className="text-gray-500 hover:text-blue-500 transition-colors"
+              className="text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
             >
               <CgPen size={18} />
             </Button>
@@ -130,7 +130,7 @@ export function Sound({
             }}
             variant="outline"
             size="icon"
-            className="text-gray-500 hover:text-red-500 transition-colors"
+            className="text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors"
           >
             <CgTrash size={18} />
           </Button>

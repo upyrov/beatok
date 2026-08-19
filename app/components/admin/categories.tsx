@@ -51,9 +51,8 @@ export function Categories({ kitId }: { kitId: string }) {
                 onChange={field.handleChange}
                 onBlur={field.handleBlur}
                 errors={field.state.meta.errors}
-                placeholder="New category name..."
+                placeholder="Category name"
                 className="flex-1"
-                inputClassName="text-center"
               />
             )}
           />

@@ -17,6 +17,7 @@ export function Kits() {
 
   return (
     <CrudManager
+      isLoading={kitsQuery.isLoading}
       items={kits}
       emptyMessage="No kits found. Create one above!"
       defaultValues={{ name: "", genreIds: [] as string[] }}
@@ -51,7 +52,6 @@ export function Kits() {
                   errors={field.state.meta.errors}
                   placeholder="Kit name"
                   className="flex-1"
-                  inputClassName="text-center"
                 />
                 <form.Subscribe
                   selector={(state) => [state.canSubmit, state.isSubmitting]}

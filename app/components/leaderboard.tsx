@@ -1,6 +1,6 @@
 import { Select } from "@base-ui/react";
 import { useState } from "react";
-import { CgProfile, CgTrophy } from "react-icons/cg";
+import { CgProfile, CgTrophy, CgChevronDown } from "react-icons/cg";
 import { Link } from "react-router";
 import type { LeaderboardQuery } from "~/api/types/leadeboard-query";
 import { useLeaderboard } from "~/api/user";
@@ -11,7 +11,10 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 export function Leaderboard() {
   const [sortBy, setSortBy] = useState<LeaderboardQuery["sortBy"]>("rating");
   const { data: users, isLoading } = useLeaderboard({ sortBy });
-  const [parent] = useAutoAnimate();
+  const [parent] = useAutoAnimate({
+    duration: 350,
+    easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)'
+  });
 
   return (
     <Card className="bg-background/50 backdrop-blur-sm">
@@ -28,7 +31,9 @@ export function Leaderboard() {
         >
           <Select.Trigger className="system-input text-sm py-1 h-auto cursor-pointer inline-flex items-center gap-2">
             <Select.Value />
-            <Select.Icon />
+            <Select.Icon>
+              <CgChevronDown className="text-gray-500" />
+            </Select.Icon>
           </Select.Trigger>
           <Select.Portal>
             <Select.Positioner sideOffset={4}>

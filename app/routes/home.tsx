@@ -51,31 +51,13 @@ export async function clientLoader() {
   } catch (e) {
     if (e instanceof Response) throw e;
   }
-  await queryClient.prefetchQuery(lobbiesQueryOptions());
+  queryClient.prefetchQuery(lobbiesQueryOptions());
+  return null;
 }
 
-export function HydrateFallback() {
+function HeroSection() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center transition duration-300 starting:opacity-0 starting:translate-y-1">
-      <CgSpinner
-        role="status"
-        aria-label={"Loading..."}
-        className="animate-spin text-gray-400"
-        size={48}
-      />
-    </div>
-  );
-}
-
-export default function LandingPage() {
-  const lobbiesQuery = useLobbies();
-  const lobbies = lobbiesQuery.data ?? [];
-  const activeLobbies = lobbies.filter((l) => !l.isJoined).slice(0, 3);
-
-  const [vote, setDemoVote] = useState(5);
-
-  return (
-    <div className="flex flex-col flex-1">
+    <>
       <section className="flex flex-col items-center justify-center pt-32 pb-24 px-4 text-center">
         <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 bg-linear-to-br from-gray-900 to-gray-500 dark:from-white dark:to-gray-400 bg-clip-text text-transparent transition duration-300 starting:opacity-0 starting:translate-y-1">
           Beat Battle
@@ -135,15 +117,44 @@ export default function LandingPage() {
           </div>
         </PageContainer>
       </section>
+    </>
+  );
+}
 
-      {activeLobbies.length > 0 && (
+export function HydrateFallback() {
+  return (
+    <div className="flex flex-col flex-1">
+      <HeroSection />
+    </div>
+  );
+}
+
+export default function LandingPage() {
+  const lobbiesQuery = useLobbies();
+  const lobbies = lobbiesQuery.data ?? [];
+  const activeLobbies = lobbies.filter((l) => !l.isJoined).slice(0, 3);
+
+  const [vote, setDemoVote] = useState(5);
+
+  return (
+    <div className="flex flex-col flex-1">
+      <HeroSection />
+
+      {(activeLobbies.length > 0 || lobbiesQuery.isLoading) && (
         <section className="bg-muted py-24 px-4 border-y border-muted-border flex-1">
           <PageContainer className="max-w-6xl">
-            <div className="flex items-center justify-between mb-10">
-              <h2 className="text-3xl font-bold">Live Battles</h2>
+            <div className="flex justify-between items-end mb-12">
+              <div>
+                <h2 className="text-3xl font-bold tracking-tight mb-2">
+                  Active Lobbies
+                </h2>
+                <p className="text-gray-600 dark:text-gray-400">
+                  Jump into a battle that's accepting participants right now.
+                </p>
+              </div>
               <Link
                 viewTransition
-                to="/dashboard"
+                to="/lobbies"
                 className="text-blue-500 font-medium hover:underline"
               >
                 <span className="flex items-center gap-1">
@@ -152,10 +163,29 @@ export default function LandingPage() {
               </Link>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {activeLobbies.map((lobby) => (
-                <div
+              {lobbiesQuery.isLoading
+                ? Array.from({ length: 3 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="system-card p-6 flex flex-col gap-4 min-h-[160px]"
+                    >
+                      <div>
+                        <div className="system-skeleton w-32 h-4 mb-2 rounded" />
+                        <div className="system-skeleton w-48 h-6 rounded" />
+                      </div>
+                      <div className="mt-auto flex justify-between">
+                        <div className="system-skeleton w-16 h-4 rounded" />
+                        <div className="system-skeleton w-24 h-4 rounded" />
+                      </div>
+                    </div>
+                  ))
+                : activeLobbies.map((lobby) => (
+                <Link
                   key={lobby.id}
-                  className="system-panel p-6 rounded-xl flex flex-col gap-4 opacity-80 hover:opacity-100 transition duration-300"
+                  viewTransition
+                  to={`/lobbies/${lobby.id}`}
+                  style={{ viewTransitionName: `lobby-${lobby.id}` }}
+                  className="system-panel p-6 rounded-xl flex flex-col gap-4 opacity-80 hover:opacity-100 transition duration-300 block"
                 >
                   <div>
                     <span className="text-sm text-gray-500">
@@ -175,7 +205,7 @@ export default function LandingPage() {
                       {lobby.participantCount} / {lobby.participantLimit}
                     </span>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </PageContainer>

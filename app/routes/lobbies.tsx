@@ -1,12 +1,16 @@
-import { useMemo } from "react";
-import { CgLogIn, CgMathPlus } from "react-icons/cg";
+import { Select } from "@base-ui/react";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
+import { useDeferredValue, useMemo, useState } from "react";
+import { CgChevronDown, CgLogIn, CgMathPlus } from "react-icons/cg";
 import { Link } from "react-router";
+import { useGenres } from "~/api/genre";
 import { lobbiesQueryOptions, useLobbies } from "~/api/lobby";
-import type { Lobby } from "~/api/types/lobby";
+import type { Lobby, LobbyFilter } from "~/api/types/lobby";
 import { Leaderboard } from "~/components/leaderboard";
 import { LobbyCard } from "~/components/lobby-card";
 import { PageContainer } from "~/components/page-container";
 import { Button } from "~/components/ui/button";
+import { Input } from "~/components/ui/input";
 import { getQueryClient } from "~/lib/query-client";
 import type { Route } from "./+types/home";
 
@@ -21,14 +25,12 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export async function clientLoader() {
-  const queryClient = getQueryClient();
-  await queryClient.prefetchQuery(lobbiesQueryOptions());
-}
-
 function LobbyGridItem({ lobby }: { lobby: Lobby }) {
   return (
-    <div className="system-card flex flex-col p-5 hover:border-black/20 dark:hover:border-white/20 transition-colors">
+    <div
+      style={{ viewTransitionName: `lobby-${lobby.id}` }}
+      className="system-card flex flex-col p-5 hover:border-black/20 dark:hover:border-white/20 transition-colors"
+    >
       <LobbyCard lobby={lobby} />
       <div className="mt-6">
         <Link
@@ -47,7 +49,7 @@ function LobbyGridItem({ lobby }: { lobby: Lobby }) {
   );
 }
 
-function HomeSkeleton() {
+function LobbyGridSkeleton() {
   return (
     <section className="flex flex-col flex-1">
       <div className="flex items-center justify-between mb-6">
@@ -92,24 +94,21 @@ function HomeSkeleton() {
   );
 }
 
-export function HydrateFallback() {
-  return (
-    <PageContainer className="max-w-7xl">
-      <div className="flex flex-col lg:flex-row gap-8 items-start w-full">
-        <div className="flex-1 min-w-0 flex flex-col gap-8 w-full">
-          <HomeSkeleton />
-        </div>
-        <aside className="w-full lg:w-80 shrink-0 sticky top-24 hidden lg:block">
-          <Leaderboard />
-        </aside>
-      </div>
-    </PageContainer>
-  );
+export function clientLoader() {
+  const queryClient = getQueryClient();
+  queryClient.prefetchQuery(lobbiesQueryOptions());
+  return null;
 }
 
 export default function Home() {
-  const lobbiesQuery = useLobbies();
+  const [filter, setFilter] = useState<LobbyFilter>({});
+  const deferredFilter = useDeferredValue(filter);
+
+  const lobbiesQuery = useLobbies(deferredFilter);
   const lobbies = lobbiesQuery.data ?? [];
+
+  const genresQuery = useGenres();
+  const genres = genresQuery.data ?? [];
 
   const { toRejoin, active } = useMemo(() => {
     return lobbies.reduce<{
@@ -125,54 +124,139 @@ export default function Home() {
     );
   }, [lobbies]);
 
+  const [parent] = useAutoAnimate({
+    duration: 350,
+    easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)'
+  });
+  const [gridParent1] = useAutoAnimate({
+    duration: 350,
+    easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)'
+  });
+  const [gridParent2] = useAutoAnimate({
+    duration: 350,
+    easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)'
+  });
+
   return (
     <PageContainer className="max-w-7xl">
       <div className="flex flex-col lg:flex-row gap-8 items-start w-full">
-        <div className="flex-1 min-w-0 flex flex-col gap-8 w-full">
-          {toRejoin.length > 0 && (
-            <section>
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="flex items-center gap-2">Lobbies to Rejoin</h2>
-              </div>
-              <div className="system-grid-list">
-                {toRejoin.map((lobby) => (
-                  <LobbyGridItem key={lobby.id} lobby={lobby} />
-                ))}
-              </div>
-            </section>
-          )}
+        <div ref={parent} className="flex-1 min-w-0 flex flex-col gap-8 w-full">
+          <div className="flex flex-col sm:flex-row gap-4 items-center">
+            <Input
+              placeholder="Search"
+              value={filter.name || ""}
+              onChange={(e) =>
+                setFilter((f) => ({ ...f, name: e.target.value }))
+              }
+              className="flex-1 system-input"
+            />
+            <Select.Root
+              value={filter.genreId || null}
+              onValueChange={(val) =>
+                setFilter((f) => ({
+                  ...f,
+                  genreId: val === "all" ? null : val,
+                }))
+              }
+            >
+              <Select.Trigger className="system-input flex justify-between items-center w-full sm:w-48 h-10">
+                <Select.Value placeholder="All Genres">
+                  {(value) =>
+                    value && value !== "all"
+                      ? genres.find((g) => g.id === value)?.name || "All Genres"
+                      : "All Genres"
+                  }
+                </Select.Value>
+                <Select.Icon>
+                  <CgChevronDown className="text-gray-500 dark:text-gray-400" />
+                </Select.Icon>
+              </Select.Trigger>
+              <Select.Portal>
+                <Select.Positioner sideOffset={4} alignItemWithTrigger={false}>
+                  <Select.Popup className="system-popup min-w-48">
+                    {genresQuery.isLoading ? (
+                      <Select.Item
+                        value="loading"
+                        disabled
+                        className="system-popup-item text-sm cursor-not-allowed select-none opacity-50"
+                      >
+                        <Select.ItemText>Loading...</Select.ItemText>
+                      </Select.Item>
+                    ) : (
+                      <>
+                        <Select.Item
+                          value="all"
+                          className="system-popup-item text-sm cursor-pointer select-none"
+                        >
+                          <Select.ItemText>All Genres</Select.ItemText>
+                        </Select.Item>
+                        {genres.map((genre) => (
+                          <Select.Item
+                            key={genre.id}
+                            value={genre.id}
+                            className="system-popup-item text-sm cursor-pointer select-none"
+                          >
+                            <Select.ItemText>{genre.name}</Select.ItemText>
+                          </Select.Item>
+                        ))}
+                      </>
+                    )}
+                  </Select.Popup>
+                </Select.Positioner>
+              </Select.Portal>
+            </Select.Root>
+          </div>
 
-          <section className="flex flex-col flex-1">
-            {!!active.length && (
-              <>
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="flex items-center gap-2">Lobbies</h2>
+          {lobbiesQuery.isLoading ? (
+            <LobbyGridSkeleton />
+          ) : (
+            <div className="flex flex-col flex-1">
+              <div className={toRejoin.length > 0 ? "flex flex-col mb-8" : ""}>
+                {toRejoin.length > 0 && (
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="flex items-center gap-2">
+                      Lobbies to Rejoin
+                    </h2>
+                  </div>
+                )}
+                <div ref={gridParent1} className="system-grid-list">
+                  {toRejoin.map((lobby) => (
+                    <LobbyGridItem key={lobby.id} lobby={lobby} />
+                  ))}
                 </div>
-                <div className="system-grid-list">
+              </div>
+
+              <div className={active.length > 0 ? "flex flex-col flex-1" : ""}>
+                {active.length > 0 && (
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="flex items-center gap-2">Lobbies</h2>
+                  </div>
+                )}
+                <div ref={gridParent2} className="system-grid-list">
                   {active.map((lobby) => (
                     <LobbyGridItem key={lobby.id} lobby={lobby} />
                   ))}
                 </div>
-              </>
-            )}
-
-            {!active.length && (
-              <div className="flex justify-center items-center flex-col flex-1 text-center">
-                <p className="text-xl font-medium">No Lobbies Found</p>
-                <p className="mt-2 text-gray-500">Check back later or</p>
-                <Link
-                  viewTransition
-                  to="/lobbies/new"
-                  prefetch="intent"
-                  className="mt-4 flex justify-center"
-                >
-                  <Button className="flex items-center gap-2">
-                    <CgMathPlus /> Create Your Own
-                  </Button>
-                </Link>
               </div>
-            )}
-          </section>
+            </div>
+          )}
+
+          {!lobbiesQuery.isLoading && !active.length && !toRejoin.length && (
+            <div className="flex justify-center items-center flex-col flex-1 text-center">
+              <p className="text-xl font-medium">No Lobbies Found</p>
+              <p className="mt-2 text-gray-500">Check back later or</p>
+              <Link
+                viewTransition
+                to="/lobbies/new"
+                prefetch="intent"
+                className="mt-4 flex justify-center"
+              >
+                <Button className="flex items-center gap-2">
+                  <CgMathPlus /> Create Your Own
+                </Button>
+              </Link>
+            </div>
+          )}
         </div>
 
         <aside className="w-full lg:w-80 shrink-0 sticky top-24 hidden lg:block">

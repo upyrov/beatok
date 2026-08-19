@@ -26,6 +26,7 @@ interface CrudManagerProps<TItem, TFormData> {
     >,
   ) => React.ReactNode;
   renderItem: (item: TItem) => React.ReactNode;
+  isLoading?: boolean;
 }
 
 export function CrudManager<TItem, TFormData>({
@@ -36,6 +37,7 @@ export function CrudManager<TItem, TFormData>({
   createMutationError,
   renderFormFields,
   renderItem,
+  isLoading,
 }: CrudManagerProps<TItem, TFormData>) {
   const form = useForm({
     defaultValues,
@@ -61,8 +63,16 @@ export function CrudManager<TItem, TFormData>({
 
       <div className="flex-1">
         <div className="flex flex-col gap-3">
-          {items.map((item) => renderItem(item))}
-          {!items.length && <p>{emptyMessage}</p>}
+          {isLoading ? (
+            Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="system-skeleton w-full h-14 rounded-lg" />
+            ))
+          ) : (
+            <>
+              {items.map((item) => renderItem(item))}
+              {!items.length && <p>{emptyMessage}</p>}
+            </>
+          )}
         </div>
       </div>
     </div>

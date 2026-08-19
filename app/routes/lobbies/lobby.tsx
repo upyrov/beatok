@@ -160,7 +160,10 @@ export default function Lobby() {
       {!lobby ? (
         <div className="w-full flex flex-col lg:flex-row gap-8">
           {/* Column 1: Info and Participants */}
-          <div className="flex flex-col gap-4 flex-1">
+          <div
+            className="flex flex-col gap-4 flex-1"
+            style={{ viewTransitionName: id ? `lobby-${id}` : undefined }}
+          >
             <div className="flex items-center justify-between">
               <div className="system-skeleton w-48 h-8 rounded-lg" />
               <div className="system-skeleton w-24 h-10 rounded-lg" />
@@ -220,7 +223,10 @@ export default function Lobby() {
         </div>
       ) : (
         <>
-          <div className="flex flex-col gap-4 flex-1">
+          <div
+            className="flex flex-col gap-4 flex-1"
+            style={{ viewTransitionName: `lobby-${lobby.id}` }}
+          >
             <div className="flex items-center justify-between">
               <h1 className="text-2xl font-bold">{lobby.name}</h1>
               <ActionButton

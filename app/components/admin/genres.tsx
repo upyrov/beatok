@@ -13,6 +13,7 @@ export function Genres() {
 
   return (
     <CrudManager
+      isLoading={genresQuery.isLoading}
       items={genres}
       emptyMessage="No genres found. Create one above!"
       defaultValues={{ name: "" }}
@@ -37,7 +38,6 @@ export function Genres() {
                 errors={field.state.meta.errors}
                 placeholder="Genre name"
                 className="flex-1"
-                inputClassName="text-center"
               />
               <form.Subscribe
                 selector={(state) => [state.canSubmit, state.isSubmitting]}

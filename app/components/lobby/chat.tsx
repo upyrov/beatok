@@ -8,6 +8,7 @@ import type { Me, User } from "~/api/types/user";
 
 import { UserCard } from "~/components/user-card";
 import { LobbyContext } from "~/contexts";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { ActionButton } from "../action-button";
 
 export interface Message {
@@ -22,8 +23,20 @@ export function Chat() {
   const { lobby, connection } = use(LobbyContext);
   const { user } = useOutletContext<{ user: Me | null }>();
   const [messages, setMessages] = useState<Message[]>([]);
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const [animationParent] = useAutoAnimate<HTMLDivElement>({
+    duration: 350,
+    easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)'
+  });
   const formRef = useRef<HTMLFormElement>(null);
+
+  const setRefs = useCallback(
+    (el: HTMLDivElement | null) => {
+      scrollRef.current = el;
+      animationParent(el);
+    },
+    [animationParent],
+  );
 
   const participantsRef = useRef(lobby?.participants ?? []);
   useEffect(() => {
@@ -47,7 +60,7 @@ export function Chat() {
           );
           if (isDuplicate) return prev;
         }
-        return [...prev, { content, sender }];
+        return [...prev, { id: crypto.randomUUID(), content, sender }];
       });
     }
 
@@ -116,11 +129,11 @@ export function Chat() {
     <div className="flex flex-col border border-muted-border rounded-xl bg-muted overflow-hidden h-150 shrink-0">
       <div className="p-4 border-b border-muted-border font-bold">Chat</div>
       <div
-        ref={scrollRef}
+        ref={setRefs}
         className="flex-1 overflow-y-auto p-4 flex flex-col gap-2"
       >
         {messages.map((m, i) => (
-          <div key={i} className="text-sm flex items-start gap-2">
+          <div key={m.id || `msg-${i}`} className="text-sm flex items-start gap-2 starting:opacity-0 starting:translate-y-2 transition-all duration-300">
             <UserCard user={m.sender} className="shrink-0" />
             <span className="wrap-break-word mt-1">{m.content}</span>
           </div>

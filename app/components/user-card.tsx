@@ -12,6 +12,7 @@ export interface UserCardProps {
   showRating?: boolean;
   direction?: "horizontal" | "vertical";
   hideNameOnMobile?: boolean;
+  badges?: React.ReactNode;
 }
 
 export function UserCard({
@@ -20,6 +21,7 @@ export function UserCard({
   showRating = false,
   direction = "horizontal",
   hideNameOnMobile = false,
+  badges,
 }: UserCardProps) {
   const queryClient = useQueryClient();
   const prefetch = () => {
@@ -63,9 +65,12 @@ export function UserCard({
       <div
         className={`flex flex-col justify-center ${hideNameOnMobile ? "hidden sm:flex" : ""}`}
       >
-        <span className="font-semibold group-hover:transition-colors group-[.is-md]:text-base group-[.is-lg]:text-lg group-[.is-xl]:text-xl">
-          {user.name || "Anonymous"}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="font-semibold group-hover:transition-colors group-[.is-md]:text-base group-[.is-lg]:text-lg group-[.is-xl]:text-xl">
+            {user.name || "Anonymous"}
+          </span>
+          {badges && <div className="flex items-center gap-1">{badges}</div>}
+        </div>
         {showRating && (
           <span className="text-gray-400 text-xs group-[.is-md]:text-sm group-[.is-lg]:text-sm">
             Rating: {user.rating}

@@ -51,7 +51,7 @@ export function Category({
         {isEditing ? (
           <div className="flex items-center gap-2 flex-1 mr-4">
             <BaseInput
-              className="flex-1 text-sm text-center system-input"
+              className="flex-1 text-sm system-input"
               value={editName}
               onChange={(e) => setEditName(e.target.value)}
               autoFocus
@@ -93,7 +93,7 @@ export function Category({
               }}
               variant="outline"
               size="icon"
-              className="text-gray-500 hover:text-gray-700 transition-colors"
+              className="text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors"
             >
               <CgClose size={18} />
             </Button>
@@ -102,7 +102,7 @@ export function Category({
           <div className="flex items-center gap-2 flex-1">
             <span>{category.name}</span>
             <span
-              className="text-[10px] font-bold text-gray-500 bg-black/10 dark:bg-white/10 rounded px-1.5 py-0.5"
+              className="text-[10px] font-bold text-gray-600 dark:text-gray-300 bg-black/10 dark:bg-white/10 rounded px-1.5 py-0.5"
               title="Random sounds count"
             >
               {category.randomSoundsCount}
@@ -119,7 +119,7 @@ export function Category({
               }}
               variant="outline"
               size="icon"
-              className="text-gray-500 hover:text-blue-500 transition-colors"
+              className="text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
             >
               <CgPen size={18} />
             </Button>
@@ -128,7 +128,7 @@ export function Category({
             onClick={() => setShowSounds(!showSounds)}
             variant="outline"
             size="icon"
-            className="text-gray-500 hover:text-gray-700 transition-colors"
+            className="text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors"
           >
             {showSounds ? (
               <CgChevronUp size={18} />
@@ -148,7 +148,7 @@ export function Category({
             }}
             variant="outline"
             size="icon"
-            className="text-gray-500 hover:text-red-500 transition-colors"
+            className="text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors"
           >
             <CgTrash size={18} />
           </Button>

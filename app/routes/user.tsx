@@ -1,4 +1,5 @@
 import { Select } from "@base-ui/react";
+import { CgChevronDown } from "react-icons/cg";
 import { Suspense, startTransition, useState } from "react";
 import { useParams } from "react-router";
 import {
@@ -87,7 +88,9 @@ function ActivitySection({
                 <Select.Value>
                   {(value) => (value === "default" ? "Last 365 days" : value)}
                 </Select.Value>
-                <Select.Icon />
+                <Select.Icon>
+                  <CgChevronDown className="text-gray-500 dark:text-gray-400" />
+                </Select.Icon>
               </Select.Trigger>
               <Select.Portal>
                 <Select.Positioner
@@ -154,7 +157,7 @@ export function HydrateFallback() {
       {/* Profile Skeleton */}
       <div className="flex items-center gap-6 bg-muted border border-muted-border p-6 rounded-xl relative">
         <div className="relative group/avatar inline-flex shrink-0">
-          <div className="system-skeleton w-32 h-32 rounded-lg" />
+          <div className="system-skeleton w-32 h-32 rounded-full" />
         </div>
         <div className="flex flex-col flex-1 gap-4">
           <div className="system-skeleton w-64 h-10 rounded-lg" />
@@ -163,18 +166,27 @@ export function HydrateFallback() {
       </div>
 
       {/* Activity Section Skeleton */}
-      <div className="bg-muted border border-muted-border rounded-xl p-6">
+      <div className="system-card">
         <div className="flex justify-between items-center mb-4">
-          <div className="system-skeleton w-48 h-8 rounded-lg" />
-          <div className="system-skeleton w-32 h-10 rounded-lg" />
+          <h2 className="text-2xl font-bold">Activity</h2>
+          <Select.Root disabled>
+            <Select.Trigger className="flex justify-between items-center gap-2 system-input opacity-50 cursor-not-allowed">
+              <Select.Value>Last 365 days</Select.Value>
+              <Select.Icon>
+                <CgChevronDown className="text-gray-500 dark:text-gray-400" />
+              </Select.Icon>
+            </Select.Trigger>
+          </Select.Root>
         </div>
-        <div className="system-skeleton w-full h-40 mt-4" />
+        <div className="w-full flex justify-center py-4">
+          <div className="system-skeleton w-full h-40" />
+        </div>
       </div>
 
       {/* Comments Skeleton */}
-      <div className="bg-muted border border-muted-border rounded-xl p-6">
-        <div className="system-skeleton w-40 h-8 rounded-lg mb-4" />
-        <div className="flex flex-col gap-4 mt-6">
+      <div className="system-card flex flex-col gap-6">
+        <h2 className="text-2xl font-bold">Comments</h2>
+        <div className="flex flex-col gap-4">
           <div className="system-skeleton w-full h-24 rounded-lg" />
           <div className="system-skeleton w-full h-24 rounded-lg" />
           <div className="system-skeleton w-full h-24 rounded-lg" />

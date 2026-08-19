@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import { auth } from "../lib/firebase";
 
 export async function fetchApi<T>(
@@ -66,7 +66,10 @@ export class CrudApi<TConfig, TCreate = unknown, TUpdate = unknown> {
   });
 
   useList = (...args: ResolveArgs<TConfig>) =>
-    useQuery(this.listQueryOptions(...args));
+    useQuery({
+      ...this.listQueryOptions(...args),
+      placeholderData: keepPreviousData,
+    });
 
   useCreate = () => {
     const queryClient = useQueryClient();

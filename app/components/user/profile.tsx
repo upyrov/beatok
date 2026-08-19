@@ -1,4 +1,4 @@
-import { Form as BaseForm, Input as BaseInput, Button } from "@base-ui/react";
+import { Input as BaseInput, Button } from "@base-ui/react";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
@@ -127,7 +127,7 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
               type="button"
               onClick={handleRemoveAvatar}
               disabled={updateUserMutation.isPending}
-              className="absolute -top-2 -right-2 z-20 bg-black/80 hover:bg-red-500 text-white p-1.5 rounded-full shadow-md transition-colors disabled:opacity-50"
+              className="absolute bottom-2 -right-2 z-20 bg-black/80 hover:bg-red-500 text-white p-1.5 rounded-full shadow-md transition-colors disabled:opacity-50"
               title="Remove profile picture"
             >
               <CgTrash size={16} />
@@ -162,17 +162,23 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
               )}
             />
             <form.Subscribe
-              selector={(state) => [state.canSubmit, state.isSubmitting, state.isDirty]}
-              children={([canSubmit, isSubmitting, isDirty]) => (
+              selector={(state) => [
+                state.canSubmit,
+                state.isSubmitting,
+                state.isDirty,
+              ]}
+              children={([canSubmit, isSubmitting, isDirty]) =>
                 isDirty && (
                   <ActionButton
                     type="submit"
-                    disabled={!canSubmit || isSubmitting || updateUserMutation.isPending}
+                    disabled={
+                      !canSubmit || isSubmitting || updateUserMutation.isPending
+                    }
                   >
                     Save
                   </ActionButton>
                 )
-              )}
+              }
             />
           </form>
         ) : (
