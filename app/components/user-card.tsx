@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { CgSpinner, CgUser } from "react-icons/cg";
 import { Link } from "react-router";
 import type { Me, User } from "~/api/types/user";
@@ -24,9 +24,9 @@ export function UserCard({
   badges,
 }: UserCardProps) {
   const queryClient = useQueryClient();
-  const prefetch = () => {
+  const prefetch = useCallback(() => {
     queryClient.prefetchQuery(userByIdQueryOptions(user.id));
-  };
+  }, [queryClient, user.id]);
   const [imageLoaded, setImageLoaded] = useState(false);
 
   const sizeClasses =
@@ -63,13 +63,13 @@ export function UserCard({
         )}
       </div>
       <div
-        className={`flex flex-col justify-center ${hideNameOnMobile ? "hidden sm:flex" : ""}`}
+        className={`flex flex-col justify-center flex-1 min-w-0 ${hideNameOnMobile ? "hidden sm:flex" : ""}`}
       >
-        <div className="flex items-center gap-2">
-          <span className="font-semibold group-hover:transition-colors group-[.is-md]:text-base group-[.is-lg]:text-lg group-[.is-xl]:text-xl">
+        <div className="flex items-center gap-2 w-full">
+          <span className="font-semibold truncate group-hover:transition-colors group-[.is-md]:text-base group-[.is-lg]:text-lg group-[.is-xl]:text-xl">
             {user.name || "Anonymous"}
           </span>
-          {badges && <div className="flex items-center gap-1">{badges}</div>}
+          {badges && <div className="flex items-center gap-1 ml-auto">{badges}</div>}
         </div>
         {showRating && (
           <span className="text-gray-400 text-xs group-[.is-md]:text-sm group-[.is-lg]:text-sm">

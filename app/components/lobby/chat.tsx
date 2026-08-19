@@ -6,9 +6,9 @@ import { use, useCallback, useEffect, useRef, useState } from "react";
 import { useOutletContext } from "react-router";
 import type { Me, User } from "~/api/types/user";
 
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { UserCard } from "~/components/user-card";
 import { LobbyContext } from "~/contexts";
-import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { ActionButton } from "../action-button";
 
 export interface Message {
@@ -19,6 +19,47 @@ export interface Message {
 
 const contentValidator = { onChange: type("string > 0") };
 
+function ReactionButton({
+  emoji,
+  onReact,
+}: {
+  emoji: string;
+  onReact: (e: string) => void;
+}) {
+  const [particles, setParticles] = useState<{ id: number; x: number }[]>([]);
+
+  const handleClick = useCallback(() => {
+    onReact(emoji);
+    const newId = Date.now() + Math.random();
+    const x = (Math.random() - 0.5) * 24;
+    setParticles((prev) => [...prev, { id: newId, x }]);
+    setTimeout(() => {
+      setParticles((prev) => prev.filter((p) => p.id !== newId));
+    }, 600);
+  }, [emoji, onReact]);
+
+  return (
+    <button
+      onClick={handleClick}
+      className={`relative active:scale-90 hover:bg-black/10 dark:hover:bg-white/10 rounded px-2 py-1 transition-all text-lg shrink-0 outline-none focus-visible:ring-2 focus-visible:ring-black dark:focus-visible:ring-white ${
+        particles.length > 0 ? "z-10" : ""
+      }`}
+      type="button"
+    >
+      <span className="relative z-10">{emoji}</span>
+      {particles.map((p) => (
+        <span
+          key={p.id}
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none animate-float-up text-base z-20"
+          style={{ "--x": `${p.x}px` } as React.CSSProperties}
+        >
+          {emoji}
+        </span>
+      ))}
+    </button>
+  );
+}
+
 export function Chat() {
   const { lobby, connection } = use(LobbyContext);
   const { user } = useOutletContext<{ user: Me | null }>();
@@ -26,7 +67,7 @@ export function Chat() {
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const [animationParent] = useAutoAnimate<HTMLDivElement>({
     duration: 350,
-    easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)'
+    easing: "cubic-bezier(0.34, 1.56, 0.64, 1)",
   });
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -130,31 +171,31 @@ export function Chat() {
       <div className="p-4 border-b border-muted-border font-bold">Chat</div>
       <div
         ref={setRefs}
-        className="flex-1 overflow-y-auto p-4 flex flex-col gap-2"
+        className="flex-1 overflow-y-scroll overflow-x-hidden p-4 flex flex-col gap-2"
       >
         {messages.map((m, i) => (
-          <div key={m.id || `msg-${i}`} className="text-sm flex items-start gap-2 starting:opacity-0 starting:translate-y-2 transition-all duration-300">
+          <div
+            key={m.id || `msg-${i}`}
+            className="text-sm flex items-start gap-2 starting:opacity-0 starting:translate-y-2 transition-all duration-300"
+          >
             <UserCard user={m.sender} className="shrink-0" />
             <span className="wrap-break-word mt-1">{m.content}</span>
           </div>
         ))}
       </div>
-      <div className="border-t border-muted-border flex flex-col">
-        <div className="px-4 pt-3 flex gap-1 overflow-x-auto scrollbar-hide">
+      <div className="border-t border-muted-border flex flex-col relative z-20">
+        <div className="px-4 pt-3 flex flex-wrap gap-1 relative z-10">
           {["🔥", "😂", "🤯", "👍", "❤️", "💀", "🥶"].map((emoji) => (
-            <button
+            <ReactionButton
               key={emoji}
-              onClick={() => handleQuickReaction(emoji)}
-              className="hover:bg-black/10 dark:hover:bg-white/10 rounded px-2 py-1 transition-colors text-lg shrink-0"
-              type="button"
-            >
-              {emoji}
-            </button>
+              emoji={emoji}
+              onReact={handleQuickReaction}
+            />
           ))}
         </div>
         <BaseForm
           ref={formRef}
-          onSubmit={(e: React.SyntheticEvent) => {
+          onSubmit={(e) => {
             e.preventDefault();
             e.stopPropagation();
             form.handleSubmit();
