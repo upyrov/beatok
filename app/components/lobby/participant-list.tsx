@@ -104,7 +104,7 @@ export function ParticipantList({
                 const rc =
                   ratingChanges.find((r) => r.userId === p.user.id) ||
                   ratingChanges[index];
-                if (!rc.ratingChange) return null;
+                if (!rc || typeof rc.ratingChange !== "number") return null;
 
                 const change = Math.round(rc.ratingChange);
                 const isGain = change >= 0;

@@ -61,6 +61,7 @@ export default function Lobby() {
     },
     onError(error) {
       toastError(error);
+      navigate("/lobbies");
     },
   });
   const leaveMutation = useMutation({
