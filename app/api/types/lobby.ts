@@ -52,3 +52,18 @@ export interface LobbyFilter {
   name?: string | null;
   genreId?: string | null;
 }
+
+export interface ArchivedLobby {
+  id: string;
+  name: string;
+
+  genre: Genre;
+
+  participantCount: number;
+  isWinner: boolean;
+
+  createdAt: string;
+  submissionStartedAt: string;
+  votingStartedAt: string;
+  endedAt: string;
+}

@@ -1,8 +1,9 @@
 import { Select } from "@base-ui/react";
+import { Suspense, startTransition } from "react";
 import { CgChevronDown } from "react-icons/cg";
-import { Suspense, startTransition, useState } from "react";
-import { useParams } from "react-router";
+import { useParams, useSearchParams } from "react-router";
 import {
+  activityQueryOptions,
   commentsQueryOptions,
   useComments,
   useUser,
@@ -19,11 +20,22 @@ import { getQueryClient } from "~/lib/query-client";
 import { formatDate } from "~/lib/time";
 import type { Route } from "./+types/user";
 
-export async function clientLoader({ params }: Route.ClientLoaderArgs) {
+export async function clientLoader({
+  request,
+  params,
+}: Route.ClientLoaderArgs) {
   const queryClient = getQueryClient();
+  const url = new URL(request.url);
+  const date = url.searchParams.get("date");
+  const yearStr = url.searchParams.get("year");
+  const year = yearStr ? parseInt(yearStr, 10) : undefined;
+
   const [user] = await Promise.all([
-    queryClient.ensureQueryData(userByIdQueryOptions(params.id!)),
+    queryClient.ensureQueryData(userByIdQueryOptions(params.id!, year)),
     queryClient.prefetchQuery(commentsQueryOptions(params.id!, 1, 25)),
+    ...(date
+      ? [queryClient.ensureQueryData(activityQueryOptions(params.id!, date))]
+      : []),
   ]);
   return { user };
 }
@@ -52,8 +64,32 @@ function ActivitySection({
   userId: string;
   initialAvailableYears?: number[];
 }) {
-  const [selectedYear, setSelectedYear] = useState<number | undefined>();
-  const [selectedDate, setSelectedDate] = useState<string | undefined>();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const yearStr = searchParams.get("year");
+  const selectedYear = yearStr ? parseInt(yearStr, 10) : undefined;
+  const selectedDate = searchParams.get("date") || undefined;
+
+  const setSelectedYear = (y: number | undefined) => {
+    setSearchParams(
+      (prev) => {
+        if (y === undefined) prev.delete("year");
+        else prev.set("year", y.toString());
+        return prev;
+      },
+      { replace: true, preventScrollReset: true },
+    );
+  };
+
+  const setSelectedDate = (d: string | undefined) => {
+    setSearchParams(
+      (prev) => {
+        if (d === undefined) prev.delete("date");
+        else prev.set("date", d);
+        return prev;
+      },
+      { replace: true, preventScrollReset: true },
+    );
+  };
 
   const { data: user, isFetching } = useUserById(userId, selectedYear);
   const availableYears = user?.availableYears || initialAvailableYears;

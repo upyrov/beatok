@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import { useActivity } from "~/api/user";
-import { LobbyCard } from "~/components/lobby-card";
+import { ArchivedLobbyCard } from "~/components/archived-lobby-card";
 
 export function Activity({ userId, date }: { userId: string; date: string }) {
   const { data: activity, isLoading } = useActivity(userId, date);
@@ -31,7 +31,7 @@ export function Activity({ userId, date }: { userId: string; date: string }) {
             to={`/lobbies/${lobby.id}`}
             className="bg-black/5 hover:bg-black/10 dark:hover:bg-black/10 dark:bg-white/10 transition-colors border border-muted-border p-4 rounded-xl block"
           >
-            <LobbyCard lobby={lobby} />
+            <ArchivedLobbyCard lobby={lobby} />
           </Link>
         ))}
       </div>

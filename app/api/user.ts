@@ -3,7 +3,7 @@ import { fetchApi } from ".";
 import { queryKeys } from "./query-keys";
 import type { Comment, CreateComment } from "./types/comment";
 import type { LeaderboardQuery } from "./types/leadeboard-query";
-import type { Lobby } from "./types/lobby";
+import type { ArchivedLobby } from "./types/lobby";
 import type { PageResult } from "./types/page-result";
 import type {
   LeaderboardUser,
@@ -77,11 +77,7 @@ export function useAddComment(userId: string) {
   });
 }
 
-export function getComments(
-  userId: string,
-  page = 1,
-  pageSize = 25,
-): Promise<PageResult<Comment>> {
+export function getComments(userId: string, page = 1, pageSize = 25) {
   const params = new URLSearchParams();
   params.append("page", page.toString());
   params.append("pageSize", pageSize.toString());
@@ -132,10 +128,12 @@ export function useUpdateUser() {
   });
 }
 
-export function getActivity(userId: string, date: string): Promise<Lobby[]> {
+export function getActivity(userId: string, date: string) {
   const params = new URLSearchParams();
   params.append("date", date);
-  return fetchApi<Lobby[]>(`/users/${userId}/activity?${params.toString()}`);
+  return fetchApi<ArchivedLobby[]>(
+    `/users/${userId}/activity?${params.toString()}`,
+  );
 }
 
 export const activityQueryOptions = (userId: string, date: string) => ({
