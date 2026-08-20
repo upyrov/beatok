@@ -9,6 +9,7 @@ import type { Me, User } from "~/api/types/user";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { UserCard } from "~/components/user-card";
 import { LobbyContext } from "~/contexts";
+import { toastError } from "~/lib/toast";
 import { ActionButton } from "../action-button";
 
 export interface Message {
@@ -136,6 +137,7 @@ export function Chat() {
       try {
         await connection.invoke("SendMessage", lobby.id, content);
       } catch (error) {
+        toastError(error);
         // Revert message on failure
         if (user) {
           setMessages((prev) => prev.filter((m) => m.id !== tempId));
@@ -158,6 +160,7 @@ export function Chat() {
       try {
         await connection.invoke("SendMessage", lobby.id, emoji);
       } catch (error) {
+        toastError(error);
         if (user) {
           setMessages((prev) => prev.filter((m) => m.id !== tempId));
         }

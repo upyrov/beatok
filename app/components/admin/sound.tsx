@@ -5,6 +5,7 @@ import { useUpdateSound, useUploadSoundUrl } from "~/api/sound";
 import type { Sound } from "~/api/types/sound";
 import { Button } from "~/components/ui/button";
 import { validateAudioFile } from "~/lib/audio";
+import { toastError } from "~/lib/toast";
 import { uploadFile } from "~/lib/upload";
 import { AudioPlayer } from "../audio-player";
 import { FileDropzone } from "../file-dropzone";
@@ -43,7 +44,7 @@ export function Sound({
         { onSuccess: () => setIsEditing(false) },
       );
     } catch (error) {
-      alert(error instanceof Error ? error.message : "Upload failed");
+      toastError(error);
     }
   }
 

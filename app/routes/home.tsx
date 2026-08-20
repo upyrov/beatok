@@ -4,7 +4,6 @@ import {
   CgEnter,
   CgHeadset,
   CgPlayButtonO,
-  CgSpinner,
   CgTrophy,
 } from "react-icons/cg";
 import { Link, redirect } from "react-router";
@@ -167,7 +166,7 @@ export default function LandingPage() {
                 ? Array.from({ length: 3 }).map((_, i) => (
                     <div
                       key={i}
-                      className="system-card p-6 flex flex-col gap-4 min-h-[160px]"
+                      className="system-card p-6 flex flex-col gap-4 min-h-40"
                     >
                       <div>
                         <div className="system-skeleton w-32 h-4 mb-2 rounded" />
@@ -180,33 +179,33 @@ export default function LandingPage() {
                     </div>
                   ))
                 : activeLobbies.map((lobby) => (
-                <Link
-                  key={lobby.id}
-                  viewTransition
-                  to={`/lobbies/${lobby.id}`}
-                  style={{ viewTransitionName: `lobby-${lobby.id}` }}
-                  className="system-panel p-6 rounded-xl flex flex-col gap-4 opacity-80 hover:opacity-100 transition duration-300 block"
-                >
-                  <div>
-                    <span className="text-sm text-gray-500">
-                      Host: {lobby.owner.name}
-                    </span>
-                    <h3 className="text-xl font-bold line-clamp-1">
-                      {lobby.name}
-                    </h3>
-                  </div>
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-gray-500">Genre</span>
-                    <span className="font-medium">{lobby.genre.name}</span>
-                  </div>
-                  <div className="flex justify-between items-center text-sm">
-                    <span className="text-gray-500">Players</span>
-                    <span className="font-medium">
-                      {lobby.participantCount} / {lobby.participantLimit}
-                    </span>
-                  </div>
-                </Link>
-              ))}
+                    <Link
+                      key={lobby.id}
+                      viewTransition
+                      to={`/lobbies/${lobby.id}`}
+                      style={{ viewTransitionName: `lobby-${lobby.id}` }}
+                      className="system-panel p-6 rounded-xl flex flex-col gap-4 opacity-80 hover:opacity-100 transition duration-300"
+                    >
+                      <div>
+                        <span className="text-sm text-gray-500">
+                          Host: {lobby.owner.name}
+                        </span>
+                        <h3 className="text-xl font-bold line-clamp-1">
+                          {lobby.name}
+                        </h3>
+                      </div>
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-gray-500">Genre</span>
+                        <span className="font-medium">{lobby.genre.name}</span>
+                      </div>
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-gray-500">Players</span>
+                        <span className="font-medium">
+                          {lobby.participantCount} / {lobby.participantLimit}
+                        </span>
+                      </div>
+                    </Link>
+                  ))}
             </div>
           </PageContainer>
         </section>

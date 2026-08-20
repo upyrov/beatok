@@ -1,13 +1,13 @@
 import { HubConnectionState } from "@microsoft/signalr";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { use, useCallback, useEffect, useRef, useState } from "react";
+import { CgMusicNote, CgTimer, CgUserList } from "react-icons/cg";
 import { useNavigate, useOutletContext, useParams } from "react-router";
 import { queryKeys } from "~/api/query-keys";
 import { LobbyState } from "~/api/types/enums";
 import type { DetailedLobby } from "~/api/types/lobby";
 import type { Submission } from "~/api/types/submission";
 import type { Me, RatingChange } from "~/api/types/user";
-import { CgMusicNote, CgTimer, CgUserList } from "react-icons/cg";
 import { ActionButton } from "~/components/action-button";
 import { Chat } from "~/components/lobby/chat";
 import { End } from "~/components/lobby/end";
@@ -18,6 +18,7 @@ import { Waiting } from "~/components/lobby/waiting";
 import { LobbyContext } from "~/contexts";
 import { requestNotificationPermission } from "~/lib/notification";
 import { formatDuration } from "~/lib/time";
+import { toastError } from "~/lib/toast";
 import type { Route } from "./+types/lobby";
 
 export function meta({}: Route.MetaArgs) {
@@ -58,17 +59,19 @@ export default function Lobby() {
         queryClient.invalidateQueries({ queryKey: queryKeys.lobbies.lists() });
       }
     },
-    onError(error) {},
+    onError(error) {
+      toastError(error);
+    },
   });
   const leaveMutation = useMutation({
-    mutationFn() {
-      return connection!.invoke("Leave", id);
-    },
+    mutationFn: () => connection!.invoke("Leave", id),
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: queryKeys.lobbies.lists() });
       navigate("/");
     },
-    onError(error) {},
+    onError(error) {
+      toastError(error);
+    },
   });
 
   const handleLeave = useCallback(
@@ -241,17 +244,23 @@ export default function Lobby() {
             </div>
             <div className="flex flex-wrap gap-x-8 gap-y-4">
               <div>
-                <p className="font-semibold text-gray-500 text-sm flex items-center gap-1.5"><CgMusicNote /> Genre</p>
+                <p className="font-semibold text-gray-500 text-sm flex items-center gap-1.5">
+                  <CgMusicNote /> Genre
+                </p>
                 <p>{lobby.genre.name}</p>
               </div>
               <div>
-                <p className="font-semibold text-gray-500 text-sm flex items-center gap-1.5"><CgUserList /> Players</p>
+                <p className="font-semibold text-gray-500 text-sm flex items-center gap-1.5">
+                  <CgUserList /> Players
+                </p>
                 <p>
                   {lobby.participants.length} / {lobby.participantLimit}
                 </p>
               </div>
               <div>
-                <p className="font-semibold text-gray-500 text-sm flex items-center gap-1.5"><CgTimer /> Submission Time</p>
+                <p className="font-semibold text-gray-500 text-sm flex items-center gap-1.5">
+                  <CgTimer /> Submission Time
+                </p>
                 <p>{formatDuration(lobby.submissionTime)}</p>
               </div>
             </div>
