@@ -71,7 +71,7 @@ export function ParticipantList({
     <div className="bg-muted border border-muted-border rounded-xl p-4">
       <h2 className="text-xl font-bold mb-4">Participants</h2>
       <ul className="flex flex-col gap-2">
-        {lobby?.participants.map((p) => (
+        {lobby?.participants.map((p, index) => (
           <li key={p.id} className="flex items-center gap-4 justify-between">
             <UserCard
               user={p.user}
@@ -101,17 +101,23 @@ export function ParticipantList({
 
             <div className="flex items-center gap-2 ml-auto">
               {(() => {
-                const rc = ratingChanges.find((r) => r.userId === p.user.id);
-                if (!rc) return null;
+                const rc =
+                  ratingChanges.find((r) => r.userId === p.user.id) ||
+                  ratingChanges[index];
+                if (!rc.ratingChange) return null;
 
                 const change = Math.round(rc.ratingChange);
                 const isGain = change >= 0;
                 return (
                   <span
+                    style={{
+                      animationFillMode: "both",
+                      animationDelay: `${index * 150}ms`,
+                    }}
                     className={
                       isGain
-                        ? "text-green-500 font-bold"
-                        : "text-red-500 font-bold"
+                        ? "text-green-500 font-bold bg-green-500/10 px-2 py-1 rounded-md animate-in zoom-in-75 fade-in slide-in-from-bottom-2 duration-500"
+                        : "text-red-500 font-bold bg-red-500/10 px-2 py-1 rounded-md animate-in zoom-in-75 fade-in slide-in-from-bottom-2 duration-500"
                     }
                   >
                     {isGain ? "+" : ""}
