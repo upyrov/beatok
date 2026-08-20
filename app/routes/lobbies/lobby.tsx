@@ -18,7 +18,7 @@ import { Waiting } from "~/components/lobby/waiting";
 import { LobbyContext } from "~/contexts";
 import { requestNotificationPermission } from "~/lib/notification";
 import { formatDuration } from "~/lib/time";
-import { toastError } from "~/lib/toast";
+import { toast, toastError } from "~/lib/toast";
 import type { Route } from "./+types/lobby";
 
 export function meta({}: Route.MetaArgs) {
@@ -144,12 +144,19 @@ export default function Lobby() {
         });
       },
     );
+
+    connection.on("KickedReceived", () => {
+      toast("You have been kicked from the lobby.", "error");
+      navigate("/");
+    });
+
     return () => {
       connection.off("Ended", handleEnded);
       connection.off("VotingStarted");
       connection.off("SubmissionForPlayback");
+      connection.off("KickedReceived");
     };
-  }, [user, connection, setLobby]);
+  }, [user, connection, setLobby, navigate]);
 
   const StateView =
     lobby &&

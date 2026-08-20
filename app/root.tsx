@@ -10,12 +10,12 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
-import { GlobalErrorToast } from "~/components/error-toast";
 import { Footer } from "~/components/footer";
 import { Header } from "~/components/header";
 import type { Route } from "./+types/root";
 import { userQueryOptions, useUser } from "./api/user";
 import "./app.css";
+import { Toast } from "./components/toast";
 import { auth } from "./lib/firebase";
 import { getQueryClient } from "./lib/query-client";
 
@@ -89,6 +89,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         {children}
+        <Toast />
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -110,7 +111,6 @@ function Content() {
   return (
     <>
       <Header user={user} />
-      <GlobalErrorToast />
       <main className="flex flex-col min-h-[calc(100svh-var(--spacing-header))]">
         <Outlet context={{ user }} />
       </main>

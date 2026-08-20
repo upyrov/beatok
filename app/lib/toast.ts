@@ -1,3 +1,13 @@
+export type ToastVariant = "error" | "info" | "success";
+
+export function toast(message: string, variant: ToastVariant = "info") {
+  window.dispatchEvent(
+    new CustomEvent("globaltoast", {
+      detail: { message, variant },
+    }),
+  );
+}
+
 export function toastError(...errors: unknown[]) {
   if (errors.length === 0) return;
 
@@ -10,9 +20,5 @@ export function toastError(...errors: unknown[]) {
     })
     .join(" ");
 
-  window.dispatchEvent(
-    new CustomEvent("globalerror", {
-      detail: message || "An unexpected error occurred.",
-    }),
-  );
+  toast(message || "An unexpected error occurred.", "error");
 }
