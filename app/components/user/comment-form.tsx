@@ -3,7 +3,7 @@ import { useForm } from "@tanstack/react-form";
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { type } from "arktype";
 import { useRef } from "react";
-import { useAddComment } from "~/api/user";
+import { useAddComment, useUser } from "~/api/user";
 import { Keyboard } from "~/components/ui/keyboard";
 import { toastError } from "~/lib/toast";
 import { ActionButton } from "../action-button";
@@ -11,6 +11,15 @@ import { ActionButton } from "../action-button";
 export function CommentForm({ userId }: { userId: string }) {
   const addComment = useAddComment(userId);
   const formRef = useRef<HTMLFormElement>(null);
+  const { data: user } = useUser();
+
+  if (user?.isAnonymous) {
+    return (
+      <div className="mb-8 p-6 bg-muted border border-muted-border rounded-lg text-center text-sm text-gray-500">
+        You must have credentials linked to write comments.
+      </div>
+    );
+  }
 
   useHotkey(
     "Mod+Enter",
