@@ -126,15 +126,15 @@ export default function Home() {
 
   const [parent] = useAutoAnimate({
     duration: 350,
-    easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)'
+    easing: "cubic-bezier(0.34, 1.56, 0.64, 1)",
   });
   const [gridParent1] = useAutoAnimate({
     duration: 350,
-    easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)'
+    easing: "cubic-bezier(0.34, 1.56, 0.64, 1)",
   });
   const [gridParent2] = useAutoAnimate({
     duration: 350,
-    easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)'
+    easing: "cubic-bezier(0.34, 1.56, 0.64, 1)",
   });
 
   return (
@@ -205,6 +205,12 @@ export default function Home() {
                 </Select.Positioner>
               </Select.Portal>
             </Select.Root>
+            <Link viewTransition to="/lobbies/new" className="w-full sm:w-auto">
+              <Button className="px-3 sm:px-5 w-full sm:w-auto shrink-0">
+                <CgMathPlus className="sm:mr-2 text-lg" />{" "}
+                <span className="hidden sm:inline">Create Lobby</span>
+              </Button>
+            </Link>
           </div>
 
           {lobbiesQuery.isLoading ? (

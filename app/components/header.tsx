@@ -1,5 +1,5 @@
 import { Menu } from "@base-ui/react";
-import { CgLogIn, CgLogOut, CgMathPlus, CgUser } from "react-icons/cg";
+import { CgLogIn, CgLogOut, CgUser } from "react-icons/cg";
 import { Link, useNavigate } from "react-router";
 import type { Me } from "~/api/types/user";
 import { Button } from "~/components/ui/button";
@@ -31,12 +31,6 @@ export function Header({ user }: { user: Me | null }) {
         </Link>
       </div>
       <div className="flex items-center gap-2 sm:gap-4">
-        <Link viewTransition to="/lobbies/new">
-          <Button className="px-3 sm:px-5">
-            <CgMathPlus className="sm:mr-2 text-lg" />{" "}
-            <span className="hidden sm:inline">Create Lobby</span>
-          </Button>
-        </Link>
         {user ? (
           <Menu.Root>
             <Menu.Trigger className="focus:outline-none group">
