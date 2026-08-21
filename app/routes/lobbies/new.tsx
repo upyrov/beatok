@@ -1,8 +1,8 @@
 import { Form as BaseForm, Input as BaseInput, Select } from "@base-ui/react";
 import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
-import { useNavigate } from "react-router";
 import { CgChevronDown } from "react-icons/cg";
+import { useNavigate } from "react-router";
 import { useGenres } from "~/api/genre";
 import { useCreateLobby } from "~/api/lobby";
 import { ActionButton } from "~/components/action-button";

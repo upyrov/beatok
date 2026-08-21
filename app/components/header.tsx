@@ -12,7 +12,7 @@ export function Header({ user }: { user: Me | null }) {
   const navigate = useNavigate();
 
   return (
-    <header className="flex justify-between items-center h-header px-4 md:px-6 border-b border-black/5 dark:border-white/5 bg-white/50 dark:bg-black/20 backdrop-blur-md sticky top-0 z-40">
+    <header style={{ viewTransitionName: 'site-header' }} className="flex justify-between items-center h-header px-4 md:px-6 border-b border-black/5 dark:border-white/5 bg-white/50 dark:bg-black/20 backdrop-blur-md sticky top-0 z-40">
       <div>
         <Link
           viewTransition

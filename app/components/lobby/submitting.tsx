@@ -1,20 +1,17 @@
 import JSZip from "jszip";
-import { use, useCallback, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { CgSoftwareDownload, CgTrash } from "react-icons/cg";
-import { useOutletContext } from "react-router";
 import {
   useCreateSubmission,
   useDeleteSubmission,
   useUploadUrl,
 } from "~/api/submission";
 import type { Sound } from "~/api/types/sound";
-import type { Me } from "~/api/types/user";
 import { ActionButton } from "~/components/action-button";
 import { FileDropzone } from "~/components/file-dropzone";
 import { AudioPlayer } from "~/components/lazy-audio-player";
-import { MutationBoundary } from "~/components/mutation-boundary";
+
 import { Button } from "~/components/ui/button";
-import { LobbyContext } from "~/contexts";
 import { useCountdown } from "~/hooks/use-countdown";
 import { validateAudioFile } from "~/lib/audio";
 import {
@@ -23,10 +20,14 @@ import {
 } from "~/lib/notification";
 import { toastError } from "~/lib/toast";
 import { uploadFile } from "~/lib/upload";
+import { useLobbyStore } from "~/stores/lobby";
+import { useUserStore } from "~/stores/user";
 
 export function Submitting() {
-  const { lobby, setLobby, connection } = use(LobbyContext);
-  const { user } = useOutletContext<{ user: Me | null }>();
+  const lobby = useLobbyStore((s) => s.lobby);
+  const setLobby = useLobbyStore((s) => s.setLobby);
+  const connection = useLobbyStore((s) => s.connection);
+  const user = useUserStore((s) => s.user);
   const participation = lobby?.participants.find((p) => p.user.id === user?.id);
   const getUploadUrlMutation = useUploadUrl();
   const createSubmissionMutation = useCreateSubmission();
@@ -63,22 +64,31 @@ export function Submitting() {
   const handleUpload = useCallback(
     async (file: File, onProgress: (progress: number) => void) => {
       const validation = await validateAudioFile(file);
-      if (!validation.valid) throw new Error(validation.error);
+      if (!validation.valid || validation.durationSeconds === 0) {
+        const errorMsg = validation.error || "Failed to read audio file metadata.";
+        toastError(errorMsg);
+        throw new Error(errorMsg);
+      }
 
-      const fileExtension = file.name.split(".").pop() ?? "";
-      const { uploadUrl, fileKey } = await getUploadUrlMutation.mutateAsync({
-        extension: fileExtension,
-        contentType: file.type,
-      });
+      try {
+        const fileExtension = file.name.split(".").pop() ?? "";
+        const { uploadUrl, fileKey } = await getUploadUrlMutation.mutateAsync({
+          extension: fileExtension,
+          contentType: file.type,
+        });
 
-      await uploadFile(file, uploadUrl, onProgress);
+        await uploadFile(file, uploadUrl, onProgress);
 
-      if (!lobby) return;
-      await createSubmissionMutation.mutateAsync({
-        lobbyId: lobby.id,
-        value: fileKey,
-        durationSeconds: validation.durationSeconds,
-      });
+        if (!lobby) return;
+        await createSubmissionMutation.mutateAsync({
+          lobbyId: lobby.id,
+          value: fileKey,
+          durationSeconds: validation.durationSeconds,
+        });
+      } catch (err) {
+        toastError(err);
+        throw err;
+      }
     },
     [getUploadUrlMutation, createSubmissionMutation, lobby],
   );
@@ -96,6 +106,9 @@ export function Submitting() {
             ),
           };
         });
+      },
+      onError: (err) => {
+        toastError(err);
       },
     });
   }, [deleteSubmissionMutation, mySubmission, setLobby]);
@@ -205,30 +218,24 @@ export function Submitting() {
         {mySubmission ? (
           <div className="flex flex-col gap-4">
             <AudioPlayer src={mySubmission.value} />
-            <MutationBoundary mutation={deleteSubmissionMutation}>
-              <ActionButton
-                onClick={handleDeleteSubmission}
-                pending={deleteSubmissionMutation.isPending}
-                className="flex items-center justify-center gap-2"
-              >
-                <CgTrash /> Delete Submission
-              </ActionButton>
-            </MutationBoundary>
+            <ActionButton
+              onClick={handleDeleteSubmission}
+              pending={deleteSubmissionMutation.isPending}
+              className="flex items-center justify-center gap-2"
+            >
+              <CgTrash /> Delete Submission
+            </ActionButton>
           </div>
         ) : createSubmissionMutation.isSuccess ? (
           <div className="text-green-400 font-semibold text-center py-4">
             Submission registered!
           </div>
         ) : (
-          <MutationBoundary mutation={getUploadUrlMutation}>
-            <MutationBoundary mutation={createSubmissionMutation}>
-              <FileDropzone
-                label="Click or drag your beat here"
-                maxFiles={1}
-                onUpload={handleUpload}
-              />
-            </MutationBoundary>
-          </MutationBoundary>
+          <FileDropzone
+            label="Click or drag your beat here"
+            maxFiles={1}
+            onUpload={handleUpload}
+          />
         )}
       </div>
     </div>

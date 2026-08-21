@@ -1,14 +1,13 @@
-import { use, useEffect, useRef, useState } from "react";
-import { useOutletContext } from "react-router";
+import { useEffect, useRef, useState } from "react";
 import type { LobbyPlaybackItem } from "~/api/types/lobby-playback-item";
-import type { Me } from "~/api/types/user";
 import { AudioPlayer } from "~/components/lazy-audio-player";
-import { LobbyContext } from "~/contexts";
+import { useLobbyStore } from "~/stores/lobby";
+import { useUserStore } from "~/stores/user";
 import { ScoreForm } from "./score-form";
 
 export function Voting() {
-  const { lobby } = use(LobbyContext);
-  const { user } = useOutletContext<{ user: Me | null }>();
+  const lobby = useLobbyStore((s) => s.lobby);
+  const user = useUserStore((s) => s.user);
 
   const currentPlaybackItem = lobby?.currentPlaybackItem;
   const participation = lobby?.participants.find((p) => p.user.id === user?.id);

@@ -140,7 +140,7 @@ export default function Home() {
   return (
     <PageContainer className="max-w-7xl">
       <div className="flex flex-col lg:flex-row gap-8 items-start w-full">
-        <div ref={parent} className="flex-1 min-w-0 flex flex-col gap-8 w-full">
+        <div className="flex-1 min-w-0 flex flex-col gap-8 w-full">
           <div className="flex flex-col sm:flex-row gap-4 items-center">
             <Input
               placeholder="Search"
@@ -186,7 +186,7 @@ export default function Home() {
                       <>
                         <Select.Item
                           value="all"
-                          className="system-popup-item text-sm cursor-pointer select-none"
+                          className="system-popup-item text-sm select-none"
                         >
                           <Select.ItemText>All Genres</Select.ItemText>
                         </Select.Item>
@@ -194,7 +194,7 @@ export default function Home() {
                           <Select.Item
                             key={genre.id}
                             value={genre.id}
-                            className="system-popup-item text-sm cursor-pointer select-none"
+                            className="system-popup-item text-sm select-none"
                           >
                             <Select.ItemText>{genre.name}</Select.ItemText>
                           </Select.Item>
@@ -213,56 +213,58 @@ export default function Home() {
             </Link>
           </div>
 
-          {lobbiesQuery.isLoading ? (
-            <LobbyGridSkeleton />
-          ) : (
-            <div className="flex flex-col flex-1">
-              <div className={toRejoin.length > 0 ? "flex flex-col mb-8" : ""}>
-                {toRejoin.length > 0 && (
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="flex items-center gap-2">
-                      Lobbies to Rejoin
-                    </h2>
+          <div ref={parent} className="flex flex-col gap-8 w-full">
+            {lobbiesQuery.isLoading ? (
+              <LobbyGridSkeleton />
+            ) : (
+              <div className="flex flex-col flex-1">
+                <div className={toRejoin.length > 0 ? "flex flex-col mb-8" : ""}>
+                  {toRejoin.length > 0 && (
+                    <div className="flex items-center justify-between mb-6">
+                      <h2 className="flex items-center gap-2">
+                        Lobbies to Rejoin
+                      </h2>
+                    </div>
+                  )}
+                  <div ref={gridParent1} className="system-grid-list">
+                    {toRejoin.map((lobby) => (
+                      <LobbyGridItem key={lobby.id} lobby={lobby} />
+                    ))}
                   </div>
-                )}
-                <div ref={gridParent1} className="system-grid-list">
-                  {toRejoin.map((lobby) => (
-                    <LobbyGridItem key={lobby.id} lobby={lobby} />
-                  ))}
+                </div>
+
+                <div className={active.length > 0 ? "flex flex-col flex-1" : ""}>
+                  {active.length > 0 && (
+                    <div className="flex items-center justify-between mb-6">
+                      <h2 className="flex items-center gap-2">Lobbies</h2>
+                    </div>
+                  )}
+                  <div ref={gridParent2} className="system-grid-list">
+                    {active.map((lobby) => (
+                      <LobbyGridItem key={lobby.id} lobby={lobby} />
+                    ))}
+                  </div>
                 </div>
               </div>
+            )}
 
-              <div className={active.length > 0 ? "flex flex-col flex-1" : ""}>
-                {active.length > 0 && (
-                  <div className="flex items-center justify-between mb-6">
-                    <h2 className="flex items-center gap-2">Lobbies</h2>
-                  </div>
-                )}
-                <div ref={gridParent2} className="system-grid-list">
-                  {active.map((lobby) => (
-                    <LobbyGridItem key={lobby.id} lobby={lobby} />
-                  ))}
-                </div>
+            {!lobbiesQuery.isLoading && !active.length && !toRejoin.length && (
+              <div className="flex justify-center items-center flex-col flex-1 text-center">
+                <p className="text-xl font-medium">No Lobbies Found</p>
+                <p className="mt-2 text-gray-500">Check back later or</p>
+                <Link
+                  viewTransition
+                  to="/lobbies/new"
+                  prefetch="intent"
+                  className="mt-4 flex justify-center"
+                >
+                  <Button className="flex items-center gap-2">
+                    <CgMathPlus /> Create Your Own
+                  </Button>
+                </Link>
               </div>
-            </div>
-          )}
-
-          {!lobbiesQuery.isLoading && !active.length && !toRejoin.length && (
-            <div className="flex justify-center items-center flex-col flex-1 text-center">
-              <p className="text-xl font-medium">No Lobbies Found</p>
-              <p className="mt-2 text-gray-500">Check back later or</p>
-              <Link
-                viewTransition
-                to="/lobbies/new"
-                prefetch="intent"
-                className="mt-4 flex justify-center"
-              >
-                <Button className="flex items-center gap-2">
-                  <CgMathPlus /> Create Your Own
-                </Button>
-              </Link>
-            </div>
-          )}
+            )}
+          </div>
         </div>
 
         <aside className="w-full lg:w-80 shrink-0 sticky top-24 hidden lg:block">

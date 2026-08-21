@@ -1,21 +1,24 @@
-import { use, useCallback, useEffect } from "react";
-import { useNavigate, useOutletContext } from "react-router";
+import { useCallback, useEffect } from "react";
+import { useNavigate } from "react-router";
 import { useKickParticipant } from "~/api/lobby";
 import { LobbyState } from "~/api/types/enums";
 import type { Participation } from "~/api/types/participation";
-import type { Me, RatingChange } from "~/api/types/user";
+import type { RatingChange } from "~/api/types/user";
 import { ActionButton } from "~/components/action-button";
 import { MutationBoundary } from "~/components/mutation-boundary";
 import { UserCard } from "~/components/user-card";
-import { LobbyContext } from "~/contexts";
+import { useLobbyStore } from "~/stores/lobby";
+import { useUserStore } from "~/stores/user";
 
 export function ParticipantList({
   ratingChanges = [],
 }: {
   ratingChanges?: RatingChange[];
 }) {
-  const { lobby, setLobby, connection } = use(LobbyContext);
-  const { user } = useOutletContext<{ user: Me | null }>();
+  const lobby = useLobbyStore((s) => s.lobby);
+  const setLobby = useLobbyStore((s) => s.setLobby);
+  const connection = useLobbyStore((s) => s.connection);
+  const user = useUserStore((s) => s.user);
   const kickParticipantMutation = useKickParticipant();
   const navigate = useNavigate();
 

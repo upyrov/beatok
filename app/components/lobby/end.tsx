@@ -1,10 +1,9 @@
-import { use } from "react";
 import { CgTrophy } from "react-icons/cg";
-import { LobbyContext } from "~/contexts";
+import { useLobbyStore } from "~/stores/lobby";
 import { AudioPlayer } from "../audio-player";
 
 export function End() {
-  const { lobby } = use(LobbyContext);
+  const lobby = useLobbyStore((s) => s.lobby);
   const winningSubmission =
     lobby?.submissions.find((s) => s.id === lobby?.winningSubmissionId) ?? null;
 

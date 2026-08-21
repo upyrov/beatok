@@ -1,6 +1,6 @@
 import { Select } from "@base-ui/react";
 import { useState } from "react";
-import { CgProfile, CgTrophy, CgChevronDown } from "react-icons/cg";
+import { CgChevronDown, CgProfile, CgTrophy } from "react-icons/cg";
 import { Link } from "react-router";
 import type { LeaderboardQuery } from "~/api/types/leadeboard-query";
 import { useLeaderboard } from "~/api/user";
@@ -13,7 +13,7 @@ export function Leaderboard() {
   const { data: users, isLoading } = useLeaderboard({ sortBy });
   const [parent] = useAutoAnimate({
     duration: 350,
-    easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)'
+    easing: "cubic-bezier(0.34, 1.56, 0.64, 1)",
   });
 
   return (
@@ -29,7 +29,7 @@ export function Leaderboard() {
           }
           items={{ rating: "Top Rated", wins: "Most Wins" }}
         >
-          <Select.Trigger className="system-input text-sm py-1 h-auto cursor-pointer inline-flex items-center gap-2">
+          <Select.Trigger className="system-input text-sm py-1 h-auto inline-flex items-center gap-2">
             <Select.Value />
             <Select.Icon>
               <CgChevronDown className="text-gray-500" />
@@ -37,16 +37,16 @@ export function Leaderboard() {
           </Select.Trigger>
           <Select.Portal>
             <Select.Positioner sideOffset={4}>
-              <Select.Popup className="system-popup outline-hidden min-w-[140px]">
+              <Select.Popup className="system-popup outline-hidden min-w-35">
                 <Select.Item
                   value="rating"
-                  className="system-popup-item text-sm cursor-pointer select-none"
+                  className="system-popup-item text-sm select-none"
                 >
                   <Select.ItemText>Top Rated</Select.ItemText>
                 </Select.Item>
                 <Select.Item
                   value="wins"
-                  className="system-popup-item text-sm cursor-pointer select-none"
+                  className="system-popup-item text-sm select-none"
                 >
                   <Select.ItemText>Most Wins</Select.ItemText>
                 </Select.Item>

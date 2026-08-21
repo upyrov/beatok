@@ -120,13 +120,6 @@ function HeroSection() {
   );
 }
 
-export function HydrateFallback() {
-  return (
-    <div className="flex flex-col flex-1">
-      <HeroSection />
-    </div>
-  );
-}
 
 export default function LandingPage() {
   const lobbiesQuery = useLobbies();

@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useState, useCallback } from "react";
+import { useCallback, useState } from "react";
 import { CgSpinner, CgUser } from "react-icons/cg";
 import { Link } from "react-router";
 import type { Me, User } from "~/api/types/user";
@@ -69,7 +69,9 @@ export function UserCard({
           <span className="font-semibold truncate group-hover:transition-colors group-[.is-md]:text-base group-[.is-lg]:text-lg group-[.is-xl]:text-xl">
             {user.name || "Anonymous"}
           </span>
-          {badges && <div className="flex items-center gap-1 ml-auto">{badges}</div>}
+          {badges && (
+            <div className="flex items-center gap-1 ml-auto">{badges}</div>
+          )}
         </div>
         {showRating && (
           <span className="text-gray-400 text-xs group-[.is-md]:text-sm group-[.is-lg]:text-sm">

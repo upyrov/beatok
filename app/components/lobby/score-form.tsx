@@ -1,14 +1,13 @@
 import { Form as BaseForm } from "@base-ui/react";
 import { useForm } from "@tanstack/react-form";
 import { type } from "arktype";
-import { use, useRef } from "react";
-import { useOutletContext } from "react-router";
+import { useRef } from "react";
 import { useUpdateScore, useVote } from "~/api/lobby";
 import type { Score } from "~/api/types/score";
-import type { Me } from "~/api/types/user";
 import { Knob } from "~/components/knob";
-import { LobbyContext } from "~/contexts";
 import { toastError } from "~/lib/toast";
+import { useLobbyStore } from "~/stores/lobby";
+import { useUserStore } from "~/stores/user";
 
 const scoreValidator = { onChange: type("1 <= number <= 10") };
 
@@ -27,8 +26,9 @@ export function ScoreForm({
   existingScoreValue?: number;
   onVote: () => void;
 }) {
-  const { lobby, setLobby } = use(LobbyContext);
-  const { user } = useOutletContext<{ user: Me | null }>();
+  const lobby = useLobbyStore((s) => s.lobby);
+  const setLobby = useLobbyStore((s) => s.setLobby);
+  const user = useUserStore((s) => s.user);
 
   const voteMutation = useVote();
   const updateScoreMutation = useUpdateScore();

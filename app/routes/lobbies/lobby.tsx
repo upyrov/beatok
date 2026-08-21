@@ -1,13 +1,13 @@
 import { HubConnectionState } from "@microsoft/signalr";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { use, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { CgMusicNote, CgTimer, CgUserList } from "react-icons/cg";
-import { useNavigate, useOutletContext, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { queryKeys } from "~/api/query-keys";
 import { LobbyState } from "~/api/types/enums";
 import type { DetailedLobby } from "~/api/types/lobby";
 import type { Submission } from "~/api/types/submission";
-import type { Me, RatingChange } from "~/api/types/user";
+import type { RatingChange } from "~/api/types/user";
 import { ActionButton } from "~/components/action-button";
 import { Chat } from "~/components/lobby/chat";
 import { End } from "~/components/lobby/end";
@@ -15,10 +15,11 @@ import { ParticipantList } from "~/components/lobby/participant-list";
 import { Submitting } from "~/components/lobby/submitting";
 import { Voting } from "~/components/lobby/voting";
 import { Waiting } from "~/components/lobby/waiting";
-import { LobbyContext } from "~/contexts";
 import { requestNotificationPermission } from "~/lib/notification";
 import { formatDuration } from "~/lib/time";
 import { toast, toastError } from "~/lib/toast";
+import { useLobbyStore } from "~/stores/lobby";
+import { useUserStore } from "~/stores/user";
 import type { Route } from "./+types/lobby";
 
 export function meta({}: Route.MetaArgs) {
@@ -32,8 +33,10 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Lobby() {
-  const { connection, lobby, setLobby } = use(LobbyContext);
-  const { user } = useOutletContext<{ user: Me | null }>();
+  const connection = useLobbyStore((s) => s.connection);
+  const lobby = useLobbyStore((s) => s.lobby);
+  const setLobby = useLobbyStore((s) => s.setLobby);
+  const user = useUserStore((s) => s.user);
 
   const { id } = useParams();
   const queryClient = useQueryClient();

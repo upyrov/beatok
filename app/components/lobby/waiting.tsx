@@ -1,16 +1,17 @@
-import { use, useCallback, useEffect } from "react";
-import { useOutletContext } from "react-router";
+import { useCallback, useEffect } from "react";
 import { useStartLobby } from "~/api/lobby";
 import { LobbyState } from "~/api/types/enums";
 import type { SoundWithCategory } from "~/api/types/sound";
-import type { Me } from "~/api/types/user";
 import { ActionButton } from "~/components/action-button";
 import { MutationBoundary } from "~/components/mutation-boundary";
-import { LobbyContext } from "~/contexts";
+import { useLobbyStore } from "~/stores/lobby";
+import { useUserStore } from "~/stores/user";
 
 export function Waiting() {
-  const { lobby, setLobby, connection } = use(LobbyContext);
-  const { user } = useOutletContext<{ user: Me | null }>();
+  const lobby = useLobbyStore((s) => s.lobby);
+  const setLobby = useLobbyStore((s) => s.setLobby);
+  const connection = useLobbyStore((s) => s.connection);
+  const user = useUserStore((s) => s.user);
   const startLobbyMutation = useStartLobby();
 
   const isOwner = user?.id === lobby?.ownerId;

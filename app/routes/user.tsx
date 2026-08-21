@@ -1,5 +1,5 @@
 import { Select } from "@base-ui/react";
-import { Suspense, startTransition } from "react";
+import { Suspense, startTransition, useState } from "react";
 import { CgChevronDown } from "react-icons/cg";
 import { useParams, useSearchParams } from "react-router";
 import {
@@ -33,9 +33,6 @@ export async function clientLoader({
   const [user] = await Promise.all([
     queryClient.ensureQueryData(userByIdQueryOptions(params.id!, year)),
     queryClient.prefetchQuery(commentsQueryOptions(params.id!, 1, 25)),
-    ...(date
-      ? [queryClient.ensureQueryData(activityQueryOptions(params.id!, date))]
-      : []),
   ]);
   return { user };
 }
@@ -67,7 +64,11 @@ function ActivitySection({
   const [searchParams, setSearchParams] = useSearchParams();
   const yearStr = searchParams.get("year");
   const selectedYear = yearStr ? parseInt(yearStr, 10) : undefined;
-  const selectedDate = searchParams.get("date") || undefined;
+  
+  // Use local state for date to prevent full page React Router navigation
+  const [selectedDate, setLocalSelectedDate] = useState<string | undefined>(
+    searchParams.get("date") || undefined
+  );
 
   const setSelectedYear = (y: number | undefined) => {
     setSearchParams(
@@ -81,14 +82,15 @@ function ActivitySection({
   };
 
   const setSelectedDate = (d: string | undefined) => {
-    setSearchParams(
-      (prev) => {
-        if (d === undefined) prev.delete("date");
-        else prev.set("date", d);
-        return prev;
-      },
-      { replace: true, preventScrollReset: true },
-    );
+    setLocalSelectedDate(d);
+    
+    // Update URL without triggering React Router navigation
+    const newParams = new URLSearchParams(searchParams);
+    if (d === undefined) newParams.delete("date");
+    else newParams.set("date", d);
+    
+    const newUrl = window.location.pathname + (newParams.toString() ? `?${newParams.toString()}` : "");
+    window.history.replaceState(null, "", newUrl);
   };
 
   const { data: user, isFetching } = useUserById(userId, selectedYear);
@@ -97,7 +99,7 @@ function ActivitySection({
 
   return (
     <>
-      <div className="system-card flex flex-col gap-6">
+      <div style={{ viewTransitionName: 'activity-graph-container' }} className="system-card flex flex-col gap-6">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold">Activity Graph</h2>
           {!!availableYears?.length && (

@@ -1,11 +1,11 @@
-import { redirect, useOutletContext } from "react-router";
+import { redirect } from "react-router";
 import { genresQueryOptions } from "~/api/genre";
 import { kitsQueryOptions } from "~/api/kit";
-import type { Me } from "~/api/types/user";
 import { Genres } from "~/components/admin/genres";
 import { Kits } from "~/components/admin/kits";
 import { PageContainer } from "~/components/page-container";
 import { getQueryClient } from "~/lib/query-client";
+import { useUserStore } from "~/stores/user";
 import type { Route } from "./+types/admin";
 
 export function meta({}: Route.MetaArgs) {
@@ -28,9 +28,8 @@ export function clientLoader() {
   return null;
 }
 
-
 export default function Admin() {
-  const { user } = useOutletContext<{ user: Me | null }>();
+  const user = useUserStore((s) => s.user);
 
   return (
     user && (

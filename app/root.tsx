@@ -1,5 +1,6 @@
-import { HotkeysProvider } from "@tanstack/react-hotkeys";
+import { HotkeysProvider, useHotkey } from "@tanstack/react-hotkeys";
 import { QueryClientProvider, useQueryClient } from "@tanstack/react-query";
+import { audioPlayerStore } from "~/stores/audio-player";
 import { onAuthStateChanged } from "firebase/auth";
 import { useEffect } from "react";
 import {
@@ -97,9 +98,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
+import { useUserStore } from "./stores/user";
+
 function Content() {
   const { data: user = null } = useUser();
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    useUserStore.setState({ user });
+  }, [user]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, () =>
@@ -108,11 +115,22 @@ function Content() {
     return () => unsubscribe();
   }, [queryClient]);
 
+  useHotkey("Space", (e) => {
+    if (
+      document.activeElement?.tagName === "INPUT" ||
+      document.activeElement?.tagName === "TEXTAREA"
+    ) {
+      return;
+    }
+    e.preventDefault();
+    audioPlayerStore.getState().toggleActive();
+  });
+
   return (
     <>
       <Header user={user} />
-      <main className="flex flex-col min-h-[calc(100svh-var(--spacing-header))]">
-        <Outlet context={{ user }} />
+      <main style={{ viewTransitionName: 'page-content' }} className="flex flex-col min-h-[calc(100svh-var(--spacing-header))]">
+        <Outlet />
       </main>
       <Footer />
     </>

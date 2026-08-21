@@ -29,7 +29,10 @@ export function Sound({
   ) {
     try {
       const validation = await validateAudioFile(file);
-      if (!validation.valid) throw new Error(validation.error);
+      if (!validation.valid || validation.durationSeconds === 0) {
+        const errorMsg = validation.error || "Failed to read audio file metadata.";
+        throw new Error(errorMsg);
+      }
 
       const fileExtension = file.name.split(".").pop() ?? "";
       const { uploadUrl, fileKey } = await getUploadUrlMutation.mutateAsync({

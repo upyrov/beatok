@@ -1,15 +1,15 @@
 import { Form as BaseForm, Input as BaseInput } from "@base-ui/react";
 import { useForm } from "@tanstack/react-form";
+import { useUserStore } from "~/stores/user";
 
 import { type } from "arktype";
-import { use, useCallback, useEffect, useRef, useState } from "react";
-import { useOutletContext } from "react-router";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { Me, User } from "~/api/types/user";
 
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { UserCard } from "~/components/user-card";
-import { LobbyContext } from "~/contexts";
 import { toastError } from "~/lib/toast";
+import { useLobbyStore } from "~/stores/lobby";
 import { ActionButton } from "../action-button";
 
 export interface Message {
@@ -62,8 +62,9 @@ function ReactionButton({
 }
 
 export function Chat() {
-  const { lobby, connection } = use(LobbyContext);
-  const { user } = useOutletContext<{ user: Me | null }>();
+  const lobby = useLobbyStore((s) => s.lobby);
+  const connection = useLobbyStore((s) => s.connection);
+  const user = useUserStore((s) => s.user);
   const [messages, setMessages] = useState<Message[]>([]);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const [animationParent] = useAutoAnimate<HTMLDivElement>({

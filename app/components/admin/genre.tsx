@@ -79,7 +79,9 @@ export function Genre({ genre }: { genre: IGenre }) {
         </Button>
         <Button
           onClick={() => {
-            if (confirm(`Delete genre "${genre.name}"?`)) {
+            if (
+              confirm(`Are you sure you want to delete genre "${genre.name}"?`)
+            ) {
               deleteMutation.mutate(genre.id);
             }
           }}

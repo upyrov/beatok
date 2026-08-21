@@ -22,16 +22,39 @@ export async function validateAudioFile(file: File): Promise<{
   }
 
   try {
-    const { parseBlob } = await import("music-metadata");
-    const metadata = await parseBlob(file, { duration: true });
-    const durationSeconds = Math.round(metadata.format.duration ?? 0);
+    const durationSeconds = await new Promise<number>((resolve) => {
+      const audio = new Audio();
+      const url = URL.createObjectURL(file);
+      audio.src = url;
+      audio.addEventListener("loadedmetadata", () => {
+        URL.revokeObjectURL(url);
+        resolve(Math.round(audio.duration) || 0);
+      });
+      audio.addEventListener("error", async () => {
+        URL.revokeObjectURL(url);
+        try {
+          const arrayBuffer = await file.arrayBuffer();
+          const AudioContextClass =
+            window.AudioContext || (window as any).webkitAudioContext;
+          const audioContext = new AudioContextClass();
+          const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+          resolve(Math.round(audioBuffer.duration) || 0);
+        } catch {
+          resolve(0); // If all fails, still allow upload
+        }
+      });
+    });
 
+    if (durationSeconds <= 0) {
+      return invalid("Failed to read audio file metadata.");
+    }
     if (durationSeconds > maxDuration) {
       return invalid("Audio duration cannot exceed 5 minutes.");
     }
 
     return { valid: true, durationSeconds };
-  } catch {
-    return invalid("Failed to read audio file metadata.");
+  } catch (error) {
+    // We shouldn't hit this since we resolve(0) now, but just in case
+    return { valid: true, durationSeconds: 0 };
   }
 }

@@ -5,18 +5,18 @@ import {
 } from "@microsoft/signalr";
 import { useEffect, useState } from "react";
 import { Outlet, useOutletContext } from "react-router";
-import type { DetailedLobby } from "~/api/types/lobby";
-import { LobbyContext } from "~/contexts";
+import { useStore } from "zustand";
 import { ensureAnonymouslySignedIn } from "~/hooks/use-auth";
 import { auth } from "~/lib/firebase";
+import { LobbyContext, createLobbyStore } from "~/stores/lobby";
 
 export const handle = { sitemap: () => [] };
 
 export default function Layout() {
   const context = useOutletContext();
 
-  const [connection, setConnection] = useState<HubConnection | null>(null);
-  const [lobby, setLobby] = useState<DetailedLobby | null>(null);
+  const [store] = useState(() => createLobbyStore());
+  const setConnection = useStore(store, (s) => s.setConnection);
 
   useEffect(() => {
     let isActive = true;
@@ -57,10 +57,10 @@ export default function Layout() {
       isActive = false;
       newConnection?.stop();
     };
-  }, []);
+  }, [setConnection]);
 
   return (
-    <LobbyContext value={{ lobby, setLobby, connection }}>
+    <LobbyContext value={store}>
       <Outlet context={context} />
     </LobbyContext>
   );

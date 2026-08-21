@@ -107,6 +107,10 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+html {
+  view-transition-name: none;
+}
+
 html,
 body {
   @apply scroll-smooth bg-background text-foreground transition-colors;

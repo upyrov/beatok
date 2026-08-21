@@ -1,8 +1,8 @@
-import { useHotkey } from "@tanstack/react-hotkeys";
 import { useWavesurfer } from "@wavesurfer/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CgPlayButton, CgPlayPause } from "react-icons/cg";
 import { Keyboard } from "~/components/ui/keyboard";
+import { audioPlayerStore } from "~/stores/audio-player";
 
 export interface AudioPlayerProps {
   src: string;
@@ -118,12 +118,18 @@ export function AudioPlayer({
     wavesurfer.playPause();
   }, [wavesurfer]);
 
-  useHotkey("Space", (e) => {
-    if (!hideControls && isReady) {
-      e.preventDefault();
-      handleClick();
-    }
-  });
+  const stateRef = useRef({ isReady, hideControls, handleClick });
+  stateRef.current = { isReady, hideControls, handleClick };
+
+  useEffect(() => {
+    audioPlayerStore.getState().mount(playerId, () => {
+      const { isReady, hideControls, handleClick } = stateRef.current;
+      if (isReady && !hideControls) {
+        handleClick();
+      }
+    });
+    return () => audioPlayerStore.getState().unmount(playerId);
+  }, [playerId]);
 
   const formatTime = useCallback((seconds: number) => {
     if (isNaN(seconds) || !isFinite(seconds)) return "0:00";

@@ -6,6 +6,7 @@ import {
   useUploadSoundUrl,
 } from "~/api/sound";
 import { validateAudioFile } from "~/lib/audio";
+import { toastError } from "~/lib/toast";
 import { uploadFile } from "~/lib/upload";
 import { FileDropzone } from "../file-dropzone";
 import { Sound } from "./sound";
@@ -20,7 +21,11 @@ export function Sounds({ categoryId }: { categoryId: string }) {
   const handleUpload = useCallback(
     async (file: File, onProgress: (progress: number) => void) => {
       const validation = await validateAudioFile(file);
-      if (!validation.valid) throw new Error(validation.error);
+      if (!validation.valid || validation.durationSeconds === 0) {
+        const errorMsg = validation.error || "Failed to read audio file metadata.";
+        toastError(errorMsg);
+        throw new Error(errorMsg);
+      }
 
       const fileExtension = file.name.split(".").pop() ?? "";
       const { uploadUrl, fileKey } = await getUploadUrlMutation.mutateAsync({
