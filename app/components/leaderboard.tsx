@@ -59,9 +59,10 @@ export function Leaderboard() {
       <Card.Content ref={parent} className="flex flex-col gap-3">
         {isLoading &&
           [...Array(5)].map((_, i) => (
-            <div key={i} className="flex items-center gap-3">
+            <div key={i} className="flex items-center gap-3 p-2 -mx-2 rounded-lg">
+              <div className="w-5 shrink-0" />
               <div className="system-skeleton w-12 h-12 rounded-full shrink-0" />
-              <div className="flex-1 space-y-2">
+              <div className="flex-1 flex flex-col justify-center gap-2">
                 <div className="system-skeleton h-4 rounded w-1/2" />
                 <div className="system-skeleton h-3 rounded w-1/4" />
               </div>

@@ -32,16 +32,21 @@ export function Activity({ userId, date }: { userId: string; date: string }) {
         {activity.map((lobby) => (
           <div
             key={lobby.id}
-            className="bg-black/5 hover:bg-black/10 dark:hover:bg-black/10 dark:bg-white/10 transition-colors border border-muted-border p-4 rounded-xl block"
+            className="bg-black/5 dark:bg-white/5 border border-muted-border p-4 rounded-xl block"
           >
             <div className="flex flex-col h-full relative">
               <div className="mb-6 flex items-start justify-between gap-4">
-                <div>
+                <div className="min-w-0">
                   <h3
-                    className="text-xl font-bold tracking-tight text-foreground truncate"
+                    className="text-xl font-bold tracking-tight text-foreground flex items-center gap-2"
                     title={lobby.name}
                   >
-                    {lobby.name}
+                    <span className="truncate">{lobby.name}</span>
+                    {lobby.isWinner && (
+                      <span className="text-yellow-500 flex items-center shrink-0" title="Winner">
+                        <CgTrophy size={18} />
+                      </span>
+                    )}
                   </h3>
                   <div className="flex items-center gap-1.5 text-sm text-gray-500 mt-1.5">
                     <CgCalendarDates className="opacity-70 text-base shrink-0" />
@@ -63,47 +68,49 @@ export function Activity({ userId, date }: { userId: string; date: string }) {
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between text-sm">
-                  <span className="flex items-center gap-2 text-gray-500">
-                    <CgTrophy className="text-base" /> Result
-                  </span>
-                  <span
-                    className={`font-medium ${lobby.isWinner ? "text-yellow-500" : "text-gray-500"}`}
-                  >
-                    {lobby.isWinner ? "Winner" : "Participant"}
-                  </span>
-                </div>
+                {(() => {
+                  const tCreated = new Date(lobby.createdAt).getTime();
+                  const tEnded = new Date(lobby.endedAt).getTime();
+                  let tSub = new Date(lobby.submissionStartedAt).getTime();
+                  let tVote = new Date(lobby.votingStartedAt).getTime();
 
-                <div className="mt-2 flex flex-col gap-1.5">
-                  <div className="flex justify-between text-[10px] uppercase font-bold tracking-wider text-gray-400">
-                    <span>Created</span>
-                    <span>Ended</span>
-                  </div>
-                  <div className="flex gap-1 h-1.5 w-full bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-blue-500/80 rounded-full"
-                      style={{ flex: 1 }}
-                      title="Waiting"
-                    />
-                    <div
-                      className="h-full bg-orange-500/80 rounded-full"
-                      style={{ flex: 2 }}
-                      title="Submission Phase"
-                    />
-                    <div
-                      className="h-full bg-green-500/80 rounded-full"
-                      style={{ flex: 1 }}
-                      title="Voting Phase"
-                    />
-                  </div>
-                </div>
+                  if (tSub < 0 || tSub < tCreated) tSub = tEnded;
+                  if (tVote < 0 || tVote < tSub) tVote = tEnded;
+
+                  const waitMins = Math.max(0, Math.round((tSub - tCreated) / 60000));
+                  const subMins = Math.max(0, Math.round((tVote - tSub) / 60000));
+                  const voteMins = Math.max(0, Math.round((tEnded - tVote) / 60000));
+
+                  return (
+                    <div className="mt-2 flex flex-col gap-2">
+                      <div className="flex items-center w-full">
+                        <div
+                          className="h-1.5 bg-black/10 dark:bg-white/10 rounded-l-full"
+                          style={{ flex: Math.max(1, waitMins) }}
+                          title="Waiting"
+                        />
+                        <div className="w-2.5 h-2.5 rounded-full bg-gray-400 dark:bg-gray-500 shrink-0 -mx-[5px] z-10" />
+                        <div
+                          className="h-1.5 bg-black/10 dark:bg-white/10"
+                          style={{ flex: Math.max(1, subMins) }}
+                          title="Submission Phase"
+                        />
+                        <div className="w-2.5 h-2.5 rounded-full bg-gray-400 dark:bg-gray-500 shrink-0 -mx-[5px] z-10" />
+                        <div
+                          className="h-1.5 bg-black/10 dark:bg-white/10 rounded-r-full"
+                          style={{ flex: Math.max(1, voteMins) }}
+                          title="Voting Phase"
+                        />
+                      </div>
+                      <div className="flex text-[10px] uppercase font-bold tracking-wider text-gray-500">
+                        <span className="w-0 flex-1 text-left">{waitMins}m wait</span>
+                        <span className="w-0 flex-1 text-center">{subMins}m sub</span>
+                        <span className="w-0 flex-1 text-right">{voteMins}m vote</span>
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
-
-              {lobby.isWinner && (
-                <div className="absolute -top-3 -right-3 w-8 h-8 bg-yellow-500 text-white rounded-full flex items-center justify-center shadow-lg border-2 border-white dark:border-gray-900">
-                  <CgTrophy size={16} />
-                </div>
-              )}
             </div>
           </div>
         ))}
