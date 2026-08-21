@@ -10,7 +10,7 @@ import { FieldError } from "~/components/field-error";
 import { Knob } from "~/components/knob";
 import { MutationBoundary } from "~/components/mutation-boundary";
 import { toastError } from "~/lib/toast";
-import type { Route } from "./+types/new";
+import type { Route } from "./+types/lobbies.new";
 
 export function meta({}: Route.MetaArgs) {
   return [

@@ -1,5 +1,5 @@
 import { Select } from "@base-ui/react";
-import { useAutoAnimate } from "@formkit/auto-animate/react";
+
 import { useDeferredValue, useMemo, useState } from "react";
 import { CgChevronDown, CgLogIn, CgMathPlus } from "react-icons/cg";
 import { Link } from "react-router";
@@ -12,7 +12,7 @@ import { PageContainer } from "~/components/page-container";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { getQueryClient } from "~/lib/query-client";
-import type { Route } from "./+types/home";
+import type { Route } from "./+types/lobbies._index";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -29,7 +29,7 @@ function LobbyGridItem({ lobby }: { lobby: Lobby }) {
   return (
     <div
       style={{ viewTransitionName: `lobby-${lobby.id}` }}
-      className="system-card flex flex-col p-5 hover:border-black/20 dark:hover:border-white/20 transition-colors"
+      className="system-card flex flex-col p-5 hover:border-black/20 dark:hover:border-white/20 transition-all duration-300 starting:opacity-0 starting:blur-sm"
     >
       <LobbyCard lobby={lobby} />
       <div className="mt-6">
@@ -53,7 +53,9 @@ function LobbyGridSkeleton() {
   return (
     <section className="flex flex-col flex-1">
       <div className="flex items-center justify-between mb-6">
-        <div className="system-skeleton w-32 h-8" />
+        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          Active Lobbies
+        </h1>
       </div>
       <div className="system-grid-list">
         {[...Array(8)].map((_, i) => (
@@ -61,29 +63,29 @@ function LobbyGridSkeleton() {
             key={i}
             className="flex flex-col p-5 bg-muted border border-muted-border rounded-xl"
           >
-            <div className="flex flex-col gap-4">
-              <div>
-                <div className="system-skeleton w-24 h-4 mb-2" />
-                <div className="flex justify-between items-start">
-                  <div className="system-skeleton w-32 h-6" />
-                  <div className="system-skeleton w-16 h-5" />
-                </div>
+            <div className="mb-6 flex items-start justify-between gap-4">
+              <div className="flex flex-col gap-2">
+                <div className="system-skeleton w-32 h-6" />
+                <div className="system-skeleton w-24 h-4" />
               </div>
-              <div className="grow flex flex-col gap-2 mt-4">
-                <div className="flex justify-between">
-                  <div className="system-skeleton w-16 h-4" />
-                  <div className="system-skeleton w-24 h-4" />
-                </div>
-                <div className="flex justify-between">
-                  <div className="system-skeleton w-24 h-4" />
-                  <div className="system-skeleton w-16 h-4" />
-                </div>
-                <div className="flex justify-between">
-                  <div className="system-skeleton w-16 h-4" />
-                  <div className="system-skeleton w-12 h-4" />
-                </div>
+              <div className="system-skeleton w-16 h-6 rounded-lg shrink-0" />
+            </div>
+            
+            <div className="flex flex-col gap-3 mt-auto">
+              <div className="flex items-center justify-between">
+                <div className="system-skeleton w-20 h-4" />
+                <div className="system-skeleton w-24 h-4" />
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="system-skeleton w-28 h-4" />
+                <div className="system-skeleton w-16 h-4" />
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="system-skeleton w-16 h-4" />
+                <div className="system-skeleton w-12 h-4" />
               </div>
             </div>
+
             <div className="mt-6">
               <div className="system-skeleton w-full h-10 rounded-lg" />
             </div>
@@ -123,19 +125,6 @@ export default function Home() {
       { toRejoin: [], active: [] },
     );
   }, [lobbies]);
-
-  const [parent] = useAutoAnimate({
-    duration: 350,
-    easing: "cubic-bezier(0.34, 1.56, 0.64, 1)",
-  });
-  const [gridParent1] = useAutoAnimate({
-    duration: 350,
-    easing: "cubic-bezier(0.34, 1.56, 0.64, 1)",
-  });
-  const [gridParent2] = useAutoAnimate({
-    duration: 350,
-    easing: "cubic-bezier(0.34, 1.56, 0.64, 1)",
-  });
 
   return (
     <PageContainer className="max-w-7xl">
@@ -213,7 +202,7 @@ export default function Home() {
             </Link>
           </div>
 
-          <div ref={parent} className="flex flex-col gap-8 w-full">
+          <div className="flex flex-col gap-8 w-full">
             {lobbiesQuery.isLoading ? (
               <LobbyGridSkeleton />
             ) : (
@@ -226,7 +215,7 @@ export default function Home() {
                       </h2>
                     </div>
                   )}
-                  <div ref={gridParent1} className="system-grid-list">
+                  <div className="system-grid-list">
                     {toRejoin.map((lobby) => (
                       <LobbyGridItem key={lobby.id} lobby={lobby} />
                     ))}
@@ -239,7 +228,7 @@ export default function Home() {
                       <h2 className="flex items-center gap-2">Lobbies</h2>
                     </div>
                   )}
-                  <div ref={gridParent2} className="system-grid-list">
+                  <div className="system-grid-list">
                     {active.map((lobby) => (
                       <LobbyGridItem key={lobby.id} lobby={lobby} />
                     ))}
@@ -249,7 +238,7 @@ export default function Home() {
             )}
 
             {!lobbiesQuery.isLoading && !active.length && !toRejoin.length && (
-              <div className="flex justify-center items-center flex-col flex-1 text-center">
+              <div className="transition duration-300 starting:opacity-0 starting:blur-sm flex justify-center items-center flex-col flex-1 text-center">
                 <p className="text-xl font-medium">No Lobbies Found</p>
                 <p className="mt-2 text-gray-500">Check back later or</p>
                 <Link

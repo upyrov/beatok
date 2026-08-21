@@ -147,7 +147,9 @@ export function ScoreForm({
                 value={field.state.value}
                 onChange={(val) => {
                   field.handleChange(val);
-                  // Optimistic UI update instantly while dragging
+                }}
+                onChangeEnd={(val) => {
+                  // Optimistic UI update only when drag finishes
                   setLobby((prev) => {
                     if (!prev) return prev;
                     return {
@@ -182,8 +184,8 @@ export function ScoreForm({
                       }),
                     };
                   });
+                  form.handleSubmit();
                 }}
-                onChangeEnd={() => form.handleSubmit()}
                 min={0}
                 max={10}
                 size={60}

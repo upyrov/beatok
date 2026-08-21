@@ -6,7 +6,7 @@ import { type } from "arktype";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Me, User } from "~/api/types/user";
 
-import { useAutoAnimate } from "@formkit/auto-animate/react";
+
 import { UserCard } from "~/components/user-card";
 import { toastError } from "~/lib/toast";
 import { useLobbyStore } from "~/stores/lobby";
@@ -67,18 +67,13 @@ export function Chat() {
   const user = useUserStore((s) => s.user);
   const [messages, setMessages] = useState<Message[]>([]);
   const scrollRef = useRef<HTMLDivElement | null>(null);
-  const [animationParent] = useAutoAnimate<HTMLDivElement>({
-    duration: 350,
-    easing: "cubic-bezier(0.34, 1.56, 0.64, 1)",
-  });
   const formRef = useRef<HTMLFormElement>(null);
 
   const setRefs = useCallback(
     (el: HTMLDivElement | null) => {
       scrollRef.current = el;
-      animationParent(el);
     },
-    [animationParent],
+    [],
   );
 
   const participantsRef = useRef(lobby?.participants ?? []);

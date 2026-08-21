@@ -1,20 +1,15 @@
 import { Select } from "@base-ui/react";
 import { useState } from "react";
+import { flushSync } from "react-dom";
 import { CgChevronDown, CgProfile, CgTrophy } from "react-icons/cg";
 import { Link } from "react-router";
 import type { LeaderboardQuery } from "~/api/types/leadeboard-query";
 import { useLeaderboard } from "~/api/user";
 import { Card } from "~/components/ui/card";
 
-import { useAutoAnimate } from "@formkit/auto-animate/react";
-
 export function Leaderboard() {
   const [sortBy, setSortBy] = useState<LeaderboardQuery["sortBy"]>("rating");
   const { data: users, isLoading } = useLeaderboard({ sortBy });
-  const [parent] = useAutoAnimate({
-    duration: 350,
-    easing: "cubic-bezier(0.34, 1.56, 0.64, 1)",
-  });
 
   return (
     <Card className="bg-background/50 backdrop-blur-sm">
@@ -24,9 +19,19 @@ export function Leaderboard() {
         </Card.Title>
         <Select.Root
           value={sortBy}
-          onValueChange={(val) =>
-            val && setSortBy(val as LeaderboardQuery["sortBy"])
-          }
+          onValueChange={(val) => {
+            if (val) {
+              if (document.startViewTransition) {
+                document.startViewTransition(() => {
+                  flushSync(() => {
+                    setSortBy(val as LeaderboardQuery["sortBy"]);
+                  });
+                });
+              } else {
+                setSortBy(val as LeaderboardQuery["sortBy"]);
+              }
+            }
+          }}
           items={{ rating: "Top Rated", wins: "Most Wins" }}
         >
           <Select.Trigger className="system-input text-sm py-1 h-auto inline-flex items-center gap-2">
@@ -56,10 +61,10 @@ export function Leaderboard() {
         </Select.Root>
       </Card.Header>
 
-      <Card.Content ref={parent} className="flex flex-col gap-3">
+      <Card.Content className="flex flex-col gap-3">
         {isLoading &&
           [...Array(5)].map((_, i) => (
-            <div key={i} className="flex items-center gap-3 p-2 -mx-2 rounded-lg">
+            <div key={`skeleton-${i}`} className="transition duration-300 starting:opacity-0 starting:blur-sm flex items-center gap-3 p-2 -mx-2 rounded-lg">
               <div className="w-5 shrink-0" />
               <div className="system-skeleton w-12 h-12 rounded-full shrink-0" />
               <div className="flex-1 flex flex-col justify-center gap-2">
@@ -70,7 +75,7 @@ export function Leaderboard() {
           ))}
 
         {!isLoading && !users?.length && (
-          <div className="text-center text-sm text-gray-500 py-4">
+          <div key="empty-state" className="text-center text-sm text-gray-500 py-4">
             No users found
           </div>
         )}
@@ -80,7 +85,8 @@ export function Leaderboard() {
             <Link
               key={user.id}
               to={`/users/${user.id}`}
-              className="flex items-center gap-3 group p-2 -mx-2 rounded-lg hover:bg-muted/50 transition-colors"
+              style={{ viewTransitionName: `leaderboard-user-${user.id}` }}
+              className="transition duration-300 starting:opacity-0 starting:blur-sm flex items-center gap-3 group p-2 -mx-2 rounded-lg hover:bg-muted/50 transition-colors"
             >
               <div className="w-5 text-center text-sm font-bold text-gray-400 group-hover:text-foreground shrink-0 transition-colors">
                 {index + 1}

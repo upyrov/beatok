@@ -6,7 +6,7 @@ import { ActionButton } from "~/components/action-button";
 import { FieldError } from "~/components/field-error";
 import { MutationBoundary } from "~/components/mutation-boundary";
 import { useResetPassword } from "~/hooks/use-auth";
-import type { Route } from "./+types/password-reset";
+import type { Route } from "./+types/_auth.password-reset";
 
 export function meta({}: Route.MetaArgs) {
   return [

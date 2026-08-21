@@ -1,5 +1,5 @@
 import { Input as BaseInput, Button } from "@base-ui/react";
-import { useAutoAnimate } from "@formkit/auto-animate/react";
+
 import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
 import { type } from "arktype";
@@ -91,7 +91,6 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
     </div>
   ) : null;
 
-  const [formParent] = useAutoAnimate();
 
   return (
     <div className="system-card flex flex-col sm:flex-row items-center sm:items-start gap-6 relative">
@@ -139,7 +138,6 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
       <div className="flex flex-col flex-1 gap-2 items-center sm:items-start text-center sm:text-left w-full">
         {isCurrentUser ? (
           <form
-            ref={formParent}
             onSubmit={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -169,14 +167,16 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
               ]}
               children={([canSubmit, isSubmitting, isDirty]) =>
                 isDirty && (
-                  <ActionButton
-                    type="submit"
-                    disabled={
-                      !canSubmit || isSubmitting || updateUserMutation.isPending
-                    }
-                  >
-                    Save
-                  </ActionButton>
+                  <div className="transition duration-300 starting:opacity-0 starting:blur-sm">
+                    <ActionButton
+                      type="submit"
+                      disabled={
+                        !canSubmit || isSubmitting || updateUserMutation.isPending
+                      }
+                    >
+                      Save
+                    </ActionButton>
+                  </div>
                 )
               }
             />

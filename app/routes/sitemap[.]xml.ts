@@ -1,6 +1,6 @@
 import { generateRemixSitemap } from "@forge42/seo-tools/remix/sitemap";
 import { href } from "react-router";
-import type { Route } from "./+types/sitemap.xml";
+import type { Route } from "./+types/sitemap[.]xml";
 
 export const loader = async ({ request }: Route.LoaderArgs) => {
   const { routes } = await import("virtual:react-router/server-build");

@@ -15,10 +15,12 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export function clientLoader() {
+export async function clientLoader() {
   try {
-    getQueryClient().ensureQueryData(genresQueryOptions());
-    getQueryClient().ensureQueryData(kitsQueryOptions());
+    await Promise.all([
+      getQueryClient().ensureQueryData(genresQueryOptions()),
+      getQueryClient().ensureQueryData(kitsQueryOptions()),
+    ]);
   } catch (error) {
     if (error instanceof Error && error.message === "Unauthorized") {
       throw redirect("/signin");

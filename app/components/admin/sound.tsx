@@ -7,7 +7,7 @@ import { Button } from "~/components/ui/button";
 import { validateAudioFile } from "~/lib/audio";
 import { toastError } from "~/lib/toast";
 import { uploadFile } from "~/lib/upload";
-import { AudioPlayer } from "../audio-player";
+import { AudioPlayer } from "../lazy-audio-player";
 import { FileDropzone } from "../file-dropzone";
 
 export function Sound({

@@ -10,10 +10,11 @@ import { Link, redirect } from "react-router";
 import { lobbiesQueryOptions, useLobbies } from "~/api/lobby";
 import { userQueryOptions } from "~/api/user";
 import { Knob } from "~/components/knob";
+import { LobbyCard } from "~/components/lobby-card";
 import { PageContainer } from "~/components/page-container";
 import { Button } from "~/components/ui/button";
 import { getQueryClient } from "~/lib/query-client";
-import type { Route } from "./+types/home";
+import type { Route } from "./+types/_index";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -159,15 +160,29 @@ export default function LandingPage() {
                 ? Array.from({ length: 3 }).map((_, i) => (
                     <div
                       key={i}
-                      className="system-card p-6 flex flex-col gap-4 min-h-40"
+                      className="flex flex-col p-5 bg-muted border border-muted-border rounded-xl"
                     >
-                      <div>
-                        <div className="system-skeleton w-32 h-4 mb-2 rounded" />
-                        <div className="system-skeleton w-48 h-6 rounded" />
+                      <div className="mb-6 flex items-start justify-between gap-4">
+                        <div className="flex flex-col gap-2">
+                          <div className="system-skeleton w-32 h-6" />
+                          <div className="system-skeleton w-24 h-4" />
+                        </div>
+                        <div className="system-skeleton w-16 h-6 rounded-lg shrink-0" />
                       </div>
-                      <div className="mt-auto flex justify-between">
-                        <div className="system-skeleton w-16 h-4 rounded" />
-                        <div className="system-skeleton w-24 h-4 rounded" />
+                      
+                      <div className="flex flex-col gap-3 mt-auto">
+                        <div className="flex items-center justify-between">
+                          <div className="system-skeleton w-20 h-4" />
+                          <div className="system-skeleton w-24 h-4" />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div className="system-skeleton w-28 h-4" />
+                          <div className="system-skeleton w-16 h-4" />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div className="system-skeleton w-16 h-4" />
+                          <div className="system-skeleton w-12 h-4" />
+                        </div>
                       </div>
                     </div>
                   ))
@@ -177,26 +192,9 @@ export default function LandingPage() {
                       viewTransition
                       to={`/lobbies/${lobby.id}`}
                       style={{ viewTransitionName: `lobby-${lobby.id}` }}
-                      className="system-panel p-6 rounded-xl flex flex-col gap-4 opacity-80 hover:opacity-100 transition duration-300"
+                      className="system-panel p-5 rounded-xl flex flex-col opacity-90 hover:opacity-100 hover:border-black/20 dark:hover:border-white/20 transition duration-300"
                     >
-                      <div>
-                        <span className="text-sm text-gray-500">
-                          Host: {lobby.owner.name}
-                        </span>
-                        <h3 className="text-xl font-bold line-clamp-1">
-                          {lobby.name}
-                        </h3>
-                      </div>
-                      <div className="flex justify-between items-center text-sm">
-                        <span className="text-gray-500">Genre</span>
-                        <span className="font-medium">{lobby.genre.name}</span>
-                      </div>
-                      <div className="flex justify-between items-center text-sm">
-                        <span className="text-gray-500">Players</span>
-                        <span className="font-medium">
-                          {lobby.participantCount} / {lobby.participantLimit}
-                        </span>
-                      </div>
+                      <LobbyCard lobby={lobby} />
                     </Link>
                   ))}
             </div>

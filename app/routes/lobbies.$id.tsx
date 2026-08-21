@@ -1,8 +1,9 @@
-import { HubConnectionState } from "@microsoft/signalr";
+import { HubConnectionState, HubConnectionBuilder, LogLevel, type HubConnection } from "@microsoft/signalr";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CgMusicNote, CgTimer, CgUserList } from "react-icons/cg";
 import { useNavigate, useParams } from "react-router";
+import { useStore } from "zustand";
 import { queryKeys } from "~/api/query-keys";
 import { LobbyState } from "~/api/types/enums";
 import type { DetailedLobby } from "~/api/types/lobby";
@@ -15,12 +16,14 @@ import { ParticipantList } from "~/components/lobby/participant-list";
 import { Submitting } from "~/components/lobby/submitting";
 import { Voting } from "~/components/lobby/voting";
 import { Waiting } from "~/components/lobby/waiting";
+import { ensureAnonymouslySignedIn } from "~/hooks/use-auth";
+import { auth } from "~/lib/firebase";
 import { requestNotificationPermission } from "~/lib/notification";
 import { formatDuration } from "~/lib/time";
 import { toast, toastError } from "~/lib/toast";
-import { useLobbyStore } from "~/stores/lobby";
+import { LobbyContext, createLobbyStore, useLobbyStore } from "~/stores/lobby";
 import { useUserStore } from "~/stores/user";
-import type { Route } from "./+types/lobby";
+import type { Route } from "./+types/lobbies.$id";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -32,7 +35,59 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
-export default function Lobby() {
+export default function LobbyRoot() {
+  const [store] = useState(() => createLobbyStore());
+  const setConnection = useStore(store, (s) => s.setConnection);
+
+  useEffect(() => {
+    let isActive = true;
+    let newConnection: HubConnection | null = null;
+
+    async function getHubConnection() {
+      await auth.authStateReady();
+      await ensureAnonymouslySignedIn();
+
+      if (!isActive) return;
+
+      const connection = new HubConnectionBuilder()
+        .withUrl(`${import.meta.env.VITE_API_BASE_URL}/lobby`, {
+          withCredentials: true,
+          accessTokenFactory: () => auth.currentUser?.getIdToken() ?? "",
+        })
+        .configureLogging(LogLevel.Warning)
+        .withAutomaticReconnect()
+        .build();
+
+      try {
+        await connection.start();
+
+        connection.on("Error", (errorDto: { message: string }) => {});
+
+        if (isActive) {
+          newConnection = connection;
+          setConnection(connection);
+        } else {
+          connection.stop();
+        }
+      } catch (error) {}
+    }
+
+    getHubConnection();
+
+    return () => {
+      isActive = false;
+      newConnection?.stop();
+    };
+  }, [setConnection]);
+
+  return (
+    <LobbyContext value={store}>
+      <LobbyInner />
+    </LobbyContext>
+  );
+}
+
+function LobbyInner() {
   const connection = useLobbyStore((s) => s.connection);
   const lobby = useLobbyStore((s) => s.lobby);
   const setLobby = useLobbyStore((s) => s.setLobby);

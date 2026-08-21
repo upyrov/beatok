@@ -1,6 +1,6 @@
 import { CgTrophy } from "react-icons/cg";
 import { useLobbyStore } from "~/stores/lobby";
-import { AudioPlayer } from "../audio-player";
+import { AudioPlayer } from "../lazy-audio-player";
 
 export function End() {
   const lobby = useLobbyStore((s) => s.lobby);

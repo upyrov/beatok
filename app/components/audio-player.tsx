@@ -1,4 +1,4 @@
-import { useWavesurfer } from "@wavesurfer/react";
+import WaveSurfer from "wavesurfer.js";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CgPlayButton, CgPlayPause } from "react-icons/cg";
 import { Keyboard } from "~/components/ui/keyboard";
@@ -11,6 +11,13 @@ export interface AudioPlayerProps {
   hideControls?: boolean;
 }
 
+function formatTime(seconds: number) {
+  if (isNaN(seconds) || !isFinite(seconds)) return "0:00";
+  const m = Math.floor(seconds / 60);
+  const s = Math.floor(seconds % 60);
+  return `${m}:${s.toString().padStart(2, "0")}`;
+}
+
 export function AudioPlayer({
   src,
   className = "",
@@ -18,37 +25,65 @@ export function AudioPlayer({
   hideControls = false,
 }: AudioPlayerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const timeRef = useRef<HTMLDivElement>(null);
 
-  const { wavesurfer, isReady, isPlaying, currentTime } = useWavesurfer({
-    container: containerRef,
-    url: src,
-    waveColor: "#a1a1aa",
-    progressColor: "#000000",
-    height: 32,
-    cursorWidth: 1,
-    cursorColor: "#000000",
-    normalize: true,
-    interact: !hideControls,
-  });
-
+  const [wavesurfer, setWavesurfer] = useState<WaveSurfer | null>(null);
+  const [isReady, setIsReady] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(0);
+
   const playerId = useRef(Math.random().toString(36).slice(2)).current;
 
   useEffect(() => {
-    if (!wavesurfer) return;
+    if (!containerRef.current) return;
+    
+    const ws = WaveSurfer.create({
+      container: containerRef.current,
+      url: src,
+      waveColor: "#a1a1aa",
+      progressColor: "#000000",
+      height: 32,
+      cursorWidth: 1,
+      cursorColor: "#000000",
+      normalize: true,
+      interact: !hideControls,
+    });
+    setWavesurfer(ws);
 
-    const subscriptions = [
-      wavesurfer.on("decode", (duration) => setDuration(duration)),
-      wavesurfer.on("ready", () => setDuration(wavesurfer.getDuration())),
-      wavesurfer.on("play", () => {
-        window.dispatchEvent(
-          new CustomEvent("audioplay", { detail: playerId }),
-        );
-      }),
-    ];
+    const updateTime = () => {
+      if (timeRef.current) {
+        timeRef.current.textContent = `${formatTime(ws.getCurrentTime())} / ${formatTime(ws.getDuration())}`;
+      }
+    };
 
-    return () => subscriptions.forEach((unsubscribe) => unsubscribe());
-  }, [wavesurfer, playerId]);
+    ws.on("ready", () => {
+      setIsReady(true);
+      setDuration(ws.getDuration());
+      updateTime();
+    });
+    
+    ws.on("decode", (duration) => {
+      setDuration(duration);
+    });
+
+    ws.on("play", () => {
+      setIsPlaying(true);
+      window.dispatchEvent(
+        new CustomEvent("audioplay", { detail: playerId }),
+      );
+    });
+    
+    ws.on("pause", () => {
+      setIsPlaying(false);
+    });
+
+    ws.on("audioprocess", updateTime);
+    ws.on("timeupdate", updateTime);
+
+    return () => {
+      ws.destroy();
+    };
+  }, [src, hideControls, playerId]);
 
   useEffect(() => {
     if (!wavesurfer) return;
@@ -79,7 +114,6 @@ export function AudioPlayer({
         if (err.name === "NotAllowedError" || err.message.includes("play()")) {
           wavesurfer.setMuted(true);
           
-          // Muted autoplay usually works
           wavesurfer.play().catch(() => {});
 
           const enableAudio = () => {
@@ -96,7 +130,6 @@ export function AudioPlayer({
 
     wavesurfer.on("ready", onReady);
     
-    // If wavesurfer is already ready when this effect runs
     if (wavesurfer.getDuration() > 0) {
       onReady();
     }
@@ -130,13 +163,6 @@ export function AudioPlayer({
     });
     return () => audioPlayerStore.getState().unmount(playerId);
   }, [playerId]);
-
-  const formatTime = useCallback((seconds: number) => {
-    if (isNaN(seconds) || !isFinite(seconds)) return "0:00";
-    const m = Math.floor(seconds / 60);
-    const s = Math.floor(seconds % 60);
-    return `${m}:${s.toString().padStart(2, "0")}`;
-  }, []);
 
   return (
     <div
@@ -175,8 +201,8 @@ export function AudioPlayer({
       {!hideControls && (
         <div className="shrink-0 flex items-center gap-2">
           <Keyboard className="hidden md:inline-block">Space</Keyboard>
-          <div className="text-[10px] font-mono text-gray-500 whitespace-nowrap px-1 text-right">
-            {formatTime(currentTime)} / {formatTime(duration)}
+          <div ref={timeRef} className="text-[10px] font-mono text-gray-500 whitespace-nowrap px-1 text-right min-w-16">
+            0:00 / 0:00
           </div>
         </div>
       )}

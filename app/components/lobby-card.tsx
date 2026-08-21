@@ -14,7 +14,7 @@ interface LobbyCardProps {
 
 export function LobbyCard({ lobby }: LobbyCardProps) {
   return (
-    <div className="flex flex-col h-full">
+    <>
       <div className="mb-6 flex items-start justify-between gap-4">
         <div>
           <h3
@@ -67,6 +67,6 @@ export function LobbyCard({ lobby }: LobbyCardProps) {
           </span>
         </div>
       </div>
-    </div>
+    </>
   );
 }
