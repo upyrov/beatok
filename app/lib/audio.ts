@@ -2,7 +2,7 @@ const isAudioFile = (file: File) =>
   file.type.startsWith("audio/") ||
   /\.(mp3|wav|flac|ogg|m4a|aac)$/i.test(file.name);
 
-const max_duration = 5 * 60;
+const maxDuration = 5 * 60;
 
 export async function validateAudioFile(file: File): Promise<{
   valid: boolean;
@@ -23,11 +23,11 @@ export async function validateAudioFile(file: File): Promise<{
 
   try {
     const { parseBlob } = await import("music-metadata");
-    const metadata = await parseBlob(file);
-    const durationSeconds = Math.round(metadata.format.duration || 0);
+    const metadata = await parseBlob(file, { duration: true });
+    const durationSeconds = Math.round(metadata.format.duration ?? 0);
 
-    if (durationSeconds > max_duration) {
-      return invalid("Audio duration cannot exceed 5 minutes (300 seconds).");
+    if (durationSeconds > maxDuration) {
+      return invalid("Audio duration cannot exceed 5 minutes.");
     }
 
     return { valid: true, durationSeconds };
