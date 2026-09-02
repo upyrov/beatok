@@ -39,7 +39,10 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
 			});
 
 			await uploadFile(file, uploadUrl, onProgress);
-			await updateUserMutation.mutateAsync({ pictureKey: fileKey });
+			await updateUserMutation.mutateAsync({
+				name: user.name ?? "",
+				pictureKey: fileKey,
+			});
 
 			queryClient.invalidateQueries({
 				queryKey: queryKeys.users.detail(user.id),
@@ -50,7 +53,10 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
 	);
 
 	const handleRemoveAvatar = useCallback(async () => {
-		await updateUserMutation.mutateAsync({ pictureKey: null });
+		await updateUserMutation.mutateAsync({
+			name: user.name ?? "",
+			pictureKey: null,
+		});
 		queryClient.invalidateQueries({
 			queryKey: queryKeys.users.detail(user.id),
 		});
@@ -64,7 +70,10 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
 			debounce(async (newName: string) => {
 				if (!newName) return;
 				try {
-					await updateUserMutation.mutateAsync({ name: newName });
+					await updateUserMutation.mutateAsync({
+						name: newName,
+						pictureKey: user.picture?.key ?? null,
+					});
 					queryClient.invalidateQueries({
 						queryKey: queryKeys.users.detail(user.id),
 					});
