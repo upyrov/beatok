@@ -100,7 +100,7 @@ export function Leaderboard() {
 
 							{user.picture ? (
 								<img
-									src={user.picture}
+									src={user.picture.url}
 									alt={user.name || "User"}
 									className="w-12 h-12 rounded-full object-cover shrink-0 ring-1 ring-black/5 dark:ring-white/10"
 								/>

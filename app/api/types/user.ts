@@ -3,11 +3,16 @@ export interface ActivityDay {
 	count: number;
 }
 
+export interface Picture {
+	url: string;
+	key: string;
+}
+
 export interface Me {
 	id: string;
 	name: string;
 	rating: number | null;
-	picture: string | null;
+	picture: Picture | null;
 	isAnonymous: boolean;
 }
 
@@ -41,14 +46,14 @@ export interface Signup {
 
 export interface UserUpdate {
 	name?: string;
-	picture?: string | null;
+	pictureKey?: string | null;
 }
 
 export interface User {
 	id: string;
 	name: string | null;
 	rating: number;
-	picture: string | null;
+	picture: Picture | null;
 }
 
 export interface LeaderboardUser extends User {

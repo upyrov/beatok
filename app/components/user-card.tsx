@@ -50,7 +50,7 @@ export function UserCard({
 							</div>
 						)}
 						<img
-							src={user.picture}
+							src={user.picture.url}
 							alt={user.name || "Anonymous"}
 							onLoad={() => setImageLoaded(true)}
 							className={`object-cover rounded-full ring-1 ring-black/5 dark:ring-white/10 w-full h-full ${imageLoaded ? "" : "invisible"}`}

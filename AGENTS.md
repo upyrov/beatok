@@ -1,4 +1,4 @@
-After making changes to the code, format it.
+After making changes to the code, format it using Biome.
 After making changes to the code, run `bun typecheck`.
 
 Always use `bun` instead of `node`.

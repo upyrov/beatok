@@ -39,7 +39,7 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
 			});
 
 			await uploadFile(file, uploadUrl, onProgress);
-			await updateUserMutation.mutateAsync({ picture: fileKey });
+			await updateUserMutation.mutateAsync({ pictureKey: fileKey });
 
 			queryClient.invalidateQueries({
 				queryKey: queryKeys.users.detail(user.id),
@@ -50,7 +50,7 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
 	);
 
 	const handleRemoveAvatar = useCallback(async () => {
-		await updateUserMutation.mutateAsync({ picture: null });
+		await updateUserMutation.mutateAsync({ pictureKey: null });
 		queryClient.invalidateQueries({
 			queryKey: queryKeys.users.detail(user.id),
 		});
@@ -110,7 +110,7 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
 								</div>
 							)}
 							<img
-								src={user.picture}
+								src={user.picture.url}
 								alt={user.name ?? "Anonymous"}
 								onLoad={() => setImageLoaded(true)}
 								className={`object-cover ring-1 ring-black/5 dark:ring-white/10 w-full h-full rounded-full ${imageLoaded ? "" : "invisible"}`}
