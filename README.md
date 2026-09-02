@@ -1,87 +1,55 @@
-# Welcome to React Router!
+# Beatok
 
-A modern, production-ready template for building full-stack React applications using React Router.
+Welcome to **Beatok**! A React application for competitive beat making.
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+The backend API is available in a [separate repository](https://github.com/upyrov/beatok-api).
 
-## Features
+## 🛠️ Features
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
+- **Modern Stack**: React 19, React Router 8, and TailwindCSS 4.
+- **Audio Playback**: Waveform rendering and audio playing via [wavesurfer.js](https://wavesurfer.xyz).
+- **Real-Time Capabilities**: WebSockets through SignalR.
+- **State Management**: Robust client state using Zustand and TanStack Query.
+- **Strictly Typed**: End-to-end type safety with TypeScript.
 
-## Getting Started
+## 📦 Getting Started
+
+### Prerequisites
+
+**[Bun](https://bun.sh/)** is the official package manager and runtime for this project. Please ensure you have it installed.
 
 ### Installation
 
-Install the dependencies:
+1. Clone the repository:
 
-```bash
-npm install
-```
+   ```bash
+   git clone https://github.com/upyrov/beatok.git
+   cd beatok
+   ```
 
-### Development
+2. Install the dependencies using Bun:
 
-Start the development server with HMR:
+   ```bash
+   bun install
+   ```
 
-```bash
-npm run dev
-```
+3. Start the development server:
+   ```bash
+   bun run dev
+   ```
 
 Your application will be available at `http://localhost:5173`.
 
-## Building for Production
+## 🤝 Contributing
 
-Create a production build:
+We welcome contributions to Beatok!
 
-```bash
-npm run build
-```
+Please refer to our **[CONTRIBUTING.md](./CONTRIBUTING.md)** for detailed instructions on:
 
-## Deployment
+- Local development workflow
+- Coding guidelines
+- Pull request process
 
-### Docker Deployment
+## 📜 License
 
-To build and run using Docker:
-
-```bash
-docker build -t my-app .
-
-# Run the container
-docker run -p 3000:3000 my-app
-```
-
-The containerized application can be deployed to any platform that supports Docker, including:
-
-- AWS ECS
-- Google Cloud Run
-- Azure Container Apps
-- Digital Ocean App Platform
-- Fly.io
-- Railway
-
-### DIY Deployment
-
-If you're familiar with deploying Node applications, the built-in app server is production-ready.
-
-Make sure to deploy the output of `npm run build`
-
-```
-├── package.json
-├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
-├── build/
-│   ├── client/    # Static assets
-│   └── server/    # Server-side code
-```
-
-## Styling
-
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
-
----
-
-Built with ❤️ using React Router.
+This project is licensed under the terms of the [MIT License](./LICENSE).
