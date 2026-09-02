@@ -1,5 +1,5 @@
 export interface LobbyPlaybackItem {
-  submissionId: string;
-  startedAt: string;
-  order: number;
+	submissionId: string;
+	startedAt: string;
+	order: number;
 }

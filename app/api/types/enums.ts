@@ -1,6 +1,6 @@
 export enum LobbyState {
-  Waiting,
-  Submitting,
-  Voting,
-  Ended,
+	Waiting,
+	Submitting,
+	Voting,
+	Ended,
 }

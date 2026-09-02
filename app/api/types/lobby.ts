@@ -7,63 +7,63 @@ import type { Submission } from "./submission";
 import type { User } from "./user";
 
 export interface CreateLobby {
-  name: string;
-  participantLimit: number;
-  submissionTime: string;
-  genreId: string;
+	name: string;
+	participantLimit: number;
+	submissionTime: string;
+	genreId: string;
 }
 
 export interface DetailedLobby {
-  id: string;
-  name: string;
-  participantLimit: number;
-  state: LobbyState;
+	id: string;
+	name: string;
+	participantLimit: number;
+	state: LobbyState;
 
-  submissionTime: string;
-  votingTime: string;
+	submissionTime: string;
+	votingTime: string;
 
-  createdAt: string;
-  submissionStartedAt: string;
-  votingStartedAt: string;
-  endedAt: string;
+	createdAt: string;
+	submissionStartedAt: string;
+	votingStartedAt: string;
+	endedAt: string;
 
-  genre: Genre;
-  ownerId: string;
-  participants: Participation[];
-  sounds: SoundWithCategory[];
-  submissions: Submission[];
-  winningSubmissionId: string | null;
-  currentPlaybackItem?: LobbyPlaybackItem;
+	genre: Genre;
+	ownerId: string;
+	participants: Participation[];
+	sounds: SoundWithCategory[];
+	submissions: Submission[];
+	winningSubmissionId: string | null;
+	currentPlaybackItem?: LobbyPlaybackItem;
 }
 
 export interface Lobby {
-  id: string;
-  name: string;
-  participantCount: number;
-  participantLimit: number;
-  submissionTime: string;
-  createdAt: string;
-  genre: Genre;
-  owner: User;
-  isJoined: boolean;
+	id: string;
+	name: string;
+	participantCount: number;
+	participantLimit: number;
+	submissionTime: string;
+	createdAt: string;
+	genre: Genre;
+	owner: User;
+	isJoined: boolean;
 }
 
 export interface LobbyFilter {
-  name?: string | null;
-  genreId?: string | null;
+	name?: string | null;
+	genreId?: string | null;
 }
 
 export interface ArchivedLobby {
-  id: string;
-  name: string;
+	id: string;
+	name: string;
 
-  genre: Genre;
+	genre: Genre;
 
-  participantCount: number;
-  isWinner: boolean;
+	participantCount: number;
+	isWinner: boolean;
 
-  createdAt: string;
-  submissionStartedAt: string;
-  votingStartedAt: string;
-  endedAt: string;
+	createdAt: string;
+	submissionStartedAt: string;
+	votingStartedAt: string;
+	endedAt: string;
 }

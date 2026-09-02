@@ -1,4 +1,9 @@
-import { HubConnectionState, HubConnectionBuilder, LogLevel, type HubConnection } from "@microsoft/signalr";
+import {
+	HubConnectionBuilder,
+	HubConnectionState,
+	LogLevel,
+	type HubConnection,
+} from "@microsoft/signalr";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CgMusicNote, CgTimer, CgUserList } from "react-icons/cg";
@@ -26,320 +31,320 @@ import { useUserStore } from "~/stores/user";
 import type { Route } from "./+types/lobbies.$id";
 
 export function meta({}: Route.MetaArgs) {
-  return [
-    { title: "Beatok | Lobby" },
-    {
-      name: "description",
-      content: "Join the beat battle and compete or vote for the best beats.",
-    },
-  ];
+	return [
+		{ title: "Beatok | Lobby" },
+		{
+			name: "description",
+			content: "Join the beat battle and compete or vote for the best beats.",
+		},
+	];
 }
 
 export default function LobbyRoot() {
-  const [store] = useState(() => createLobbyStore());
-  const setConnection = useStore(store, (s) => s.setConnection);
+	const [store] = useState(() => createLobbyStore());
+	const setConnection = useStore(store, (s) => s.setConnection);
 
-  useEffect(() => {
-    let isActive = true;
-    let newConnection: HubConnection | null = null;
+	useEffect(() => {
+		let isActive = true;
+		let newConnection: HubConnection | null = null;
 
-    async function getHubConnection() {
-      await auth.authStateReady();
-      await ensureAnonymouslySignedIn();
+		async function getHubConnection() {
+			await auth.authStateReady();
+			await ensureAnonymouslySignedIn();
 
-      if (!isActive) return;
+			if (!isActive) return;
 
-      const connection = new HubConnectionBuilder()
-        .withUrl(`${import.meta.env.VITE_API_BASE_URL}/lobby`, {
-          withCredentials: true,
-          accessTokenFactory: () => auth.currentUser?.getIdToken() ?? "",
-        })
-        .configureLogging(LogLevel.Warning)
-        .withAutomaticReconnect()
-        .build();
+			const connection = new HubConnectionBuilder()
+				.withUrl(`${import.meta.env.VITE_API_BASE_URL}/lobby`, {
+					withCredentials: true,
+					accessTokenFactory: () => auth.currentUser?.getIdToken() ?? "",
+				})
+				.configureLogging(LogLevel.Warning)
+				.withAutomaticReconnect()
+				.build();
 
-      try {
-        await connection.start();
+			try {
+				await connection.start();
 
-        connection.on("Error", (errorDto: { message: string }) => {});
+				connection.on("Error", (errorDto: { message: string }) => {});
 
-        if (isActive) {
-          newConnection = connection;
-          setConnection(connection);
-        } else {
-          connection.stop();
-        }
-      } catch (error) {}
-    }
+				if (isActive) {
+					newConnection = connection;
+					setConnection(connection);
+				} else {
+					connection.stop();
+				}
+			} catch (error) {}
+		}
 
-    getHubConnection();
+		getHubConnection();
 
-    return () => {
-      isActive = false;
-      newConnection?.stop();
-    };
-  }, [setConnection]);
+		return () => {
+			isActive = false;
+			newConnection?.stop();
+		};
+	}, [setConnection]);
 
-  return (
-    <LobbyContext value={store}>
-      <LobbyInner />
-    </LobbyContext>
-  );
+	return (
+		<LobbyContext value={store}>
+			<LobbyInner />
+		</LobbyContext>
+	);
 }
 
 function LobbyInner() {
-  const connection = useLobbyStore((s) => s.connection);
-  const lobby = useLobbyStore((s) => s.lobby);
-  const setLobby = useLobbyStore((s) => s.setLobby);
-  const user = useUserStore((s) => s.user);
+	const connection = useLobbyStore((s) => s.connection);
+	const lobby = useLobbyStore((s) => s.lobby);
+	const setLobby = useLobbyStore((s) => s.setLobby);
+	const user = useUserStore((s) => s.user);
 
-  const { id } = useParams();
-  const queryClient = useQueryClient();
+	const { id } = useParams();
+	const queryClient = useQueryClient();
 
-  const [ratingChanges, setRatingChanges] = useState<RatingChange[]>([]);
+	const [ratingChanges, setRatingChanges] = useState<RatingChange[]>([]);
 
-  const joinAttemptId = useRef<string | null>(null);
+	const joinAttemptId = useRef<string | null>(null);
 
-  const navigate = useNavigate();
+	const navigate = useNavigate();
 
-  const joinMutation = useMutation({
-    mutationFn() {
-      return connection?.state !== HubConnectionState.Connected
-        ? Promise.reject(new Error("Connection is not established"))
-        : connection.invoke<DetailedLobby>("Join", id);
-    },
-    retry: 5,
-    retryDelay: 1000,
-    onSuccess(lobby) {
-      if (lobby) {
-        setLobby(lobby);
-        queryClient.setQueryData(queryKeys.lobbies.detail(lobby.id), lobby);
-        queryClient.invalidateQueries({ queryKey: queryKeys.lobbies.lists() });
-      }
-    },
-    onError(error) {
-      toastError(error);
-      navigate("/lobbies");
-    },
-  });
-  const leaveMutation = useMutation({
-    mutationFn: () => connection!.invoke("Leave", id),
-    onSuccess() {
-      queryClient.invalidateQueries({ queryKey: queryKeys.lobbies.lists() });
-      navigate("/");
-    },
-    onError(error) {
-      toastError(error);
-    },
-  });
+	const joinMutation = useMutation({
+		mutationFn() {
+			return connection?.state !== HubConnectionState.Connected
+				? Promise.reject(new Error("Connection is not established"))
+				: connection.invoke<DetailedLobby>("Join", id);
+		},
+		retry: 5,
+		retryDelay: 1000,
+		onSuccess(lobby) {
+			if (lobby) {
+				setLobby(lobby);
+				queryClient.setQueryData(queryKeys.lobbies.detail(lobby.id), lobby);
+				queryClient.invalidateQueries({ queryKey: queryKeys.lobbies.lists() });
+			}
+		},
+		onError(error) {
+			toastError(error);
+			navigate("/lobbies");
+		},
+	});
+	const leaveMutation = useMutation({
+		mutationFn: () => connection!.invoke("Leave", id),
+		onSuccess() {
+			queryClient.invalidateQueries({ queryKey: queryKeys.lobbies.lists() });
+			navigate("/");
+		},
+		onError(error) {
+			toastError(error);
+		},
+	});
 
-  const handleLeave = useCallback(
-    () => leaveMutation.mutate(),
-    [leaveMutation.mutate],
-  );
+	const handleLeave = useCallback(
+		() => leaveMutation.mutate(),
+		[leaveMutation.mutate],
+	);
 
-  useEffect(() => {
-    if (user && connection && id && !lobby && joinAttemptId.current !== id) {
-      joinAttemptId.current = id;
-      joinMutation.mutate();
+	useEffect(() => {
+		if (user && connection && id && !lobby && joinAttemptId.current !== id) {
+			joinAttemptId.current = id;
+			joinMutation.mutate();
 
-      requestNotificationPermission();
-    }
-  }, [user, connection, id, lobby, joinMutation.mutate]);
+			requestNotificationPermission();
+		}
+	}, [user, connection, id, lobby, joinMutation.mutate]);
 
-  useEffect(() => {
-    if (!user || !connection) return;
+	useEffect(() => {
+		if (!user || !connection) return;
 
-    function handleEnded(
-      submissionId: string | null,
-      ratingChangesData: RatingChange[],
-    ) {
-      setRatingChanges(ratingChangesData);
-      setLobby((prev) => {
-        if (!prev) return prev;
-        return {
-          ...prev,
-          state: LobbyState.Ended,
-          winningSubmissionId: prev.winningSubmissionId ?? submissionId,
-        };
-      });
-    }
+		function handleEnded(
+			submissionId: string | null,
+			ratingChangesData: RatingChange[],
+		) {
+			setRatingChanges(ratingChangesData);
+			setLobby((prev) => {
+				if (!prev) return prev;
+				return {
+					...prev,
+					state: LobbyState.Ended,
+					winningSubmissionId: prev.winningSubmissionId ?? submissionId,
+				};
+			});
+		}
 
-    connection.on("Ended", handleEnded);
+		connection.on("Ended", handleEnded);
 
-    connection.on("VotingStarted", () => {
-      setLobby((prev) => {
-        if (!prev) return prev;
-        return {
-          ...prev,
-          state: LobbyState.Voting,
-          votingStartedAt: new Date().toISOString(),
-        };
-      });
-    });
+		connection.on("VotingStarted", () => {
+			setLobby((prev) => {
+				if (!prev) return prev;
+				return {
+					...prev,
+					state: LobbyState.Voting,
+					votingStartedAt: new Date().toISOString(),
+				};
+			});
+		});
 
-    connection.on(
-      "SubmissionForPlayback",
-      (submission: Submission, startedAt: string) => {
-        setLobby((prev) => {
-          if (!prev) return prev;
+		connection.on(
+			"SubmissionForPlayback",
+			(submission: Submission, startedAt: string) => {
+				setLobby((prev) => {
+					if (!prev) return prev;
 
-          const newSubmissions = prev.submissions?.find(
-            (s) => s.id === submission.id,
-          )
-            ? prev.submissions
-            : [...(prev.submissions || []), submission];
+					const newSubmissions = prev.submissions?.find(
+						(s) => s.id === submission.id,
+					)
+						? prev.submissions
+						: [...(prev.submissions || []), submission];
 
-          return {
-            ...prev,
-            state: LobbyState.Voting,
-            submissions: newSubmissions,
-            currentPlaybackItem: {
-              submissionId: submission.id,
-              startedAt: startedAt,
-              order: 0,
-            },
-          };
-        });
-      },
-    );
+					return {
+						...prev,
+						state: LobbyState.Voting,
+						submissions: newSubmissions,
+						currentPlaybackItem: {
+							submissionId: submission.id,
+							startedAt: startedAt,
+							order: 0,
+						},
+					};
+				});
+			},
+		);
 
-    connection.on("KickedReceived", () => {
-      toast("You have been kicked from the lobby.", "error");
-      navigate("/");
-    });
+		connection.on("KickedReceived", () => {
+			toast("You have been kicked from the lobby.", "error");
+			navigate("/");
+		});
 
-    return () => {
-      connection.off("Ended", handleEnded);
-      connection.off("VotingStarted");
-      connection.off("SubmissionForPlayback");
-      connection.off("KickedReceived");
-    };
-  }, [user, connection, setLobby, navigate]);
+		return () => {
+			connection.off("Ended", handleEnded);
+			connection.off("VotingStarted");
+			connection.off("SubmissionForPlayback");
+			connection.off("KickedReceived");
+		};
+	}, [user, connection, setLobby, navigate]);
 
-  const StateView =
-    lobby &&
-    {
-      [LobbyState.Waiting]: Waiting,
-      [LobbyState.Submitting]: Submitting,
-      [LobbyState.Voting]: Voting,
-      [LobbyState.Ended]: End,
-    }[lobby.state];
+	const StateView =
+		lobby &&
+		{
+			[LobbyState.Waiting]: Waiting,
+			[LobbyState.Submitting]: Submitting,
+			[LobbyState.Voting]: Voting,
+			[LobbyState.Ended]: End,
+		}[lobby.state];
 
-  return (
-    <main className="container mx-auto p-4 max-w-7xl flex-1 w-full flex flex-col lg:flex-row gap-8">
-      {!lobby ? (
-        <div className="w-full flex flex-col lg:flex-row gap-8">
-          {/* Column 1: Info and Participants */}
-          <div
-            className="flex flex-col gap-4 flex-1"
-            style={{ viewTransitionName: id ? `lobby-${id}` : undefined }}
-          >
-            <div className="flex items-center justify-between">
-              <div className="system-skeleton w-48 h-8 rounded-lg" />
-              <div className="system-skeleton w-24 h-10 rounded-lg" />
-            </div>
-            <div className="flex gap-8 mt-2">
-              <div className="flex flex-col gap-2">
-                <div className="system-skeleton w-16 h-5 rounded" />
-                <div className="system-skeleton w-24 h-5 rounded" />
-              </div>
-              <div className="flex flex-col gap-2">
-                <div className="system-skeleton w-16 h-5 rounded" />
-                <div className="system-skeleton w-12 h-5 rounded" />
-              </div>
-            </div>
-            <div className="flex flex-col gap-8 mt-2">
-              <div className="flex flex-col gap-2">
-                <div className="system-skeleton w-32 h-5 rounded" />
-                <div className="system-skeleton w-20 h-5 rounded" />
-              </div>
-            </div>
-            <div className="bg-muted border border-muted-border rounded-xl p-4 mt-2">
-              <div className="system-skeleton w-32 h-6 rounded mb-4" />
-              <ul className="flex flex-col gap-4">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <li key={i} className="flex items-center gap-2">
-                    <div className="system-skeleton w-8 h-8 rounded-full" />
-                    <div className="system-skeleton w-24 h-5 rounded" />
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
+	return (
+		<main className="container mx-auto p-4 max-w-7xl flex-1 w-full flex flex-col lg:flex-row gap-8">
+			{!lobby ? (
+				<div className="w-full flex flex-col lg:flex-row gap-8">
+					{/* Column 1: Info and Participants */}
+					<div
+						className="flex flex-col gap-4 flex-1"
+						style={{ viewTransitionName: id ? `lobby-${id}` : undefined }}
+					>
+						<div className="flex items-center justify-between">
+							<div className="system-skeleton w-48 h-8 rounded-lg" />
+							<div className="system-skeleton w-24 h-10 rounded-lg" />
+						</div>
+						<div className="flex gap-8 mt-2">
+							<div className="flex flex-col gap-2">
+								<div className="system-skeleton w-16 h-5 rounded" />
+								<div className="system-skeleton w-24 h-5 rounded" />
+							</div>
+							<div className="flex flex-col gap-2">
+								<div className="system-skeleton w-16 h-5 rounded" />
+								<div className="system-skeleton w-12 h-5 rounded" />
+							</div>
+						</div>
+						<div className="flex flex-col gap-8 mt-2">
+							<div className="flex flex-col gap-2">
+								<div className="system-skeleton w-32 h-5 rounded" />
+								<div className="system-skeleton w-20 h-5 rounded" />
+							</div>
+						</div>
+						<div className="bg-muted border border-muted-border rounded-xl p-4 mt-2">
+							<div className="system-skeleton w-32 h-6 rounded mb-4" />
+							<ul className="flex flex-col gap-4">
+								{Array.from({ length: 3 }).map((_, i) => (
+									<li key={i} className="flex items-center gap-2">
+										<div className="system-skeleton w-8 h-8 rounded-full" />
+										<div className="system-skeleton w-24 h-5 rounded" />
+									</li>
+								))}
+							</ul>
+						</div>
+					</div>
 
-          {/* Column 2: State View */}
-          <div className="flex-1">
-            <div className="system-skeleton w-full h-125 rounded-xl" />
-          </div>
+					{/* Column 2: State View */}
+					<div className="flex-1">
+						<div className="system-skeleton w-full h-125 rounded-xl" />
+					</div>
 
-          {/* Column 3: Chat */}
-          <div className="flex-1 flex flex-col border border-muted-border rounded-xl bg-muted overflow-hidden h-150 shrink-0">
-            <div className="p-4 border-b border-muted-border">
-              <div className="system-skeleton w-16 h-6 rounded" />
-            </div>
-            <div className="flex-1 p-4 flex flex-col gap-4 justify-end">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="flex items-start gap-2">
-                  <div className="system-skeleton w-8 h-8 rounded-full shrink-0" />
-                  <div className="system-skeleton w-full h-12 rounded" />
-                </div>
-              ))}
-            </div>
-            <div className="p-4 border-t border-muted-border flex gap-2">
-              <div className="system-skeleton flex-1 h-10 rounded" />
-              <div className="system-skeleton w-16 h-10 rounded" />
-            </div>
-          </div>
-        </div>
-      ) : (
-        <>
-          <div
-            className="flex flex-col gap-4 flex-1"
-            style={{ viewTransitionName: `lobby-${lobby.id}` }}
-          >
-            <div className="flex items-center justify-between">
-              <h1 className="text-2xl font-bold">{lobby.name}</h1>
-              <ActionButton
-                onClick={handleLeave}
-                disabled={leaveMutation.isPending}
-                pending={leaveMutation.isPending}
-              >
-                Leave
-              </ActionButton>
-            </div>
-            <div className="flex flex-wrap gap-x-8 gap-y-4">
-              <div>
-                <p className="font-semibold text-gray-500 text-sm flex items-center gap-1.5">
-                  <CgMusicNote /> Genre
-                </p>
-                <p>{lobby.genre.name}</p>
-              </div>
-              <div>
-                <p className="font-semibold text-gray-500 text-sm flex items-center gap-1.5">
-                  <CgUserList /> Players
-                </p>
-                <p>
-                  {lobby.participants.length} / {lobby.participantLimit}
-                </p>
-              </div>
-              <div>
-                <p className="font-semibold text-gray-500 text-sm flex items-center gap-1.5">
-                  <CgTimer /> Submission Time
-                </p>
-                <p>{formatDuration(lobby.submissionTime)}</p>
-              </div>
-            </div>
-            <ParticipantList ratingChanges={ratingChanges} />
-          </div>
+					{/* Column 3: Chat */}
+					<div className="flex-1 flex flex-col border border-muted-border rounded-xl bg-muted overflow-hidden h-150 shrink-0">
+						<div className="p-4 border-b border-muted-border">
+							<div className="system-skeleton w-16 h-6 rounded" />
+						</div>
+						<div className="flex-1 p-4 flex flex-col gap-4 justify-end">
+							{Array.from({ length: 4 }).map((_, i) => (
+								<div key={i} className="flex items-start gap-2">
+									<div className="system-skeleton w-8 h-8 rounded-full shrink-0" />
+									<div className="system-skeleton w-full h-12 rounded" />
+								</div>
+							))}
+						</div>
+						<div className="p-4 border-t border-muted-border flex gap-2">
+							<div className="system-skeleton flex-1 h-10 rounded" />
+							<div className="system-skeleton w-16 h-10 rounded" />
+						</div>
+					</div>
+				</div>
+			) : (
+				<>
+					<div
+						className="flex flex-col gap-4 flex-1"
+						style={{ viewTransitionName: `lobby-${lobby.id}` }}
+					>
+						<div className="flex items-center justify-between">
+							<h1 className="text-2xl font-bold">{lobby.name}</h1>
+							<ActionButton
+								onClick={handleLeave}
+								disabled={leaveMutation.isPending}
+								pending={leaveMutation.isPending}
+							>
+								Leave
+							</ActionButton>
+						</div>
+						<div className="flex flex-wrap gap-x-8 gap-y-4">
+							<div>
+								<p className="font-semibold text-gray-500 text-sm flex items-center gap-1.5">
+									<CgMusicNote /> Genre
+								</p>
+								<p>{lobby.genre.name}</p>
+							</div>
+							<div>
+								<p className="font-semibold text-gray-500 text-sm flex items-center gap-1.5">
+									<CgUserList /> Players
+								</p>
+								<p>
+									{lobby.participants.length} / {lobby.participantLimit}
+								</p>
+							</div>
+							<div>
+								<p className="font-semibold text-gray-500 text-sm flex items-center gap-1.5">
+									<CgTimer /> Submission Time
+								</p>
+								<p>{formatDuration(lobby.submissionTime)}</p>
+							</div>
+						</div>
+						<ParticipantList ratingChanges={ratingChanges} />
+					</div>
 
-          <div className="flex-1">{StateView && <StateView />}</div>
+					<div className="flex-1">{StateView && <StateView />}</div>
 
-          <div className="flex-1">
-            <Chat />
-          </div>
-        </>
-      )}
-    </main>
-  );
+					<div className="flex-1">
+						<Chat />
+					</div>
+				</>
+			)}
+		</main>
+	);
 }

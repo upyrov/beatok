@@ -5,8 +5,8 @@ import basicSsl from "@vitejs/plugin-basic-ssl";
 import { defineConfig } from "vite";
 
 export default defineConfig({
-  plugins: [tailwindcss(), reactRouter(), basicSsl(), netlifyPlugin()],
-  resolve: {
-    tsconfigPaths: true,
-  },
+	plugins: [tailwindcss(), reactRouter(), basicSsl(), netlifyPlugin()],
+	resolve: {
+		tsconfigPaths: true,
+	},
 });

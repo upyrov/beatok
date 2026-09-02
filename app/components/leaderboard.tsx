@@ -64,7 +64,10 @@ export function Leaderboard() {
       <Card.Content className="flex flex-col gap-3">
         {isLoading &&
           [...Array(5)].map((_, i) => (
-            <div key={`skeleton-${i}`} className="transition duration-300 starting:opacity-0 starting:blur-sm flex items-center gap-3 p-2 -mx-2 rounded-lg">
+            <div
+              key={`skeleton-${i}`}
+              className="transition duration-300 starting:opacity-0 starting:blur-sm flex items-center gap-3 p-2 -mx-2 rounded-lg"
+            >
               <div className="w-5 shrink-0" />
               <div className="system-skeleton w-12 h-12 rounded-full shrink-0" />
               <div className="flex-1 flex flex-col justify-center gap-2">
@@ -75,7 +78,10 @@ export function Leaderboard() {
           ))}
 
         {!isLoading && !users?.length && (
-          <div key="empty-state" className="text-center text-sm text-gray-500 py-4">
+          <div
+            key="empty-state"
+            className="text-center text-sm text-gray-500 py-4"
+          >
             No users found
           </div>
         )}
@@ -86,7 +92,7 @@ export function Leaderboard() {
               key={user.id}
               to={`/users/${user.id}`}
               style={{ viewTransitionName: `leaderboard-user-${user.id}` }}
-              className="transition duration-300 starting:opacity-0 starting:blur-sm flex items-center gap-3 group p-2 -mx-2 rounded-lg hover:bg-muted/50 transition-colors"
+              className="duration-300 starting:opacity-0 starting:blur-sm flex items-center gap-3 group p-2 -mx-2 rounded-lg hover:bg-muted/50 transition-colors"
             >
               <div className="w-5 text-center text-sm font-bold text-gray-400 group-hover:text-foreground shrink-0 transition-colors">
                 {index + 1}

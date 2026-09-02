@@ -1,15 +1,15 @@
 export interface CreateScore {
-  value: number;
-  submissionId: string;
+	value: number;
+	submissionId: string;
 }
 
 export interface ScoreUpdate {
-  value: number;
+	value: number;
 }
 
 export interface Score {
-  id: string;
-  value: string;
-  participationId: string;
-  submissionId: string;
+	id: string;
+	value: string;
+	participationId: string;
+	submissionId: string;
 }

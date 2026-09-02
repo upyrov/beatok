@@ -7,140 +7,141 @@ import { Button } from "~/components/ui/button";
 import { validateAudioFile } from "~/lib/audio";
 import { toastError } from "~/lib/toast";
 import { uploadFile } from "~/lib/upload";
-import { AudioPlayer } from "../lazy-audio-player";
 import { FileDropzone } from "../file-dropzone";
+import { AudioPlayer } from "../lazy-audio-player";
 
 export function Sound({
-  sound,
-  onDelete,
+	sound,
+	onDelete,
 }: {
-  sound: Sound;
-  onDelete: () => void;
+	sound: Sound;
+	onDelete: () => void;
 }) {
-  const updateMutation = useUpdateSound();
-  const getUploadUrlMutation = useUploadSoundUrl();
+	const updateMutation = useUpdateSound();
+	const getUploadUrlMutation = useUploadSoundUrl();
 
-  const [isEditing, setIsEditing] = useState(false);
-  const [editName, setEditName] = useState(sound.name);
+	const [isEditing, setIsEditing] = useState(false);
+	const [editName, setEditName] = useState(sound.name);
 
-  async function handleUpdate(
-    file: File,
-    onProgress: (progress: number) => void,
-  ) {
-    try {
-      const validation = await validateAudioFile(file);
-      if (!validation.valid || validation.durationSeconds === 0) {
-        const errorMsg = validation.error || "Failed to read audio file metadata.";
-        throw new Error(errorMsg);
-      }
+	async function handleUpdate(
+		file: File,
+		onProgress: (progress: number) => void,
+	) {
+		try {
+			const validation = await validateAudioFile(file);
+			if (!validation.valid || validation.durationSeconds === 0) {
+				const errorMsg =
+					validation.error || "Failed to read audio file metadata.";
+				throw new Error(errorMsg);
+			}
 
-      const fileExtension = file.name.split(".").pop() ?? "";
-      const { uploadUrl, fileKey } = await getUploadUrlMutation.mutateAsync({
-        extension: fileExtension,
-        contentType: file.type,
-      });
+			const fileExtension = file.name.split(".").pop() ?? "";
+			const { uploadUrl, fileKey } = await getUploadUrlMutation.mutateAsync({
+				extension: fileExtension,
+				contentType: file.type,
+			});
 
-      await uploadFile(file, uploadUrl, onProgress);
+			await uploadFile(file, uploadUrl, onProgress);
 
-      updateMutation.mutate(
-        { id: sound.id, data: { name: editName, value: fileKey } },
-        { onSuccess: () => setIsEditing(false) },
-      );
-    } catch (error) {
-      toastError(error);
-    }
-  }
+			updateMutation.mutate(
+				{ id: sound.id, data: { name: editName, value: fileKey } },
+				{ onSuccess: () => setIsEditing(false) },
+			);
+		} catch (error) {
+			toastError(error);
+		}
+	}
 
-  function handleNameUpdate() {
-    if (!editName.trim() || editName === sound.name) {
-      setIsEditing(false);
-      setEditName(sound.name);
-      return;
-    }
-    updateMutation.mutate(
-      { id: sound.id, data: { name: editName, value: sound.value } },
-      { onSuccess: () => setIsEditing(false) },
-    );
-  }
+	function handleNameUpdate() {
+		if (!editName.trim() || editName === sound.name) {
+			setIsEditing(false);
+			setEditName(sound.name);
+			return;
+		}
+		updateMutation.mutate(
+			{ id: sound.id, data: { name: editName, value: sound.value } },
+			{ onSuccess: () => setIsEditing(false) },
+		);
+	}
 
-  return (
-    <div className="flex flex-col gap-2 p-2">
-      <div className="flex items-center justify-between mb-1">
-        <div className="flex flex-col flex-1 mr-4">
-          {isEditing ? (
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-2">
-                <BaseInput
-                  className="flex-1 text-sm system-input"
-                  value={editName}
-                  onChange={(e) => setEditName(e.target.value)}
-                  autoFocus
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") handleNameUpdate();
-                    if (e.key === "Escape") {
-                      setIsEditing(false);
-                      setEditName(sound.name);
-                    }
-                  }}
-                />
-                <Button
-                  onClick={handleNameUpdate}
-                  disabled={!editName.trim()}
-                  variant="outline"
-                  size="icon"
-                  className="text-green-500 hover:text-green-600 transition-colors disabled:opacity-50"
-                >
-                  <CgCheck size={18} />
-                </Button>
-                <Button
-                  onClick={() => {
-                    setIsEditing(false);
-                    setEditName(sound.name);
-                  }}
-                  variant="outline"
-                  size="icon"
-                  className="text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors"
-                >
-                  <CgClose size={18} />
-                </Button>
-              </div>
-              <FileDropzone
-                label="Drop new sound file here to replace"
-                maxFiles={1}
-                onUpload={handleUpdate}
-              />
-            </div>
-          ) : (
-            <div className="flex items-center gap-2 flex-1">
-              <span className="font-medium text-sm">{sound.name}</span>
-            </div>
-          )}
-        </div>
-        <div className="flex gap-2 items-center self-start mt-1">
-          {!isEditing && (
-            <Button
-              onClick={() => setIsEditing(true)}
-              variant="outline"
-              size="icon"
-              className="text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
-            >
-              <CgPen size={18} />
-            </Button>
-          )}
-          <Button
-            onClick={(e: React.MouseEvent) => {
-              e.stopPropagation();
-              onDelete();
-            }}
-            variant="outline"
-            size="icon"
-            className="text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors"
-          >
-            <CgTrash size={18} />
-          </Button>
-        </div>
-      </div>
-      {!isEditing && <AudioPlayer src={sound.value} />}
-    </div>
-  );
+	return (
+		<div className="flex flex-col gap-2 p-2">
+			<div className="flex items-center justify-between mb-1">
+				<div className="flex flex-col flex-1 mr-4">
+					{isEditing ? (
+						<div className="flex flex-col gap-2">
+							<div className="flex items-center gap-2">
+								<BaseInput
+									className="flex-1 text-sm system-input"
+									value={editName}
+									onChange={(e) => setEditName(e.target.value)}
+									autoFocus
+									onKeyDown={(e) => {
+										if (e.key === "Enter") handleNameUpdate();
+										if (e.key === "Escape") {
+											setIsEditing(false);
+											setEditName(sound.name);
+										}
+									}}
+								/>
+								<Button
+									onClick={handleNameUpdate}
+									disabled={!editName.trim()}
+									variant="outline"
+									size="icon"
+									className="text-green-500 hover:text-green-600 transition-colors disabled:opacity-50"
+								>
+									<CgCheck size={18} />
+								</Button>
+								<Button
+									onClick={() => {
+										setIsEditing(false);
+										setEditName(sound.name);
+									}}
+									variant="outline"
+									size="icon"
+									className="text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white transition-colors"
+								>
+									<CgClose size={18} />
+								</Button>
+							</div>
+							<FileDropzone
+								label="Drop new sound file here to replace"
+								maxFiles={1}
+								onUpload={handleUpdate}
+							/>
+						</div>
+					) : (
+						<div className="flex items-center gap-2 flex-1">
+							<span className="font-medium text-sm">{sound.name}</span>
+						</div>
+					)}
+				</div>
+				<div className="flex gap-2 items-center self-start mt-1">
+					{!isEditing && (
+						<Button
+							onClick={() => setIsEditing(true)}
+							variant="outline"
+							size="icon"
+							className="text-gray-500 dark:text-gray-400 hover:text-blue-500 dark:hover:text-blue-400 transition-colors"
+						>
+							<CgPen size={18} />
+						</Button>
+					)}
+					<Button
+						onClick={(e: React.MouseEvent) => {
+							e.stopPropagation();
+							onDelete();
+						}}
+						variant="outline"
+						size="icon"
+						className="text-gray-500 dark:text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-colors"
+					>
+						<CgTrash size={18} />
+					</Button>
+				</div>
+			</div>
+			{!isEditing && <AudioPlayer src={sound.value} />}
+		</div>
+	);
 }

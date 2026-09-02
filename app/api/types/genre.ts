@@ -1,12 +1,12 @@
 export interface CreateGenre {
-  name: string;
+	name: string;
 }
 
 export interface GenreUpdate {
-  name: string;
+	name: string;
 }
 
 export interface Genre {
-  id: string;
-  name: string;
+	id: string;
+	name: string;
 }
