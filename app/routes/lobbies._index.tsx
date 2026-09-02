@@ -12,6 +12,7 @@ import { PageContainer } from "~/components/page-container";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { getQueryClient } from "~/lib/query-client";
+import { debounce } from "~/lib/utils";
 import type { Route } from "./+types/lobbies._index";
 
 export function meta({}: Route.MetaArgs) {
@@ -109,6 +110,14 @@ export default function Home() {
 	const lobbiesQuery = useLobbies(deferredFilter);
 	const lobbies = lobbiesQuery.data ?? [];
 
+	const debouncedSetFilterName = useMemo(
+		() =>
+			debounce((value: string) => {
+				setFilter((f) => ({ ...f, name: value }));
+			}, 500),
+		[],
+	);
+
 	const genresQuery = useGenres();
 	const genres = genresQuery.data ?? [];
 
@@ -133,10 +142,8 @@ export default function Home() {
 					<div className="flex flex-col sm:flex-row gap-4 items-center">
 						<Input
 							placeholder="Search"
-							value={filter.name || ""}
-							onChange={(e) =>
-								setFilter((f) => ({ ...f, name: e.target.value }))
-							}
+							defaultValue={filter.name || ""}
+							onChange={(e) => debouncedSetFilterName(e.target.value)}
 							className="flex-1 system-input"
 						/>
 						<Select.Root

@@ -1,9 +1,7 @@
 import { Input as BaseInput, Button } from "@base-ui/react";
 
-import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
-import { type } from "arktype";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
 	CgChart,
 	CgSoftwareUpload,
@@ -19,7 +17,7 @@ import { useUpdateUser, useUploadAvatarUrl } from "~/api/user";
 import { FileDropzone } from "~/components/file-dropzone";
 import { toastError } from "~/lib/toast";
 import { uploadFile } from "~/lib/upload";
-import { ActionButton } from "../action-button";
+import { debounce } from "~/lib/utils";
 
 interface ProfileProps {
 	user: IProfile;
@@ -59,26 +57,30 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
 		queryClient.invalidateQueries({ queryKey: queryKeys.users.me() });
 	}, [updateUserMutation, queryClient, user.id]);
 
-	const form = useForm({
-		defaultValues: {
-			name: user.name || "",
-		},
-		onSubmit: async ({ value }) => {
-			if (updateUserMutation.isPending) return;
-			try {
-				await updateUserMutation.mutateAsync({
-					name: value.name,
-					picture: user.picture,
-				});
-				queryClient.invalidateQueries({
-					queryKey: queryKeys.users.detail(user.id),
-				});
-				queryClient.invalidateQueries({ queryKey: queryKeys.users.me() });
-			} catch (error) {
-				toastError(error);
-			}
-		},
-	});
+	const [name, setName] = useState(user.name || "");
+
+	const debouncedUpdateName = useMemo(
+		() =>
+			debounce(async (newName: string) => {
+				if (!newName) return;
+				try {
+					await updateUserMutation.mutateAsync({ name: newName });
+					queryClient.invalidateQueries({
+						queryKey: queryKeys.users.detail(user.id),
+					});
+					queryClient.invalidateQueries({ queryKey: queryKeys.users.me() });
+				} catch (error) {
+					toastError(error);
+				}
+			}, 500),
+		[updateUserMutation, queryClient, user.id],
+	);
+
+	const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const newName = e.target.value;
+		setName(newName);
+		debouncedUpdateName(newName);
+	};
 
 	const dropzoneOverlay = isCurrentUser ? (
 		<div className="absolute inset-0 bg-black/60 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center z-10 rounded-full overflow-hidden [&>div]:w-full [&>div]:h-full [&>div>div]:w-full [&>div>div]:h-full [&>div>div]:p-0 [&>div>div]:border-none [&>div>div]:bg-transparent [&>div>div]:rounded-none [&>div>p]:mb-0 [&>div>p]:flex [&>div>p]:items-center [&>div>p]:justify-center [&>div>p]:h-full">
@@ -136,52 +138,14 @@ export function Profile({ user, isCurrentUser }: ProfileProps) {
 
 			<div className="flex flex-col flex-1 gap-2 items-center sm:items-start text-center sm:text-left w-full">
 				{isCurrentUser ? (
-					<form
-						onSubmit={(e) => {
-							e.preventDefault();
-							e.stopPropagation();
-							form.handleSubmit();
-						}}
-						className="flex flex-col sm:flex-row items-center gap-2 w-full max-w-sm"
-					>
-						<form.Field
-							name="name"
-							validators={{ onChange: type("string > 0") }}
-							children={(field) => (
-								<BaseInput
-									name={field.name}
-									value={field.state.value}
-									onBlur={field.handleBlur}
-									onChange={(e) => field.handleChange(e.target.value)}
-									placeholder="Your Name"
-									className="flex-1 system-input text-xl font-semibold w-full"
-								/>
-							)}
+					<div className="flex flex-col sm:flex-row items-center gap-2 w-full max-w-sm">
+						<BaseInput
+							value={name}
+							onChange={handleNameChange}
+							placeholder="Your Name"
+							className="flex-1 system-input text-xl font-semibold w-full"
 						/>
-						<form.Subscribe
-							selector={(state) => [
-								state.canSubmit,
-								state.isSubmitting,
-								state.isDirty,
-							]}
-							children={([canSubmit, isSubmitting, isDirty]) =>
-								isDirty && (
-									<div className="transition duration-300 starting:opacity-0 starting:blur-sm">
-										<ActionButton
-											type="submit"
-											disabled={
-												!canSubmit ||
-												isSubmitting ||
-												updateUserMutation.isPending
-											}
-										>
-											Save
-										</ActionButton>
-									</div>
-								)
-							}
-						/>
-					</form>
+					</div>
 				) : (
 					<h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-200">
 						{user.name || "Anonymous"}
