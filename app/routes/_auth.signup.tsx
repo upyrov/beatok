@@ -37,7 +37,7 @@ export default function Signup() {
     onSubmit: async ({ value }) => {
       if (signUpMutation.isPending) return;
       await signUpMutation.mutateAsync(value, {
-        onSuccess: () => navigate("/"),
+        onSuccess: () => navigate("/lobbies"),
       });
     },
   });
@@ -158,7 +158,7 @@ export default function Signup() {
             await queryClient.invalidateQueries({
               queryKey: queryKeys.users.me(),
             });
-            navigate("/");
+            navigate("/lobbies");
           } catch (error) {
             setGoogleError(error as Error);
           } finally {

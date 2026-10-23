@@ -37,7 +37,7 @@ export function ParticipantList({
 
     function handleParticipantLeft(userId: string) {
       if (user?.id && userId === user.id) {
-        navigate("/");
+        navigate("/lobbies");
         return;
       }
 

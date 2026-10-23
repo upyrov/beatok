@@ -130,7 +130,7 @@ function LobbyInner() {
     mutationFn: () => connection!.invoke("Leave", id),
     onSuccess() {
       queryClient.invalidateQueries({ queryKey: queryKeys.lobbies.lists() });
-      navigate("/");
+      navigate("/lobbies");
     },
     onError(error) {
       toastError(error);
@@ -210,7 +210,7 @@ function LobbyInner() {
 
     connection.on("KickedReceived", () => {
       toast("You have been kicked from the lobby.", "error");
-      navigate("/");
+      navigate("/lobbies");
     });
 
     return () => {

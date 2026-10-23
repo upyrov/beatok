@@ -42,7 +42,7 @@ export default function Signin() {
       if (signInMutation.isPending) return;
       try {
         await signInMutation.mutateAsync(value);
-        navigate("/");
+        navigate("/lobbies");
       } catch {}
     },
   });
@@ -141,7 +141,7 @@ export default function Signin() {
             await queryClient.invalidateQueries({
               queryKey: queryKeys.users.me(),
             });
-            navigate("/");
+            navigate("/lobbies");
           } catch (error) {
             setGoogleError(error as Error);
           } finally {

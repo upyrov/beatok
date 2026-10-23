@@ -19,7 +19,7 @@ export function Header({ user }: { user: Me | null }) {
       <div>
         <Link
           viewTransition
-          to="/"
+          to="/lobbies"
           className="flex items-center gap-2 sm:gap-3"
         >
           <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
