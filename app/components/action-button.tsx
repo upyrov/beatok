@@ -1,38 +1,38 @@
+import { CircleNotch } from "@phosphor-icons/react";
 import type { ReactNode } from "react";
-import { CgSpinner } from "react-icons/cg";
 import { Button } from "~/components/ui/button";
 
 export interface ActionButtonProps extends React.ComponentProps<typeof Button> {
-	pending?: boolean;
-	children?: ReactNode;
+  pending?: boolean;
+  children?: ReactNode;
 }
 
 export const ActionButton = ({
-	children,
-	pending,
-	disabled,
-	className = "",
-	...props
+  children,
+  pending,
+  disabled,
+  className = "",
+  ...props
 }: ActionButtonProps) => (
-	<Button
-		{...props}
-		disabled={disabled || pending}
-		className={`relative ${className}`}
-	>
-		{pending && (
-			<div className="absolute inset-0 flex items-center justify-center">
-				<CgSpinner
-					role="status"
-					aria-label={"Loading..."}
-					size={16}
-					className="animate-spin text-gray-400"
-				/>
-			</div>
-		)}
-		<span
-			className={`inline-flex items-center justify-center gap-2 ${pending ? "opacity-0" : ""}`}
-		>
-			{children}
-		</span>
-	</Button>
+  <Button
+    {...props}
+    disabled={disabled || pending}
+    className={`relative ${className}`}
+  >
+    {pending && (
+      <div className="absolute inset-0 flex items-center justify-center">
+        <CircleNotch
+          role="status"
+          aria-label={"Loading..."}
+          size={16}
+          className="animate-spin text-gray-400"
+        />
+      </div>
+    )}
+    <span
+      className={`inline-flex items-center justify-center gap-2 ${pending ? "opacity-0" : ""}`}
+    >
+      {children}
+    </span>
+  </Button>
 );
