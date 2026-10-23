@@ -44,7 +44,7 @@ Your application will be available at `http://localhost:5173`.
 
 We welcome contributions to Beatok!
 
-Please refer to our **[Contributing Guide](./CONTRIBUTING.md)** for detailed instructions on:
+Please refer to our [Contributing Guide](./CONTRIBUTING.md) for detailed instructions on:
 
 - Local development workflow
 - Coding guidelines
