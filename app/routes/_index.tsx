@@ -67,7 +67,7 @@ function HeroSection() {
           </p>
           <div className="flex gap-3 transition-all duration-600 ease-[cubic-bezier(0.16,1,0.3,1)] delay-200 starting:opacity-0 starting:translate-y-2">
             <Link viewTransition to="/lobbies">
-              <Button className="flex items-center gap-2 px-8 py-5 text-base font-bold bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-black border-none shadow-[0_4px_24px_rgba(245,158,11,0.22)]">
+              <Button className="flex items-center gap-2 px-8 py-5 text-base font-bold bg-accent hover:opacity-90 active:opacity-100 text-foreground border-none shadow-[0_4px_24px_rgba(245,158,11,0.22)]">
                 <PlayCircle className="text-xl" /> Join a lobby
               </Button>
             </Link>
