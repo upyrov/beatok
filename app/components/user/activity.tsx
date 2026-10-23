@@ -96,13 +96,13 @@ export function Activity({ userId, date }: { userId: string; date: string }) {
                           style={{ flex: Math.max(1, waitMins) }}
                           title="Waiting"
                         />
-                        <div className="w-2.5 h-2.5 rounded-full bg-gray-400 dark:bg-gray-500 shrink-0 -mx-[0.3125rem] z-10" />
+                        <div className="w-2.5 h-2.5 rounded-full bg-gray-400 dark:bg-gray-500 shrink-0 -mx-1.25 z-10" />
                         <div
                           className="h-1.5 bg-black/10 dark:bg-white/10"
                           style={{ flex: Math.max(1, subMins) }}
                           title="Submission Phase"
                         />
-                        <div className="w-2.5 h-2.5 rounded-full bg-gray-400 dark:bg-gray-500 shrink-0 -mx-[0.3125rem] z-10" />
+                        <div className="w-2.5 h-2.5 rounded-full bg-gray-400 dark:bg-gray-500 shrink-0 -mx-1.25 z-10" />
                         <div
                           className="h-1.5 bg-black/10 dark:bg-white/10 rounded-r-full"
                           style={{ flex: Math.max(1, voteMins) }}

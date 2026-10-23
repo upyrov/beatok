@@ -19,6 +19,7 @@ import "./app.css";
 import { Toast } from "./components/toast";
 import { auth } from "./lib/firebase";
 import { getQueryClient } from "./lib/query-client";
+import { useUserStore } from "./stores/user";
 
 export const meta: Route.MetaFunction = () => {
   return [
@@ -52,14 +53,6 @@ export const links: Route.LinksFunction = () => [
     href: "https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap",
   },
 ];
-
-export function HydrateFallback() {
-  return (
-    <div className="min-h-screen flex p-8">
-      <div className="system-skeleton w-full h-full min-h-[80vh]" />
-    </div>
-  );
-}
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -97,8 +90,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
     </html>
   );
 }
-
-import { useUserStore } from "./stores/user";
 
 function Content() {
   const { data: user = null } = useUser();
