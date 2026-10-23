@@ -48,13 +48,13 @@ function HeroSection() {
       <section className="relative flex flex-col justify-center pt-32 pb-24 px-4 overflow-hidden">
         {/* Ambient background — warm studio lighting feel */}
         <div className="absolute inset-0 pointer-events-none -z-10 overflow-hidden">
-          <div className="absolute -top-64 right-0 w-[50rem] h-[50rem] rounded-full bg-amber-400/5 blur-3xl" />
-          <div className="absolute top-48 -left-48 w-[31.25rem] h-[31.25rem] rounded-full bg-orange-300/[0.04] blur-3xl" />
+          <div className="absolute -top-64 right-0 w-200 h-200 rounded-full bg-amber-400/5 blur-3xl" />
+          <div className="absolute top-48 -left-48 w-125 h-125 rounded-full bg-orange-300/4 blur-3xl" />
         </div>
 
         <div className="max-w-6xl w-full mx-auto">
           <p className="text-xs font-bold tracking-[0.18em] uppercase text-amber-600 dark:text-amber-500 mb-5 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] starting:opacity-0">
-            Beat Battle Platform
+            Competitive Beat Making
           </p>
           <h1 className="text-6xl md:text-8xl font-extrabold tracking-tighter mb-6 leading-[0.92] max-w-2xl text-gray-950 dark:text-white transition-all duration-600 ease-[cubic-bezier(0.16,1,0.3,1)] starting:opacity-0 starting:translate-y-3 text-wrap-balance">
             Make beats.

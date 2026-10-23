@@ -115,20 +115,13 @@ function ActivitySection({
           <Select.Root
             value={selectedYear?.toString() ?? "default"}
             onValueChange={(value) => {
-              const update = () => {
+              startTransition(() => {
                 setSelectedYear(
                   value === "default"
                     ? undefined
                     : parseInt(value as string, 10),
                 );
-              };
-              if (document.startViewTransition) {
-                document.startViewTransition(() => {
-                  startTransition(update);
-                });
-              } else {
-                startTransition(update);
-              }
+              });
             }}
           >
             <Select.Trigger className="flex justify-between items-center gap-2">

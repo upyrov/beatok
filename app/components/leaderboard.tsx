@@ -1,7 +1,6 @@
 import { Select } from "@base-ui/react";
 import { CaretDown, Trophy, UserCircle } from "@phosphor-icons/react";
 import { useState } from "react";
-import { flushSync } from "react-dom";
 import { Link } from "react-router";
 import type { LeaderboardQuery } from "~/api/types/leadeboard-query";
 import { useLeaderboard } from "~/api/user";
@@ -21,15 +20,7 @@ export function Leaderboard() {
           value={sortBy}
           onValueChange={(val) => {
             if (val) {
-              if (document.startViewTransition) {
-                document.startViewTransition(() => {
-                  flushSync(() => {
-                    setSortBy(val as LeaderboardQuery["sortBy"]);
-                  });
-                });
-              } else {
-                setSortBy(val as LeaderboardQuery["sortBy"]);
-              }
+              setSortBy(val as LeaderboardQuery["sortBy"]);
             }
           }}
           items={{ rating: "Top Rated", wins: "Most Wins" }}
