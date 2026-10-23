@@ -2,12 +2,12 @@
 
 Welcome to **Beatok**! A React application for competitive beat making.
 
-The backend API is available in a [separate repository](https://github.com/upyrov/beatok-api).
+Our backend API is available [here](https://github.com/upyrov/beatok-api).
 
 ## 🛠️ Features
 
 - **Modern Stack**: React 19, React Router 8, and TailwindCSS 4.
-- **Audio Playback**: Waveform rendering and audio playing via [wavesurfer.js](https://wavesurfer.xyz).
+- **Audio Playback**: Waveform rendering and audio playing via wavesurfer.js.
 - **Real-Time Capabilities**: WebSockets through SignalR.
 - **State Management**: Robust client state using Zustand and TanStack Query.
 - **Strictly Typed**: End-to-end type safety with TypeScript.
@@ -44,7 +44,7 @@ Your application will be available at `http://localhost:5173`.
 
 We welcome contributions to Beatok!
 
-Please refer to our **[CONTRIBUTING.md](./CONTRIBUTING.md)** for detailed instructions on:
+Please refer to our **[Contributing Guide](./CONTRIBUTING.md)** for detailed instructions on:
 
 - Local development workflow
 - Coding guidelines
